@@ -1,26 +1,26 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 180" role="img" aria-label="Next Flow logo">
   <defs>
     <linearGradient id="logo-bg" x1="24" y1="18" x2="140" y2="142" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#0b1f3a" />
-      <stop offset="1" stop-color="#0b7285" />
+      <stop stop-color="#312e81" />
+      <stop offset="1" stop-color="#6d28d9" />
     </linearGradient>
     <linearGradient id="logo-stroke" x1="34" y1="34" x2="128" y2="126" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#bae6fd" />
-      <stop offset="1" stop-color="#ecfeff" />
+      <stop stop-color="#ddd6fe" />
+      <stop offset="1" stop-color="#f5f3ff" />
     </linearGradient>
     <linearGradient id="wordmark" x1="180" y1="44" x2="660" y2="126" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#0f172a" />
-      <stop offset="1" stop-color="#0f766e" />
+      <stop stop-color="#312e81" />
+      <stop offset="1" stop-color="#6d28d9" />
     </linearGradient>
   </defs>
 
   <rect x="20" y="20" width="120" height="120" rx="30" fill="url(#logo-bg)" />
   <path d="M52 108V52L108 108V52" stroke="url(#logo-stroke)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" />
-  <circle cx="52" cy="52" r="7" fill="#22d3ee" />
-  <circle cx="52" cy="108" r="7" fill="#67e8f9" />
-  <circle cx="108" cy="108" r="7" fill="#99f6e4" />
-  <circle cx="108" cy="52" r="7" fill="#ccfbf1" />
+  <circle cx="52" cy="52" r="7" fill="#c4b5fd" />
+  <circle cx="52" cy="108" r="7" fill="#a78bfa" />
+  <circle cx="108" cy="108" r="7" fill="#8b5cf6" />
+  <circle cx="108" cy="52" r="7" fill="#ddd6fe" />
 
   <text x="178" y="86" fill="url(#wordmark)" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="58" font-weight="760" letter-spacing="1.2">NEXT FLOW</text>
-  <text x="180" y="122" fill="#155e75" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="24" font-weight="520" letter-spacing="0.4">Multi-tenant Project &amp; Task Management</text>
+  <text x="180" y="122" fill="#5b21b6" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="24" font-weight="520" letter-spacing="0.4">Multi-tenant Project &amp; Task Management</text>
 </svg>

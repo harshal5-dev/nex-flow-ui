@@ -4,11 +4,12 @@
 Next Flow is a modern multi-tenant workspace for project and task management, built for clear collaboration and continuous delivery.
 
 ## Core Palette
-- Midnight Navy: `#0b1f3a`
-- Flow Teal: `#0b7285`
-- Signal Cyan: `#22d3ee`
-- Frost Mint: `#99f6e4`
-- Neutral Ink: `#0f172a`
+- Indigo Base: `#312e81`
+- Brand Purple: `#6d28d9`
+- Deep Violet: `#5b21b6`
+- Soft Lavender: `#c4b5fd`
+- Light Lilac: `#ddd6fe`
+- Mist White: `#f5f3ff`
 
 ## Typography Direction
 - Primary sans: Inter / Geist / clean geometric sans-serif
