@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
-import useTheme from "@/hooks/useTheme";
+import { Card } from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
+import ThemeToggleButton from "@/components/common/theme-toggle-button";
 
 const portfolioStats = [
   { label: "Tenant-ready Modules", value: "12+" },
@@ -44,15 +46,14 @@ const journeySteps = [
 ];
 
 const Home = () => {
-  const { theme, setTheme } = useTheme();
-  const nextTheme = theme === "dark" ? "light" : "dark";
+  const navigate = useNavigate();
 
   return (
     <div className="relative min-h-svh overflow-x-hidden bg-background text-foreground">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_10%_10%,rgba(109,40,217,0.2),transparent_38%),radial-gradient(circle_at_90%_0%,rgba(196,181,253,0.2),transparent_36%),radial-gradient(circle_at_70%_90%,rgba(91,33,182,0.18),transparent_34%)]" />
 
       <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-8 px-6 py-8 md:py-10">
-        <header className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-border/70 bg-card/80 px-4 py-3 shadow-sm backdrop-blur">
+        <Card className="flex animate-in flex-wrap items-center justify-between gap-4 bg-card/80 px-4 py-3 backdrop-blur duration-700 fade-in slide-in-from-top-3">
           <div className="flex items-center gap-3">
             <img
               src="/branding/next-flow-mark.svg"
@@ -67,21 +68,17 @@ const Home = () => {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setTheme(nextTheme)}
-            >
-              Switch to {nextTheme} mode
+            <ThemeToggleButton />
+            <Button size="sm" onClick={() => navigate("/register")}>
+              Start Experience
             </Button>
-            <Button size="sm">Start Experience</Button>
           </div>
-        </header>
+        </Card>
 
         <main className="grid gap-6">
-          <section className="grid gap-6 rounded-3xl border border-border/70 bg-card/70 p-6 shadow-sm md:p-8 lg:grid-cols-[1.2fr_0.8fr]">
+          <Card className="grid animate-in gap-6 rounded-3xl bg-card/70 p-6 duration-700 fade-in slide-in-from-bottom-4 md:p-8 lg:grid-cols-[1.2fr_0.8fr]">
             <div>
-              <p className="inline-flex rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+              <p className="inline-flex rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary dark:text-foreground">
                 Featured Portfolio Build
               </p>
               <h1 className="mt-4 max-w-2xl text-3xl font-semibold tracking-tight md:text-5xl">
@@ -94,27 +91,33 @@ const Home = () => {
                 spacing, and production-ready information architecture.
               </p>
               <div className="mt-6 flex flex-wrap items-center gap-3">
-                <Button size="lg">View Product Vision</Button>
-                <Button size="lg" variant="outline">
+                <Button size="lg" onClick={() => navigate("/login")}>
+                  Login Workspace
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  onClick={() => navigate("/register")}
+                >
                   Explore Tenant Flow
                 </Button>
               </div>
               <div className="mt-8 grid gap-3 sm:grid-cols-3">
                 {portfolioStats.map((item) => (
-                  <article
+                  <Card
                     key={item.label}
-                    className="rounded-xl border border-border/70 bg-background/60 p-4"
+                    className="rounded-xl bg-background/60 p-4"
                   >
                     <p className="text-2xl font-semibold">{item.value}</p>
                     <p className="mt-1 text-xs text-muted-foreground">
                       {item.label}
                     </p>
-                  </article>
+                  </Card>
                 ))}
               </div>
             </div>
 
-            <aside className="rounded-2xl border border-border/70 bg-background/70 p-5">
+            <Card className="rounded-2xl bg-background/70 p-5">
               <p className="text-xs font-medium tracking-[0.22em] text-primary uppercase">
                 Why This Portfolio Stands Out
               </p>
@@ -132,24 +135,21 @@ const Home = () => {
                   business value.
                 </p>
               </div>
-            </aside>
-          </section>
+            </Card>
+          </Card>
 
-          <section className="grid gap-4 md:grid-cols-3">
+          <section className="grid animate-in gap-4 delay-150 duration-700 fade-in slide-in-from-bottom-3 md:grid-cols-3">
             {featureCards.map((feature) => (
-              <article
-                key={feature.title}
-                className="rounded-2xl border border-border/70 bg-card/70 p-5 shadow-sm"
-              >
+              <Card key={feature.title} className="rounded-2xl bg-card/70 p-5">
                 <h2 className="text-base font-semibold">{feature.title}</h2>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                   {feature.description}
                 </p>
-              </article>
+              </Card>
             ))}
           </section>
 
-          <section className="rounded-3xl border border-border/70 bg-card/70 p-6 md:p-8">
+          <Card className="animate-in rounded-3xl bg-card/70 p-6 delay-300 duration-700 fade-in slide-in-from-bottom-3 md:p-8">
             <p className="text-xs font-medium tracking-[0.22em] text-primary uppercase">
               Workflow Journey
             </p>
@@ -159,18 +159,18 @@ const Home = () => {
             </h2>
             <div className="mt-6 grid gap-4 md:grid-cols-3">
               {journeySteps.map((step) => (
-                <article
+                <Card
                   key={step.title}
-                  className="rounded-2xl border border-border/70 bg-background/60 p-4"
+                  className="rounded-2xl bg-background/60 p-4"
                 >
                   <p className="text-sm font-semibold">{step.title}</p>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                     {step.description}
                   </p>
-                </article>
+                </Card>
               ))}
             </div>
-          </section>
+          </Card>
         </main>
       </div>
     </div>
