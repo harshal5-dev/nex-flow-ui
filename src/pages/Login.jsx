@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { IconBrandGithub, IconBrandGoogle } from "@tabler/icons-react";
 
 import AuthPageShell from "@/components/common/auth-page-shell";
@@ -15,14 +16,40 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 const loginHighlights = [
-  "Secure workspace access with tenant-aware authentication.",
-  "Real-time project tracking and assignment visibility.",
-  "Unified dashboard for milestones, tasks, and progress.",
+  {
+    title: "Secure Workspace Access",
+    description:
+      "Tenant-aware authentication with role-scoped workspace entry.",
+  },
+  {
+    title: "Live Project Visibility",
+    description:
+      "Track assignments, priorities, and delivery status in real time.",
+  },
+  {
+    title: "Unified Delivery Control",
+    description:
+      "Operate milestones, tasks, and team coordination from one place.",
+  },
 ];
 
 const Login = () => {
+  const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleSubmit = (event) => {
     event.preventDefault();
+
+    if (isSubmitting) {
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    window.setTimeout(() => {
+      window.localStorage.setItem("nexflow:mock-auth", "true");
+      navigate("/app/dashboard");
+    }, 700);
   };
 
   return (
@@ -32,7 +59,7 @@ const Login = () => {
       description="Access your account to monitor project health, prioritize delivery, and collaborate across organizations in one modern control center."
       highlights={loginHighlights}
     >
-      <Card className="animate-in fade-in slide-in-from-right-4 w-full max-w-md border-border/70 bg-card/85 shadow-lg backdrop-blur">
+      <Card className="w-full max-w-md animate-in border-border/70 bg-card/85 shadow-lg backdrop-blur duration-700 fade-in slide-in-from-right-4">
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>
           <CardDescription>
@@ -72,8 +99,18 @@ const Login = () => {
               </button>
             </div>
 
-            <Button type="submit" size="lg" className="w-full">
-              Sign In
+            <p className="text-xs text-muted-foreground">
+              Demo mode enabled. This will use mock login and open your
+              application dashboard layout.
+            </p>
+
+            <Button
+              type="submit"
+              size="lg"
+              className="w-full"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Signing In..." : "Sign In"}
             </Button>
 
             <div className="relative py-1">
@@ -86,11 +123,21 @@ const Login = () => {
             </div>
 
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-              <Button type="button" size="lg" variant="outline" className="w-full">
+              <Button
+                type="button"
+                size="lg"
+                variant="outline"
+                className="w-full"
+              >
                 <IconBrandGoogle className="mr-1.5 size-4" />
                 Google
               </Button>
-              <Button type="button" size="lg" variant="outline" className="w-full">
+              <Button
+                type="button"
+                size="lg"
+                variant="outline"
+                className="w-full"
+              >
                 <IconBrandGithub className="mr-1.5 size-4" />
                 GitHub
               </Button>
