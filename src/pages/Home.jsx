@@ -2,11 +2,31 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 import ThemeToggleButton from "@/components/common/theme-toggle-button";
+import {
+  IconArrowUpRight,
+  IconBrandGithub,
+  IconBrandLinkedin,
+  IconCode,
+  IconServer,
+  IconWorldWww,
+} from "@tabler/icons-react";
 
 const portfolioStats = [
-  { label: "Tenant-ready Modules", value: "12+" },
-  { label: "Task Workflow States", value: "8" },
-  { label: "Reusable UI Blocks", value: "30+" },
+  {
+    label: "Tenant-ready Modules",
+    value: "12+",
+    note: "Configurable workspaces with isolated access controls.",
+  },
+  {
+    label: "Task Workflow States",
+    value: "8",
+    note: "Clear transitions from backlog planning to final delivery.",
+  },
+  {
+    label: "Reusable UI Blocks",
+    value: "30+",
+    note: "Reusable shadcn-based components for faster product rollout.",
+  },
 ];
 
 const featureCards = [
@@ -42,6 +62,41 @@ const journeySteps = [
     title: "03. Delivery Visibility",
     description:
       "Track progress in real time and share updates through a polished portfolio-grade UI.",
+  },
+];
+
+const githubRepositories = [
+  {
+    title: "UI Repository",
+    description:
+      "React frontend for the multi-tenant project and task management experience.",
+    stack: "React + Vite",
+    href: "https://github.com/harshal5-dev/nex-flow-ui",
+    Icon: IconCode,
+  },
+  {
+    title: "API Repository",
+    description:
+      "Node.js backend for tenant management, projects, tasks, and workflow APIs.",
+    stack: "Node.js + REST API",
+    href: "https://github.com/harshal5-dev/Nexflow",
+    Icon: IconServer,
+  },
+];
+
+const profileLinks = [
+  {
+    title: "LinkedIn Profile",
+    description:
+      "Connect for collaboration, freelance work, and opportunities.",
+    href: "https://www.linkedin.com/in/harshal-ganbote",
+    Icon: IconBrandLinkedin,
+  },
+  {
+    title: "Portfolio Website",
+    description: "Explore more projects, case studies, and ways to contact me.",
+    href: "https://harshalganbote.com/",
+    Icon: IconWorldWww,
   },
 ];
 
@@ -81,11 +136,11 @@ const Home = () => {
               <p className="inline-flex rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary dark:text-foreground">
                 Featured Portfolio Build
               </p>
-              <h1 className="mt-4 max-w-2xl text-3xl font-semibold tracking-tight md:text-5xl">
+              <h1 className="mt-4 max-w-2xl text-2xl font-semibold tracking-tight md:text-4xl">
                 Next Flow: a modern multi-tenant product for managing projects,
                 tasks, and team delivery.
               </h1>
-              <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground md:text-base">
+              <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground md:text-[15px]">
                 This UI demonstrates your product vision with a clean, scalable
                 design system powered by shadcn styling conventions, expressive
                 spacing, and production-ready information architecture.
@@ -102,40 +157,126 @@ const Home = () => {
                   Explore Tenant Flow
                 </Button>
               </div>
-              <div className="mt-8 grid gap-3 sm:grid-cols-3">
-                {portfolioStats.map((item) => (
+
+              <Card className="mt-6 rounded-2xl border-primary/25 bg-background/60 p-4">
+                <div className="flex items-center gap-2 text-xs font-semibold tracking-wide text-foreground/90">
+                  <IconBrandGithub className="size-4 text-primary" />
+                  GitHub Project Links
+                </div>
+                <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                  {githubRepositories.map((repo) => (
+                    <a
+                      key={repo.title}
+                      href={repo.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="group relative overflow-hidden rounded-2xl border border-primary/15 bg-linear-to-br from-background/95 via-background/80 to-primary/5 p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-md"
+                    >
+                      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-primary/20 via-primary/80 to-primary/20" />
+
+                      <div className="relative flex items-center justify-between gap-3">
+                        <div className="inline-flex items-center gap-2 text-sm font-semibold">
+                          <repo.Icon className="size-4 text-primary" />
+                          {repo.title}
+                        </div>
+                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary dark:text-foreground">
+                          View
+                          <IconArrowUpRight className="size-3.5" />
+                        </span>
+                      </div>
+
+                      <p className="relative mt-2 text-[13px] leading-relaxed text-muted-foreground">
+                        {repo.description}
+                      </p>
+
+                      <div className="relative mt-3 flex items-center justify-between">
+                        <p className="inline-flex rounded-full border border-border/80 bg-background/70 px-2 py-1 text-[11px] font-medium text-foreground/80">
+                          {repo.stack}
+                        </p>
+                        <IconBrandGithub className="size-4 text-muted-foreground transition-colors group-hover:text-primary" />
+                      </div>
+                    </a>
+                  ))}
+                </div>
+
+                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  {profileLinks.map((link) => (
+                    <a
+                      key={link.title}
+                      href={link.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="group rounded-xl border border-primary/15 bg-card/60 p-3.5 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/35 hover:bg-card/80"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="inline-flex items-center gap-2 text-sm font-semibold">
+                          <link.Icon className="size-4 text-primary" />
+                          {link.title}
+                        </div>
+                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary dark:text-foreground">
+                          Visit
+                          <IconArrowUpRight className="size-3.5" />
+                        </span>
+                      </div>
+                      <p className="mt-1.5 text-xs leading-relaxed text-muted-foreground">
+                        {link.description}
+                      </p>
+                    </a>
+                  ))}
+                </div>
+              </Card>
+            </div>
+
+            <div className="grid gap-4">
+              <Card className="rounded-2xl bg-background/70 p-5">
+                <p className="text-xs font-medium tracking-[0.22em] text-primary uppercase">
+                  Why This Portfolio Stands Out
+                </p>
+                <div className="mt-4 space-y-3 text-sm text-muted-foreground">
+                  <p>
+                    Product-focused storytelling with a clear multi-tenant
+                    architecture narrative.
+                  </p>
+                  <p>
+                    UI consistency built on reusable components and semantic
+                    theme tokens.
+                  </p>
+                  <p>
+                    Balanced visual design that presents both technical depth
+                    and business value.
+                  </p>
+                </div>
+              </Card>
+
+              <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+                {portfolioStats.map((item, index) => (
                   <Card
                     key={item.label}
-                    className="rounded-xl bg-background/60 p-4"
+                    className="group relative overflow-hidden rounded-2xl border border-primary/15 bg-linear-to-br from-background/90 via-background/75 to-primary/5 p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/35 hover:shadow-md"
                   >
-                    <p className="text-2xl font-semibold">{item.value}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {item.label}
-                    </p>
+                    <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-primary/20 via-primary/80 to-primary/20" />
+                    <div className="pointer-events-none absolute -top-10 -right-10 size-24 rounded-full bg-primary/10 blur-2xl transition-opacity duration-300 group-hover:opacity-90" />
+
+                    <div className="relative flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-xl font-semibold tracking-tight">
+                          {item.value}
+                        </p>
+                        <p className="mt-1 text-sm font-semibold text-foreground">
+                          {item.label}
+                        </p>
+                        <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                          {item.note}
+                        </p>
+                      </div>
+                      <span className="rounded-full border border-primary/30 bg-primary/10 px-2 py-1 text-[11px] font-semibold text-primary dark:text-foreground">
+                        0{index + 1}
+                      </span>
+                    </div>
                   </Card>
                 ))}
               </div>
             </div>
-
-            <Card className="rounded-2xl bg-background/70 p-5">
-              <p className="text-xs font-medium tracking-[0.22em] text-primary uppercase">
-                Why This Portfolio Stands Out
-              </p>
-              <div className="mt-4 space-y-3 text-sm text-muted-foreground">
-                <p>
-                  Product-focused storytelling with a clear multi-tenant
-                  architecture narrative.
-                </p>
-                <p>
-                  UI consistency built on reusable components and semantic theme
-                  tokens.
-                </p>
-                <p>
-                  Balanced visual design that presents both technical depth and
-                  business value.
-                </p>
-              </div>
-            </Card>
           </Card>
 
           <section className="grid animate-in gap-4 delay-150 duration-700 fade-in slide-in-from-bottom-3 md:grid-cols-3">
