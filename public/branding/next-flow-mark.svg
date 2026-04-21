@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Next Flow brand mark">
+  <defs>
+    <linearGradient id="nf-bg" x1="8" y1="6" x2="56" y2="58" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0b1f3a" />
+      <stop offset="1" stop-color="#0b7285" />
+    </linearGradient>
+    <linearGradient id="nf-stroke" x1="16" y1="18" x2="46" y2="46" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#bae6fd" />
+      <stop offset="1" stop-color="#ecfeff" />
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="56" height="56" rx="16" fill="url(#nf-bg)" />
+  <path d="M20 44V20L44 44V20" stroke="url(#nf-stroke)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+  <circle cx="20" cy="20" r="4" fill="#22d3ee" />
+  <circle cx="20" cy="44" r="4" fill="#67e8f9" />
+  <circle cx="44" cy="44" r="4" fill="#99f6e4" />
+  <circle cx="44" cy="20" r="4" fill="#ccfbf1" />
+</svg>
