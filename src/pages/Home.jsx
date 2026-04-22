@@ -124,7 +124,7 @@ const Home = () => {
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggleButton />
-            <Button size="sm" onClick={() => navigate("/register")}>
+            <Button size="sm" onClick={() => navigate("/signup")}>
               Start Experience
             </Button>
           </div>
@@ -134,7 +134,7 @@ const Home = () => {
           <Card className="grid animate-in gap-6 rounded-3xl bg-card/70 p-6 duration-700 fade-in slide-in-from-bottom-4 md:p-8 lg:grid-cols-[1.2fr_0.8fr]">
             <div>
               <p className="inline-flex rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary dark:text-foreground">
-                Featured Portfolio Build
+                Primary
               </p>
               <h1 className="mt-4 max-w-2xl text-2xl font-semibold tracking-tight md:text-4xl">
                 Next Flow: a modern multi-tenant product for managing projects,
@@ -152,7 +152,7 @@ const Home = () => {
                 <Button
                   size="lg"
                   variant="outline"
-                  onClick={() => navigate("/register")}
+                  onClick={() => navigate("/signup")}
                 >
                   Explore Tenant Flow
                 </Button>

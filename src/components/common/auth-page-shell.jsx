@@ -12,7 +12,7 @@ function AuthPageShell({
   children,
 }) {
   const panelStats = [
-    { value: "12+", label: "Tenant Modules" },
+    { value: "5+", label: "Tenant Modules" },
     { value: "8", label: "Workflow States" },
     { value: "30+", label: "UI Blocks" },
   ];

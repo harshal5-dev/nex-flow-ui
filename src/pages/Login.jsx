@@ -149,7 +149,7 @@ const Login = () => {
           <p className="text-sm text-muted-foreground">
             New to Next Flow?{" "}
             <Link
-              to="/register"
+              to="/signup"
               className="font-medium text-primary underline-offset-4 hover:underline"
             >
               Create an account
