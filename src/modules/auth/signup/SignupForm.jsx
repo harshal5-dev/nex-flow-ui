@@ -150,11 +150,6 @@ const SignupForm = () => {
           </Card>
         )}
 
-        <p className="text-xs text-muted-foreground">
-          Fields marked <span className="text-destructive">*</span> are
-          required.
-        </p>
-
         <fieldset disabled={isLoading} className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
             <FormField
@@ -260,7 +255,7 @@ const SignupForm = () => {
                   value: 8,
                   message: "Password must be at least 8 characters.",
                 },
-                kMaxLength: {
+                maxLength: {
                   value: 15,
                   message: "Password must be less than 15 characters.",
                 },

@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import Home from "@/pages/Home";
-import Login from "@/pages/Login";
+import Signin from "@/modules/auth/signin/Signin";
 import Signup from "@/modules/auth/signup/Signup";
 import AppLayout from "@/pages/app/AppLayout";
 import Dashboard from "@/pages/app/Dashboard";
@@ -11,7 +11,7 @@ export function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/home" element={<Home />} />
-      <Route path="/login" element={<Login />} />
+      <Route path="/login" element={<Signin />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/register" element={<Navigate to="/signup" replace />} />
       <Route path="/app" element={<AppLayout />}>
