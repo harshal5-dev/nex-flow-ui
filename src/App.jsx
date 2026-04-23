@@ -4,6 +4,7 @@ import Login from "@/pages/Login";
 import Signup from "@/modules/auth/signup/Signup";
 import AppLayout from "@/pages/app/AppLayout";
 import Dashboard from "@/pages/app/Dashboard";
+import Team from "@/pages/app/Team";
 
 export function App() {
   return (
@@ -18,7 +19,7 @@ export function App() {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="projects" element={<Dashboard />} />
         <Route path="tasks" element={<Dashboard />} />
-        <Route path="team" element={<Dashboard />} />
+        <Route path="team" element={<Team />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

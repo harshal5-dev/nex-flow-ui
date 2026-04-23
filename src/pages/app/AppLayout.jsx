@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import {
   Link,
   NavLink,
@@ -7,107 +7,270 @@ import {
   useNavigate,
 } from "react-router-dom";
 import {
-  IconBell,
   IconBuildingSkyscraper,
   IconChecklist,
   IconLayoutDashboard,
-  IconMenu2,
-  IconSearch,
+  IconLogout2,
+  IconUserCircle,
   IconUsers,
-  IconX,
 } from "@tabler/icons-react";
 
 import ThemeToggleButton from "@/components/common/theme-toggle-button";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarRail,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { useSidebar } from "@/hooks/useSidebar";
+import { cn } from "@/lib/utils";
 
 const navigationItems = [
   {
     title: "Dashboard",
+    description: "Overview and metrics",
     path: "/app/dashboard",
     Icon: IconLayoutDashboard,
   },
   {
     title: "Projects",
+    description: "Delivery pipelines",
     path: "/app/projects",
     Icon: IconBuildingSkyscraper,
   },
   {
     title: "Tasks",
+    description: "Execution board",
     path: "/app/tasks",
     Icon: IconChecklist,
   },
   {
     title: "Team",
+    description: "People and roles",
     path: "/app/team",
     Icon: IconUsers,
   },
 ];
 
-function SidebarContent({ onNavigate, onLogout }) {
+function WorkspaceSidebar({ onNavigate, onOpenProfile, onLogout }) {
+  const { isCollapsed } = useSidebar();
+
   return (
-    <div className="flex h-full flex-col text-sidebar-foreground">
-      <Link
-        to="/home"
-        onClick={onNavigate}
-        className="inline-flex items-center gap-2 rounded-md px-1 py-1"
-      >
-        <img
-          src="/branding/next-flow-mark.svg"
-          alt="Next Flow"
-          className="size-8 rounded-md"
-        />
-        <div>
-          <p className="text-sm font-semibold">Next Flow</p>
-          <p className="text-[11px] text-sidebar-foreground/70">
-            Mock Session Active
-          </p>
-        </div>
-      </Link>
+    <Sidebar>
+      <SidebarHeader>
+        <Link
+          to="/home"
+          onClick={onNavigate}
+          className={cn(
+            "group flex min-w-0 items-center gap-2 rounded-xl border border-sidebar-border/70 bg-sidebar-accent/35 p-2 transition-colors duration-500 hover:bg-sidebar-accent",
+            isCollapsed && "lg:justify-center"
+          )}
+        >
+          <img
+            src="/branding/next-flow-mark.svg"
+            alt="Next Flow"
+            className="size-8 shrink-0 rounded-md border border-sidebar-border/70 bg-sidebar"
+          />
+          <div className={cn("min-w-0", isCollapsed && "lg:hidden")}>
+            <p className="truncate text-[13px] font-semibold tracking-tight">
+              Next Flow
+            </p>
+            <p className="truncate text-[11px] text-sidebar-foreground/60">
+              Workspace Console
+            </p>
+          </div>
+        </Link>
+      </SidebarHeader>
 
-      <div className="mt-6">
-        <p className="px-1 text-[11px] tracking-[0.16em] text-sidebar-foreground/70 uppercase">
-          Navigation
-        </p>
-        <nav className="mt-2 grid gap-1.5">
-          {navigationItems.map((item) => (
-            <NavLink
-              key={item.title}
-              to={item.path}
-              onClick={onNavigate}
-              className={({ isActive }) =>
-                `group inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors ${
-                  isActive
-                    ? "border-sidebar-primary/30 bg-sidebar-primary/12 text-sidebar-foreground"
-                    : "border-sidebar-border bg-sidebar/30 text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground"
-                }`
-              }
+      <SidebarContent>
+        <SidebarGroup>
+          <SidebarGroupLabel className={cn(isCollapsed && "lg:sr-only")}>
+            Navigation
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {navigationItems.map((item, index) => (
+                <SidebarMenuItem
+                  key={item.title}
+                  className="animate-in duration-700 fade-in slide-in-from-left-2"
+                  style={{ animationDelay: `${90 + index * 80}ms` }}
+                >
+                  <NavLink
+                    to={item.path}
+                    onClick={onNavigate}
+                    title={item.title}
+                    className={({ isActive }) =>
+                      cn(
+                        "group flex items-center gap-2 rounded-lg border px-2 py-1.5 text-[13px] font-medium transition-all duration-700 ease-out",
+                        isActive
+                          ? "border-sidebar-primary/30 bg-sidebar-primary/14 text-sidebar-primary shadow-[0_10px_24px_-18px_var(--color-sidebar-primary)]"
+                          : "border-transparent text-sidebar-foreground/80 hover:border-sidebar-border/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                        isCollapsed && "lg:justify-center lg:px-1.5"
+                      )
+                    }
+                  >
+                    <item.Icon className="size-3.5 shrink-0 transition-transform duration-500 group-hover:scale-110" />
+                    <div className={cn("min-w-0", isCollapsed && "lg:hidden")}>
+                      <p className="truncate leading-none">{item.title}</p>
+                      <p className="mt-0.5 truncate text-[10px] text-sidebar-foreground/60">
+                        {item.description}
+                      </p>
+                    </div>
+                  </NavLink>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </SidebarContent>
+
+      <SidebarFooter className="pt-1.5">
+        <Card
+          className={cn(
+            "animate-in rounded-xl border-sidebar-border/70 bg-sidebar-accent/40 p-2.5 text-sidebar-foreground shadow-none transition-transform duration-700 fade-in slide-in-from-bottom-2 hover:-translate-y-0.5",
+            isCollapsed && "lg:p-2"
+          )}
+        >
+          <div
+            className={cn(
+              "flex items-center gap-2",
+              isCollapsed && "lg:justify-center"
+            )}
+          >
+            <span className="relative inline-flex size-8 shrink-0 items-center justify-center rounded-lg border border-sidebar-primary/25 bg-sidebar-primary/12 text-[11px] font-semibold text-sidebar-primary">
+              WA
+              <span className="absolute -right-0.5 -bottom-0.5 size-2 rounded-full border border-sidebar bg-emerald-500" />
+            </span>
+
+            <div className={cn("min-w-0", isCollapsed && "lg:hidden")}>
+              <p className="truncate text-xs font-semibold">Workspace Admin</p>
+              <p className="truncate text-[11px] text-sidebar-foreground/65">
+                Product Owner
+              </p>
+            </div>
+          </div>
+
+          <div
+            className={cn("mt-2.5 grid gap-1.5", isCollapsed && "lg:hidden")}
+          >
+            <Button
+              variant="ghost"
+              size="sm"
+              className="justify-start gap-1.5 rounded-lg px-2 text-xs text-sidebar-foreground/85 hover:bg-sidebar-accent"
+              onClick={onOpenProfile}
             >
-              <item.Icon className="size-4 text-sidebar-primary" />
-              {item.title}
-            </NavLink>
-          ))}
-        </nav>
+              <IconUserCircle className="size-3.5" />
+              Profile
+            </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              className="justify-start gap-1.5 rounded-lg border-sidebar-border bg-sidebar px-2 text-xs hover:bg-sidebar-accent"
+              onClick={onLogout}
+            >
+              <IconLogout2 className="size-3.5" />
+              Logout
+            </Button>
+          </div>
+
+          {isCollapsed ? (
+            <Button
+              variant="outline"
+              size="icon-sm"
+              className="mt-2 hidden border-sidebar-border bg-sidebar hover:bg-sidebar-accent lg:inline-flex"
+              title="Logout"
+              onClick={onLogout}
+            >
+              <IconLogout2 className="size-3.5" />
+            </Button>
+          ) : null}
+        </Card>
+      </SidebarFooter>
+
+      <SidebarRail />
+    </Sidebar>
+  );
+}
+
+function WorkspaceFrame({ pageMeta, onLogout }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { isMobile, setMobileOpen } = useSidebar();
+  const HeaderIcon = pageMeta.Icon || IconLayoutDashboard;
+
+  useEffect(() => {
+    if (isMobile) {
+      setMobileOpen(false);
+    }
+  }, [isMobile, location.pathname, setMobileOpen]);
+
+  return (
+    <div className="relative min-h-svh w-full overflow-x-hidden bg-background text-foreground">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_9%_8%,rgba(14,165,233,0.10),transparent_36%),radial-gradient(circle_at_88%_12%,rgba(109,40,217,0.10),transparent_34%)]" />
+
+      <div className="relative flex min-h-svh w-full">
+        <WorkspaceSidebar
+          onNavigate={() => {
+            if (isMobile) {
+              setMobileOpen(false);
+            }
+          }}
+          onOpenProfile={() => {
+            navigate("/app/team");
+            if (isMobile) {
+              setMobileOpen(false);
+            }
+          }}
+          onLogout={onLogout}
+        />
+
+        <SidebarInset>
+          <header className="sticky top-0 z-30 px-3 pt-2.5 md:px-4 md:pt-3">
+            <div className="rounded-xl border border-border/70 bg-background/85 px-3 py-2.5 shadow-sm backdrop-blur-xl md:px-4">
+              <div className="flex items-center gap-2.5">
+                <SidebarTrigger />
+
+                <div className="flex min-w-0 items-center gap-2.5">
+                  <span className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-primary/25 bg-primary/10 text-primary">
+                    <HeaderIcon className="size-4" />
+                  </span>
+
+                  <div className="min-w-0">
+                    <p className="truncate text-base font-semibold tracking-tight">
+                      {pageMeta.title}
+                    </p>
+                    <p className="truncate text-xs text-muted-foreground">
+                      {pageMeta.description}
+                    </p>
+                  </div>
+                </div>
+
+                <ThemeToggleButton className="ml-auto rounded-md" />
+              </div>
+            </div>
+          </header>
+
+          <main className="min-h-0 flex-1 px-3 pt-3 pb-3 md:px-4 md:pt-4 md:pb-4">
+            <Card className="min-h-full border-border/70 bg-card/65 p-3 shadow-sm md:p-5">
+              <div className="min-h-full animate-in duration-700 fade-in slide-in-from-bottom-2">
+                <Outlet />
+              </div>
+            </Card>
+          </main>
+        </SidebarInset>
       </div>
-
-      <Card className="mt-4 rounded-md border-sidebar-border bg-sidebar-accent/35 p-3 text-sidebar-foreground shadow-none">
-        <p className="text-[11px] tracking-[0.16em] text-sidebar-foreground/70 uppercase">
-          Workspace
-        </p>
-        <p className="mt-1 text-sm font-semibold">Acme Product Studio</p>
-        <p className="mt-1 text-xs text-sidebar-foreground/70">
-          Multi-tenant project and task operations.
-        </p>
-      </Card>
-
-      <Button
-        variant="outline"
-        onClick={onLogout}
-        className="mt-auto w-full border-sidebar-border bg-sidebar text-sidebar-foreground hover:bg-sidebar-accent"
-      >
-        Logout Mock Session
-      </Button>
     </div>
   );
 }
@@ -115,138 +278,44 @@ function SidebarContent({ onNavigate, onLogout }) {
 function AppLayout() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   useEffect(() => {
     const mockSession = window.localStorage.getItem("nexflow:mock-auth");
+
     if (mockSession !== "true") {
       navigate("/login", { replace: true });
     }
   }, [navigate]);
 
-  const pageTitle = useMemo(() => {
-    const activeItem = navigationItems.find((item) =>
+  const pageMeta = useMemo(() => {
+    const active = navigationItems.find((item) =>
       location.pathname.startsWith(item.path)
     );
 
-    return activeItem?.title ?? "Workspace";
+    if (active) {
+      return {
+        title: active.title,
+        description: active.description,
+        Icon: active.Icon,
+      };
+    }
+
+    return {
+      title: "Workspace",
+      description: "Operations and delivery control",
+      Icon: IconLayoutDashboard,
+    };
   }, [location.pathname]);
 
-  const handleMockLogout = () => {
+  const handleLogout = () => {
     window.localStorage.removeItem("nexflow:mock-auth");
     navigate("/login");
   };
 
-  const openMobileSidebar = () => {
-    setMobileSidebarOpen(true);
-  };
-
-  const closeMobileSidebar = () => {
-    setMobileSidebarOpen(false);
-  };
-
   return (
-    <div className="min-h-svh bg-background text-foreground">
-      <div className="flex min-h-svh w-full">
-        <aside className="hidden w-72 shrink-0 border-r border-sidebar-border bg-sidebar px-4 py-4 lg:block">
-          <SidebarContent onLogout={handleMockLogout} />
-        </aside>
-
-        <div className="flex min-h-svh flex-1 flex-col">
-          <header className="sticky top-0 z-20 border-b border-border/70 bg-background/95 backdrop-blur">
-            <div className="flex h-14 items-center gap-2 px-3 md:px-4">
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon-sm"
-                className="lg:hidden"
-                onClick={openMobileSidebar}
-                aria-label="Open navigation"
-              >
-                <IconMenu2 className="size-4" />
-              </Button>
-
-              <div className="min-w-0">
-                <p className="truncate text-sm font-semibold">{pageTitle}</p>
-              </div>
-
-              <div className="ml-auto flex items-center gap-2">
-                <div className="relative hidden w-64 md:block">
-                  <IconSearch className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    placeholder="Search projects, tasks, tenants..."
-                    className="h-9 rounded-md bg-muted/30 pl-8"
-                  />
-                </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon-sm"
-                  aria-label="Notifications"
-                >
-                  <IconBell className="size-4" />
-                </Button>
-                <ThemeToggleButton />
-              </div>
-            </div>
-
-            <div className="border-t border-border/70 px-3 py-2 md:hidden">
-              <div className="relative">
-                <IconSearch className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  placeholder="Search projects, tasks, tenants..."
-                  className="h-9 rounded-md bg-muted/30 pl-8"
-                />
-              </div>
-            </div>
-          </header>
-
-          <main className="flex-1 p-3 md:p-4 lg:p-6">
-            <div className="animate-in duration-700 fade-in slide-in-from-bottom-2">
-              <Outlet />
-            </div>
-          </main>
-        </div>
-      </div>
-
-      <div
-        className={`fixed inset-0 z-40 lg:hidden ${
-          mobileSidebarOpen ? "pointer-events-auto" : "pointer-events-none"
-        }`}
-      >
-        <button
-          type="button"
-          aria-label="Close navigation"
-          className={`absolute inset-0 bg-black/40 transition-opacity duration-300 ${
-            mobileSidebarOpen ? "opacity-100" : "opacity-0"
-          }`}
-          onClick={closeMobileSidebar}
-        />
-
-        <aside
-          className={`relative h-full w-70 max-w-[85vw] border-r border-sidebar-border bg-sidebar px-4 py-4 text-sidebar-foreground shadow-xl transition-transform duration-300 ${
-            mobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
-        >
-          <div className="mb-3 flex justify-end">
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon-sm"
-              onClick={closeMobileSidebar}
-              aria-label="Close navigation"
-            >
-              <IconX className="size-4" />
-            </Button>
-          </div>
-
-          <SidebarContent
-            onNavigate={closeMobileSidebar}
-            onLogout={handleMockLogout}
-          />
-        </aside>
-      </div>
-    </div>
+    <SidebarProvider defaultOpen>
+      <WorkspaceFrame pageMeta={pageMeta} onLogout={handleLogout} />
+    </SidebarProvider>
   );
 }
 
