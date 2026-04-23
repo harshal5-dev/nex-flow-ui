@@ -94,7 +94,7 @@ const SignupForm = () => {
       });
 
       setTimeout(() => {
-        navigate("/login");
+        navigate("/signin");
       }, 2000);
 
       form.reset({

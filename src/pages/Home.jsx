@@ -146,7 +146,7 @@ const Home = () => {
                 spacing, and production-ready information architecture.
               </p>
               <div className="mt-6 flex flex-wrap items-center gap-3">
-                <Button size="lg" onClick={() => navigate("/login")}>
+                <Button size="lg" onClick={() => navigate("/signin")}>
                   Login Workspace
                 </Button>
                 <Button

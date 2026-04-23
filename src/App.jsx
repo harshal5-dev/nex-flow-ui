@@ -11,7 +11,7 @@ export function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/home" element={<Home />} />
-      <Route path="/login" element={<Signin />} />
+      <Route path="/signin" element={<Signin />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/register" element={<Navigate to="/signup" replace />} />
       <Route path="/app" element={<AppLayout />}>

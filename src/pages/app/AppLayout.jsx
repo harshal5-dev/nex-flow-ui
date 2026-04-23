@@ -279,14 +279,6 @@ function AppLayout() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  useEffect(() => {
-    const mockSession = window.localStorage.getItem("nexflow:mock-auth");
-
-    if (mockSession !== "true") {
-      navigate("/login", { replace: true });
-    }
-  }, [navigate]);
-
   const pageMeta = useMemo(() => {
     const active = navigationItems.find((item) =>
       location.pathname.startsWith(item.path)
