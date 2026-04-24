@@ -21,7 +21,16 @@ export const authApi = createApi({
         body: signinData,
       }),
     }),
+
+    isAuthenticated: builder.query({
+      query: () => ({
+        url: "/auth/is-authenticated",
+        method: "GET",
+      }),
+      transformResponse: (response) => response.data,
+    }),
   }),
 });
 
-export const { useSignupMutation, useSigninMutation } = authApi;
+export const { useSignupMutation, useSigninMutation, useIsAuthenticatedQuery } =
+  authApi;

@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Link,
   NavLink,
@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 import {
   IconBuildingSkyscraper,
+  IconChevronDown,
   IconChecklist,
   IconLayoutDashboard,
   IconLogout2,
@@ -16,8 +17,15 @@ import {
 } from "@tabler/icons-react";
 
 import ThemeToggleButton from "@/components/common/theme-toggle-button";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Sidebar,
   SidebarContent,
@@ -42,18 +50,24 @@ const navigationItems = [
     description: "Overview and metrics",
     path: "/app/dashboard",
     Icon: IconLayoutDashboard,
+    badge: "Live",
+    badgeTone: "primary",
   },
   {
     title: "Projects",
     description: "Delivery pipelines",
     path: "/app/projects",
     Icon: IconBuildingSkyscraper,
+    badge: "12",
+    badgeTone: "muted",
   },
   {
     title: "Tasks",
     description: "Execution board",
     path: "/app/tasks",
     Icon: IconChecklist,
+    badge: "7",
+    badgeTone: "primary",
   },
   {
     title: "Team",
@@ -65,6 +79,13 @@ const navigationItems = [
 
 function WorkspaceSidebar({ onNavigate, onOpenProfile, onLogout }) {
   const { isCollapsed } = useSidebar();
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+
+  const menuBadgeToneStyles = {
+    primary:
+      "border-sidebar-primary/35 bg-sidebar-primary/16 text-sidebar-primary",
+    muted: "border-sidebar-border/80 bg-sidebar text-sidebar-foreground/70",
+  };
 
   return (
     <Sidebar>
@@ -98,105 +119,185 @@ function WorkspaceSidebar({ onNavigate, onOpenProfile, onLogout }) {
           <SidebarGroupLabel className={cn(isCollapsed && "lg:sr-only")}>
             Navigation
           </SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {navigationItems.map((item, index) => (
-                <SidebarMenuItem
-                  key={item.title}
-                  className="animate-in duration-700 fade-in slide-in-from-left-2"
-                  style={{ animationDelay: `${90 + index * 80}ms` }}
-                >
-                  <NavLink
-                    to={item.path}
-                    onClick={onNavigate}
-                    title={item.title}
-                    className={({ isActive }) =>
-                      cn(
-                        "group flex items-center gap-2 rounded-lg border px-2 py-1.5 text-[13px] font-medium transition-all duration-700 ease-out",
-                        isActive
-                          ? "border-sidebar-primary/30 bg-sidebar-primary/14 text-sidebar-primary shadow-[0_10px_24px_-18px_var(--color-sidebar-primary)]"
-                          : "border-transparent text-sidebar-foreground/80 hover:border-sidebar-border/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                        isCollapsed && "lg:justify-center lg:px-1.5"
-                      )
-                    }
+          <SidebarGroupContent className="rounded-xl border border-sidebar-border/60 bg-sidebar/35 p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]">
+            <SidebarMenu className="gap-1.5">
+              {navigationItems.map((item, index) => {
+                const badgeToneClass =
+                  menuBadgeToneStyles[item.badgeTone] ||
+                  menuBadgeToneStyles.muted;
+
+                return (
+                  <SidebarMenuItem
+                    key={item.title}
+                    className="animate-in duration-700 fade-in slide-in-from-left-2"
+                    style={{ animationDelay: `${90 + index * 80}ms` }}
                   >
-                    <item.Icon className="size-3.5 shrink-0 transition-transform duration-500 group-hover:scale-110" />
-                    <div className={cn("min-w-0", isCollapsed && "lg:hidden")}>
-                      <p className="truncate leading-none">{item.title}</p>
-                      <p className="mt-0.5 truncate text-[10px] text-sidebar-foreground/60">
-                        {item.description}
-                      </p>
-                    </div>
-                  </NavLink>
-                </SidebarMenuItem>
-              ))}
+                    <NavLink
+                      to={item.path}
+                      onClick={onNavigate}
+                      title={item.title}
+                      className={({ isActive }) =>
+                        cn(
+                          "group/nav relative flex items-center gap-2.5 overflow-hidden rounded-xl border px-2 py-2 text-[13px] font-medium transition-all duration-700 ease-out",
+                          isActive
+                            ? "border-sidebar-primary/30 bg-linear-to-r from-sidebar-primary/18 via-sidebar-primary/10 to-sidebar-accent/55 text-sidebar-primary shadow-[0_16px_34px_-24px_var(--color-sidebar-primary)]"
+                            : "border-transparent bg-transparent text-sidebar-foreground/80 hover:border-sidebar-border/75 hover:bg-sidebar-accent/85 hover:text-sidebar-accent-foreground",
+                          isCollapsed && "lg:justify-center lg:px-1.5 lg:py-1.5"
+                        )
+                      }
+                    >
+                      {({ isActive }) => (
+                        <>
+                          {isActive ? (
+                            <span
+                              aria-hidden
+                              className={cn(
+                                "pointer-events-none absolute inset-y-1.5 left-0 w-0.5 rounded-r-full bg-sidebar-primary",
+                                isCollapsed && "lg:hidden"
+                              )}
+                            />
+                          ) : null}
+
+                          <span
+                            className={cn(
+                              "relative z-10 inline-flex size-7 shrink-0 items-center justify-center rounded-lg border transition-all duration-700",
+                              isActive
+                                ? "border-sidebar-primary/35 bg-sidebar-primary/16 text-sidebar-primary shadow-[0_8px_24px_-18px_var(--color-sidebar-primary)]"
+                                : "border-sidebar-border/70 bg-sidebar text-sidebar-foreground/70 group-hover/nav:border-sidebar-border group-hover/nav:bg-sidebar-accent"
+                            )}
+                          >
+                            <item.Icon
+                              className={cn(
+                                "size-3.5 transition-transform duration-500",
+                                isActive
+                                  ? "scale-110"
+                                  : "group-hover/nav:scale-110"
+                              )}
+                            />
+                          </span>
+
+                          <div
+                            className={cn(
+                              "relative z-10 min-w-0",
+                              isCollapsed && "lg:hidden"
+                            )}
+                          >
+                            <p className="truncate leading-none">
+                              {item.title}
+                            </p>
+                            <p
+                              className={cn(
+                                "mt-0.5 truncate text-[10px]",
+                                isActive
+                                  ? "text-sidebar-primary/75"
+                                  : "text-sidebar-foreground/60"
+                              )}
+                            >
+                              {item.description}
+                            </p>
+                          </div>
+
+                          {item.badge ? (
+                            <span
+                              className={cn(
+                                "relative z-10 ml-auto inline-flex h-5 items-center rounded-md border px-1.5 text-[10px] font-semibold tracking-wide uppercase transition-colors duration-500",
+                                badgeToneClass,
+                                isCollapsed && "lg:hidden"
+                              )}
+                            >
+                              {item.badge}
+                            </span>
+                          ) : null}
+                        </>
+                      )}
+                    </NavLink>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
 
       <SidebarFooter className="pt-1.5">
-        <Card
-          className={cn(
-            "animate-in rounded-xl border-sidebar-border/70 bg-sidebar-accent/40 p-2.5 text-sidebar-foreground shadow-none transition-transform duration-700 fade-in slide-in-from-bottom-2 hover:-translate-y-0.5",
-            isCollapsed && "lg:p-2"
-          )}
-        >
-          <div
-            className={cn(
-              "flex items-center gap-2",
-              isCollapsed && "lg:justify-center"
-            )}
-          >
-            <span className="relative inline-flex size-8 shrink-0 items-center justify-center rounded-lg border border-sidebar-primary/25 bg-sidebar-primary/12 text-[11px] font-semibold text-sidebar-primary">
-              WA
-              <span className="absolute -right-0.5 -bottom-0.5 size-2 rounded-full border border-sidebar bg-emerald-500" />
-            </span>
+        <DropdownMenu onOpenChange={setIsUserMenuOpen}>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              aria-label="Open user menu"
+              className={cn(
+                "group relative flex w-full items-center gap-2 rounded-xl border border-sidebar-border/80 bg-sidebar-accent/45 p-2 text-left text-sidebar-foreground shadow-none transition-all duration-700 hover:-translate-y-0.5 hover:border-sidebar-primary/30 hover:bg-sidebar-accent focus-visible:ring-3 focus-visible:ring-sidebar-ring/40 focus-visible:outline-none",
+                isCollapsed && "lg:justify-center lg:px-1.5"
+              )}
+            >
+              <span className="relative inline-flex size-9 shrink-0 items-center justify-center rounded-xl border border-sidebar-primary/30 bg-sidebar-primary/14 text-[11px] font-semibold text-sidebar-primary">
+                WA
+                <span className="absolute -right-0.5 -bottom-0.5 size-2 rounded-full border border-sidebar bg-emerald-500" />
+              </span>
 
-            <div className={cn("min-w-0", isCollapsed && "lg:hidden")}>
-              <p className="truncate text-xs font-semibold">Workspace Admin</p>
-              <p className="truncate text-[11px] text-sidebar-foreground/65">
-                Product Owner
+              <div className={cn("min-w-0 flex-1", isCollapsed && "lg:hidden")}>
+                <p className="truncate text-xs font-semibold tracking-tight">
+                  Workspace Admin
+                </p>
+                <p className="truncate text-[11px] text-sidebar-foreground/65">
+                  Product Owner
+                </p>
+              </div>
+
+              <span
+                className={cn(
+                  "inline-flex size-6 items-center justify-center rounded-md border border-sidebar-border/60 text-sidebar-foreground/70 transition-colors group-hover:border-sidebar-primary/30 group-hover:text-sidebar-primary",
+                  isCollapsed && "lg:hidden"
+                )}
+              >
+                <IconChevronDown
+                  className={cn(
+                    "size-3.5 transition-transform duration-500 ease-out",
+                    isUserMenuOpen
+                      ? "scale-110 rotate-180"
+                      : "scale-100 rotate-0"
+                  )}
+                />
+              </span>
+            </button>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent
+            side={isCollapsed ? "right" : "top"}
+            align={isCollapsed ? "center" : "start"}
+            sideOffset={10}
+            className="w-60 border-sidebar-border/80 bg-sidebar/95 text-sidebar-foreground backdrop-blur-xl"
+          >
+            <DropdownMenuLabel className="px-2 pt-1.5 pb-2">
+              <p className="text-xs font-semibold tracking-tight">
+                Workspace Admin
               </p>
-            </div>
-          </div>
+              <p className="text-[11px] font-normal text-sidebar-foreground/65">
+                admin@nexflow.local
+              </p>
+            </DropdownMenuLabel>
 
-          <div
-            className={cn("mt-2.5 grid gap-1.5", isCollapsed && "lg:hidden")}
-          >
-            <Button
-              variant="ghost"
-              size="sm"
-              className="justify-start gap-1.5 rounded-lg px-2 text-xs text-sidebar-foreground/85 hover:bg-sidebar-accent"
-              onClick={onOpenProfile}
-            >
-              <IconUserCircle className="size-3.5" />
-              Profile
-            </Button>
+            <DropdownMenuSeparator className="bg-sidebar-border/80" />
 
-            <Button
-              variant="outline"
-              size="sm"
-              className="justify-start gap-1.5 rounded-lg border-sidebar-border bg-sidebar px-2 text-xs hover:bg-sidebar-accent"
-              onClick={onLogout}
+            <DropdownMenuItem
+              onSelect={onOpenProfile}
+              className="gap-2 rounded-lg text-sidebar-foreground/90 focus:bg-sidebar-accent focus:text-sidebar-accent-foreground"
             >
-              <IconLogout2 className="size-3.5" />
+              <IconUserCircle className="size-4 text-sidebar-primary" />
+              View profile
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator className="bg-sidebar-border/80" />
+
+            <DropdownMenuItem
+              onSelect={onLogout}
+              className="gap-2 rounded-lg text-destructive focus:bg-destructive/15 focus:text-destructive"
+            >
+              <IconLogout2 className="size-4" />
               Logout
-            </Button>
-          </div>
-
-          {isCollapsed ? (
-            <Button
-              variant="outline"
-              size="icon-sm"
-              className="mt-2 hidden border-sidebar-border bg-sidebar hover:bg-sidebar-accent lg:inline-flex"
-              title="Logout"
-              onClick={onLogout}
-            >
-              <IconLogout2 className="size-3.5" />
-            </Button>
-          ) : null}
-        </Card>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </SidebarFooter>
 
       <SidebarRail />

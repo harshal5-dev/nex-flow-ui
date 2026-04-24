@@ -5,6 +5,7 @@ import Signup from "@/modules/auth/signup/Signup";
 import AppLayout from "@/pages/app/AppLayout";
 import Dashboard from "@/pages/app/Dashboard";
 import Team from "@/pages/app/Team";
+import ProtectedRoute from "./modules/auth/ProtectedRoute";
 
 export function App() {
   return (
@@ -13,13 +14,17 @@ export function App() {
       <Route path="/home" element={<Home />} />
       <Route path="/signin" element={<Signin />} />
       <Route path="/signup" element={<Signup />} />
-      <Route path="/register" element={<Navigate to="/signup" replace />} />
-      <Route path="/app" element={<AppLayout />}>
-        <Route index element={<Navigate to="dashboard" replace />} />
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="projects" element={<Dashboard />} />
-        <Route path="tasks" element={<Dashboard />} />
-        <Route path="team" element={<Team />} />
+      <Route path="/signup" element={<Navigate to="/signup" replace />} />
+
+      {/* Auth-protected Routes */}
+      <Route element={<ProtectedRoute />}>
+        <Route path="/app" element={<AppLayout />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="projects" element={<Dashboard />} />
+          <Route path="tasks" element={<Dashboard />} />
+          <Route path="team" element={<Team />} />
+        </Route>
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

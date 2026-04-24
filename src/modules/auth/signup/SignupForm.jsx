@@ -1,17 +1,16 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  IconAlertTriangle,
   IconCircleCheck,
   IconLoader,
   IconLock,
   IconMail,
   IconUser,
+  IconDesk,
 } from "@tabler/icons-react";
 import { useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -21,8 +20,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 import { useSignupMutation } from "../authApi";
+import StatusCallout from "@/components/ui/status-callout";
 
 function RequiredMark() {
   return <span className="ml-1 text-destructive">*</span>;
@@ -31,11 +30,7 @@ function RequiredMark() {
 const SignupForm = () => {
   const navigate = useNavigate();
   const [signup, { isLoading }] = useSignupMutation();
-  const [serverState, setServerState] = useState({
-    status: "idle",
-    message: "",
-    detail: "",
-  });
+  const [serverStatus, setServerStatus] = useState(null);
 
   const form = useForm({
     mode: "onBlur",
@@ -49,31 +44,13 @@ const SignupForm = () => {
     },
   });
 
-  const statusContent = useMemo(() => {
-    if (serverState.status === "success") {
-      return {
-        icon: IconCircleCheck,
-        containerClass:
-          "border-emerald-500/35 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
-        titleClass: "text-emerald-800 dark:text-emerald-200",
-      };
-    }
-
-    if (serverState.status === "error") {
-      return {
-        icon: IconAlertTriangle,
-        containerClass:
-          "border-destructive/40 bg-destructive/10 text-destructive",
-        titleClass: "text-destructive",
-      };
-    }
-
-    return null;
-  }, [serverState.status]);
+  const dismissServerStatus = () => {
+    setServerStatus(null);
+  };
 
   const handleSubmit = async (values) => {
     form.clearErrors();
-    setServerState({ status: "idle", message: "", detail: "" });
+    setServerStatus(null);
 
     const payload = {
       firstName: values.firstName,
@@ -87,10 +64,10 @@ const SignupForm = () => {
       const response = await signup(payload).unwrap();
       const { message } = response;
 
-      setServerState({
-        status: "success",
+      setServerStatus({
+        variant: "success",
+        title: "Workspace created successfully!",
         message,
-        detail: "Redirecting to login page...",
       });
 
       setTimeout(() => {
@@ -106,13 +83,17 @@ const SignupForm = () => {
         acceptTerms: false,
       });
     } catch (error) {
-      const { message } = error.data;
-      const detail = "Please try again in a moment.";
+      const { message, validationErrors } = error.data;
+      const details = validationErrors
+        ? Object.keys(validationErrors).map((field) => validationErrors[field])
+        : [];
 
-      setServerState({
-        status: "error",
-        message,
-        detail,
+      setServerStatus({
+        variant: "error",
+        title: "Could not create workspace",
+        message:
+          message || "Something went wrong while creating your workspace.",
+        details,
       });
     }
   };
@@ -124,30 +105,28 @@ const SignupForm = () => {
         onSubmit={form.handleSubmit(handleSubmit)}
         noValidate
       >
-        {statusContent && (
-          <Card
-            className={cn(
-              "rounded-xl border p-3 shadow-none",
-              statusContent.containerClass
-            )}
-          >
-            <div className="flex items-start gap-2">
-              <statusContent.icon className="mt-0.5 size-4 shrink-0" />
-              <div className="space-y-1">
-                <p
-                  className={cn(
-                    "text-sm font-semibold",
-                    statusContent.titleClass
-                  )}
+        {serverStatus && (
+          <StatusCallout
+            variant={serverStatus.variant}
+            title={serverStatus.title}
+            message={serverStatus.message}
+            details={serverStatus.details}
+            onDismiss={dismissServerStatus}
+            action={
+              serverStatus?.variant === "success" ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate("/signin")}
+                  className="hover:border-success/30 hover:bg-success/10"
                 >
-                  {serverState.message}
-                </p>
-                {serverState.detail ? (
-                  <p className="text-xs opacity-90">{serverState.detail}</p>
-                ) : null}
-              </div>
-            </div>
-          </Card>
+                  Continue to sign in
+                </Button>
+              ) : null
+            }
+            className="mb-6"
+          />
         )}
 
         <fieldset disabled={isLoading} className="space-y-4">
@@ -351,15 +330,18 @@ const SignupForm = () => {
             type="submit"
             size="lg"
             className="w-full"
-            disabled={isLoading || serverState.status === "success"}
+            disabled={isLoading || serverStatus?.variant === "success"}
           >
-            {isLoading || serverState.status === "success" ? (
+            {isLoading ? (
               <>
                 <IconLoader className="animate-spin" />
                 Creating Workspace...
               </>
             ) : (
-              "Create Workspace"
+              <>
+                Create Workspace
+                <IconDesk className="ml-2 size-4" />
+              </>
             )}
           </Button>
         </div>

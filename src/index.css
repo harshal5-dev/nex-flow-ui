@@ -39,6 +39,16 @@
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.705 0.015 286.067);
+
+  /* Additional semantic colors - Matches user needs */
+  --success: oklch(0.627 0.194 149.214); /* emerald-500 */
+  --success-foreground: oklch(0.985 0 0);
+  --warning: oklch(0.795 0.184 86.047); /* amber-500 */
+  --warning-foreground: oklch(0.141 0.005 285.823);
+  --info: oklch(0.588 0.231 244.451); /* blue-500 */
+  --info-foreground: oklch(0.985 0 0);
+  --pending: oklch(0.704 0.191 22.216); /* orange-500 approx */
+  --pending-foreground: oklch(0.985 0 0);
 }
 
 .dark {
@@ -73,6 +83,16 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.552 0.016 285.938);
+
+  /* Additional semantic colors - dark mode */
+  --success: oklch(0.627 0.194 149.214);
+  --success-foreground: oklch(0.92 0.08 155);
+  --warning: oklch(0.795 0.184 86.047);
+  --warning-foreground: oklch(0.92 0.1 80);
+  --info: oklch(0.588 0.231 244.451);
+  --info-foreground: oklch(0.985 0 0);
+  --pending: oklch(0.704 0.191 22.216);
+  --pending-foreground: oklch(0.985 0 0);
 }
 
 @theme inline {
@@ -95,6 +115,14 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-pending: var(--pending);
+  --color-pending-foreground: var(--pending-foreground);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);

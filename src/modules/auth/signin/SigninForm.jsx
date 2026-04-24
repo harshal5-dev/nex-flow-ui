@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import {
   Form,
   FormControl,
@@ -8,20 +8,20 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import {
-  IconAlertTriangle,
-  IconCircleCheck,
   IconLoader,
   IconLock,
   IconMail,
+  IconLogin2,
 } from "@tabler/icons-react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 import { useSigninMutation } from "../authApi";
-import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import StatusCallout from "@/components/ui/status-callout";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "../authSlice";
 
 function RequiredMark() {
   return <span className="ml-1 text-destructive">*</span>;
@@ -29,12 +29,9 @@ function RequiredMark() {
 
 const SigninForm = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [signin, { isLoading }] = useSigninMutation();
-  const [serverState, setServerState] = useState({
-    status: "idle",
-    message: "",
-    detail: "",
-  });
+  const [serverStatus, setServerStatus] = useState(null);
 
   const form = useForm({
     mode: "onBlur",
@@ -44,31 +41,13 @@ const SigninForm = () => {
     },
   });
 
-  const statusContent = useMemo(() => {
-    if (serverState.status === "success") {
-      return {
-        icon: IconCircleCheck,
-        containerClass:
-          "border-emerald-500/35 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
-        titleClass: "text-emerald-800 dark:text-emerald-200",
-      };
-    }
-
-    if (serverState.status === "error") {
-      return {
-        icon: IconAlertTriangle,
-        containerClass:
-          "border-destructive/40 bg-destructive/10 text-destructive",
-        titleClass: "text-destructive",
-      };
-    }
-
-    return null;
-  }, [serverState.status]);
+  const dismissServerStatus = () => {
+    setServerStatus(null);
+  };
 
   const handleSubmit = async (values) => {
     form.clearErrors();
-    setServerState({ status: "idle", message: "", detail: "" });
+    setServerStatus(null);
 
     const payload = {
       emailId: values.emailId,
@@ -78,27 +57,35 @@ const SigninForm = () => {
     try {
       const response = await signin(payload).unwrap();
 
-      setServerState({
-        status: "success",
-        message: response?.message || "Signed in successfully.",
-        detail: "Redirecting to your workspace dashboard...",
+      const { message } = response;
+
+      setServerStatus({
+        variant: "success",
+        title: "Signed in successfully",
+        message,
       });
 
+      dispatch(setCredentials());
+
       setTimeout(() => {
-        navigate("/app/dashboard");
+        navigate("/app/dashboard", { replace: true });
       }, 850);
     } catch (error) {
-      setServerState({
-        status: "error",
-        message:
-          error?.data?.message ||
-          "Unable to sign in with provided credentials.",
-        detail: "Please check your email/password and try again.",
+      const { message, validationErrors } = error.data;
+      const details = validationErrors
+        ? Object.keys(validationErrors).map((field) => validationErrors[field])
+        : [];
+
+      setServerStatus({
+        variant: "error",
+        title: "Sign in failed",
+        message,
+        details,
       });
     }
   };
 
-  const isSubmitting = isLoading || serverState.status === "success";
+  const isSubmitting = isLoading || serverStatus?.variant === "success";
 
   return (
     <Form {...form}>
@@ -107,31 +94,16 @@ const SigninForm = () => {
         onSubmit={form.handleSubmit(handleSubmit)}
         noValidate
       >
-        {statusContent ? (
-          <Card
-            className={cn(
-              "rounded-xl border p-3 shadow-none",
-              statusContent.containerClass
-            )}
-          >
-            <div className="flex items-start gap-2">
-              <statusContent.icon className="mt-0.5 size-4 shrink-0" />
-              <div className="space-y-1">
-                <p
-                  className={cn(
-                    "text-sm font-semibold",
-                    statusContent.titleClass
-                  )}
-                >
-                  {serverState.message}
-                </p>
-                {serverState.detail ? (
-                  <p className="text-xs opacity-90">{serverState.detail}</p>
-                ) : null}
-              </div>
-            </div>
-          </Card>
-        ) : null}
+        {serverStatus && (
+          <StatusCallout
+            variant={serverStatus.variant}
+            title={serverStatus.title}
+            message={serverStatus.message}
+            details={serverStatus.details}
+            onDismiss={dismissServerStatus}
+            className="mb-6"
+          />
+        )}
 
         <fieldset disabled={isSubmitting} className="space-y-4">
           <FormField
@@ -222,7 +194,10 @@ const SigninForm = () => {
               Signing In...
             </>
           ) : (
-            "Sign In"
+            <>
+              Sign In
+              <IconLogin2 className="ml-2 size-4" />
+            </>
           )}
         </Button>
       </form>
