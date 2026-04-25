@@ -23,16 +23,27 @@ const ProtectedRoute = () => {
   }
 
   if (error) {
-    const {
-      status,
-      data: { message },
-    } = error;
-    const isUnauthorized = status === 401 || status === 403;
+    const status = error?.status;
+    const message =
+      error?.data?.message ||
+      "We could not verify your current session. Please try again.";
+    const isUnauthorized = status === 401;
+    const isForbidden = status === 403;
 
     if (isUnauthorized) {
       return (
         <Navigate
-          to="/login"
+          to="/signin"
+          replace
+          state={{ from: getRedirectPath(location) }}
+        />
+      );
+    }
+
+    if (isForbidden) {
+      return (
+        <Navigate
+          to="/access-denied"
           replace
           state={{ from: getRedirectPath(location) }}
         />
@@ -56,7 +67,7 @@ const ProtectedRoute = () => {
                 Retry
               </Button>
               <Button type="button" size="sm" asChild>
-                <Link to="/login">Go to login</Link>
+                <Link to="/signin">Go to sign in</Link>
               </Button>
             </div>
           }
@@ -67,7 +78,11 @@ const ProtectedRoute = () => {
   }
 
   return (
-    <Navigate to="/login" replace state={{ from: getRedirectPath(location) }} />
+    <Navigate
+      to="/signin"
+      replace
+      state={{ from: getRedirectPath(location) }}
+    />
   );
 };
 

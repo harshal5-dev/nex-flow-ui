@@ -50,24 +50,18 @@ const navigationItems = [
     description: "Overview and metrics",
     path: "/app/dashboard",
     Icon: IconLayoutDashboard,
-    badge: "Live",
-    badgeTone: "primary",
   },
   {
     title: "Projects",
     description: "Delivery pipelines",
     path: "/app/projects",
     Icon: IconBuildingSkyscraper,
-    badge: "12",
-    badgeTone: "muted",
   },
   {
     title: "Tasks",
     description: "Execution board",
     path: "/app/tasks",
     Icon: IconChecklist,
-    badge: "7",
-    badgeTone: "primary",
   },
   {
     title: "Team",
@@ -80,12 +74,6 @@ const navigationItems = [
 function WorkspaceSidebar({ onNavigate, onOpenProfile, onLogout }) {
   const { isCollapsed } = useSidebar();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-
-  const menuBadgeToneStyles = {
-    primary:
-      "border-sidebar-primary/35 bg-sidebar-primary/16 text-sidebar-primary",
-    muted: "border-sidebar-border/80 bg-sidebar text-sidebar-foreground/70",
-  };
 
   return (
     <Sidebar>
@@ -122,10 +110,6 @@ function WorkspaceSidebar({ onNavigate, onOpenProfile, onLogout }) {
           <SidebarGroupContent className="rounded-xl border border-sidebar-border/60 bg-sidebar/35 p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]">
             <SidebarMenu className="gap-1.5">
               {navigationItems.map((item, index) => {
-                const badgeToneClass =
-                  menuBadgeToneStyles[item.badgeTone] ||
-                  menuBadgeToneStyles.muted;
-
                 return (
                   <SidebarMenuItem
                     key={item.title}
@@ -196,18 +180,6 @@ function WorkspaceSidebar({ onNavigate, onOpenProfile, onLogout }) {
                               {item.description}
                             </p>
                           </div>
-
-                          {item.badge ? (
-                            <span
-                              className={cn(
-                                "relative z-10 ml-auto inline-flex h-5 items-center rounded-md border px-1.5 text-[10px] font-semibold tracking-wide uppercase transition-colors duration-500",
-                                badgeToneClass,
-                                isCollapsed && "lg:hidden"
-                              )}
-                            >
-                              {item.badge}
-                            </span>
-                          ) : null}
                         </>
                       )}
                     </NavLink>

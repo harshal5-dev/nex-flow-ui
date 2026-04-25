@@ -2,19 +2,27 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import Home from "@/pages/Home";
 import Signin from "@/modules/auth/signin/Signin";
 import Signup from "@/modules/auth/signup/Signup";
+import ForgotPassword from "@/modules/auth/forgot-password/ForgotPassword";
 import AppLayout from "@/pages/app/AppLayout";
 import Dashboard from "@/pages/app/Dashboard";
 import Team from "@/pages/app/Team";
+import AccessDenied from "@/pages/AccessDenied";
+import NotFound from "@/pages/NotFound";
 import ProtectedRoute from "./modules/auth/ProtectedRoute";
+import PublicOnlyRoute from "./modules/auth/PublicOnlyRoute";
 
 export function App() {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/home" element={<Home />} />
-      <Route path="/signin" element={<Signin />} />
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/signup" element={<Navigate to="/signup" replace />} />
+      <Route element={<PublicOnlyRoute />}>
+        <Route path="/" element={<Home />} />
+        <Route path="/home" element={<Home />} />
+        <Route path="/signin" element={<Signin />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/register" element={<Navigate to="/signup" replace />} />
+      </Route>
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/access-denied" element={<AccessDenied />} />
 
       {/* Auth-protected Routes */}
       <Route element={<ProtectedRoute />}>
@@ -26,7 +34,7 @@ export function App() {
           <Route path="team" element={<Team />} />
         </Route>
       </Route>
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

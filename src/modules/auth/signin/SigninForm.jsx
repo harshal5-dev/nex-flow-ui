@@ -175,6 +175,7 @@ const SigninForm = () => {
           <div className="flex justify-end">
             <button
               type="button"
+              onClick={() => navigate("/forgot-password")}
               className="text-xs font-medium text-primary underline-offset-4 transition-colors hover:underline"
             >
               Forgot password?
