@@ -4,9 +4,9 @@ import { Provider } from "react-redux";
 import { Toaster } from "sonner";
 
 import "./index.css";
-import App from "./App";
+import App from "./app/App";
 import { ThemeProvider } from "@/components/theme/theme-provider.jsx";
-import store from "./store/Store";
+import store from "./app/Store";
 
 createRoot(document.getElementById("root")).render(
   <Provider store={store}>
