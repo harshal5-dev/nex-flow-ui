@@ -2,7 +2,10 @@ import { useSelector } from "react-redux";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 import LoadingScreen from "@/components/common/LoadingScreen";
-import { selectIsAuthenticated, selectIsAuthLoading } from "./authSlice";
+import {
+  selectIsAuthenticated,
+  selectIsAuthLoading,
+} from "../../store/authSlice";
 
 function getRedirectPath(location) {
   return `${location.pathname}${location.search}${location.hash}`;

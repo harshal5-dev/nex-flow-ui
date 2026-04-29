@@ -16,12 +16,12 @@ import {
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
-import { useSigninMutation } from "../authApi";
+import { useSigninMutation } from "../../../api/authApi";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import StatusCallout from "@/components/ui/status-callout";
 import { useDispatch } from "react-redux";
-import { setCredentials } from "../authSlice";
+import { setCredentials } from "../../../store/authSlice";
 
 function RequiredMark() {
   return <span className="ml-1 text-destructive">*</span>;

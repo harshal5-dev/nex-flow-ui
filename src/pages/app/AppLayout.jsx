@@ -46,8 +46,8 @@ import {
 import { useDispatch } from "react-redux";
 import { useSidebar } from "@/hooks/useSidebar";
 import { cn, getApiErrorDetails } from "@/lib/utils";
-import { authApi, useSignoutMutation } from "@/modules/auth/authApi";
-import { clearCredentials } from "@/modules/auth/authSlice";
+import { authApi, useSignoutMutation } from "@/api/authApi";
+import { clearCredentials } from "@/store/authSlice";
 
 const navigationItems = [
   {

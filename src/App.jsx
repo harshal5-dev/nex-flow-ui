@@ -11,7 +11,7 @@ import AccessDenied from "@/pages/AccessDenied";
 import NotFound from "@/pages/NotFound";
 import ProtectedRoute from "./modules/auth/ProtectedRoute";
 import PublicOnlyRoute from "./modules/auth/PublicOnlyRoute";
-import { useIsAuthenticatedQuery } from "./modules/auth/authApi";
+import { useIsAuthenticatedQuery } from "./api/authApi";
 
 export function App() {
   const cookies = window.document.cookie;

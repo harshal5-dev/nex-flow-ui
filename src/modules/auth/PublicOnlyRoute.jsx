@@ -3,7 +3,7 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 import LoadingScreen from "@/components/common/LoadingScreen";
 
-import { selectIsAuthLoading } from "./authSlice";
+import { selectIsAuthLoading } from "../../store/authSlice";
 
 function PublicOnlyRoute() {
   const location = useLocation();
