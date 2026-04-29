@@ -1,21 +1,28 @@
+import { useSelector } from "react-redux";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 import LoadingScreen from "@/components/common/LoadingScreen";
-import { useIsAuthenticatedQuery } from "./authApi";
+
+import { selectIsAuthLoading } from "./authSlice";
 
 function PublicOnlyRoute() {
   const location = useLocation();
-  const { data, isLoading, isFetching } = useIsAuthenticatedQuery();
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const isLoading = useSelector(selectIsAuthLoading);
 
-  if (isLoading || isFetching) {
+  if (isLoading) {
     return <LoadingScreen message="Checking session..." />;
   }
 
-  if (data) {
+  if (isAuthenticated) {
     const from = `${location.pathname}${location.search}${location.hash}`;
 
     return (
-      <Navigate to="/app/dashboard" replace state={{ from, redirected: true }} />
+      <Navigate
+        to="/app/dashboard"
+        replace
+        state={{ from, redirected: true }}
+      />
     );
   }
 

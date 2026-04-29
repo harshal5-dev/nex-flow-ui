@@ -6,20 +6,24 @@ import ForgotPassword from "@/modules/auth/forgot-password/ForgotPassword";
 import AppLayout from "@/pages/app/AppLayout";
 import Dashboard from "@/pages/app/Dashboard";
 import Team from "@/pages/app/Team";
+import Profile from "@/pages/app/Profile";
 import AccessDenied from "@/pages/AccessDenied";
 import NotFound from "@/pages/NotFound";
 import ProtectedRoute from "./modules/auth/ProtectedRoute";
 import PublicOnlyRoute from "./modules/auth/PublicOnlyRoute";
+import { useIsAuthenticatedQuery } from "./modules/auth/authApi";
 
 export function App() {
+  const cookies = window.document.cookie;
+  console.log("App - Current cookies:", cookies);
+  useIsAuthenticatedQuery(); // Trigger auth check on app load
   return (
     <Routes>
+      {/* Public Routes */}
       <Route element={<PublicOnlyRoute />}>
         <Route path="/" element={<Home />} />
-        <Route path="/home" element={<Home />} />
         <Route path="/signin" element={<Signin />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/register" element={<Navigate to="/signup" replace />} />
       </Route>
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/access-denied" element={<AccessDenied />} />
@@ -32,6 +36,7 @@ export function App() {
           <Route path="projects" element={<Dashboard />} />
           <Route path="tasks" element={<Dashboard />} />
           <Route path="team" element={<Team />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
       </Route>
       <Route path="*" element={<NotFound />} />

@@ -1,5 +1,9 @@
 import { useNavigate } from "react-router-dom";
-import { IconAlertTriangle, IconArrowLeft, IconHome2 } from "@tabler/icons-react";
+import {
+  IconAlertTriangle,
+  IconArrowLeft,
+  IconHome2,
+} from "@tabler/icons-react";
 
 import ThemeToggleButton from "@/components/common/theme-toggle-button";
 import { Button } from "@/components/ui/button";
@@ -23,7 +27,7 @@ function NotFound() {
         <div className="mb-10 flex items-center justify-between">
           <button
             type="button"
-            onClick={() => navigate("/home")}
+            onClick={() => navigate("/")}
             className="inline-flex items-center gap-2 rounded-md px-1 py-1 text-sm font-medium"
           >
             <img
@@ -70,7 +74,7 @@ function NotFound() {
                 <IconArrowLeft className="size-4" />
                 Go Back
               </Button>
-              <Button type="button" onClick={() => navigate("/home")}>
+              <Button type="button" onClick={() => navigate("/")}>
                 <IconHome2 className="size-4" />
                 Back to Home
               </Button>

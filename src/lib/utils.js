@@ -44,6 +44,7 @@ const rawBaseQuery = fetchBaseQuery({
 
 export const baseQuery = async (args, api, extraOptions) => {
   let result = await rawBaseQuery(args, api, extraOptions);
+  console.log("BaseQuery - Raw result:", result);
 
   // Normalize error shape
   if (result?.error) {

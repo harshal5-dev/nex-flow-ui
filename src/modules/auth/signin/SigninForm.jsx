@@ -57,7 +57,7 @@ const SigninForm = () => {
     try {
       const response = await signin(payload).unwrap();
 
-      const { message } = response;
+      const { message, data } = response;
 
       setServerStatus({
         variant: "success",
@@ -65,10 +65,11 @@ const SigninForm = () => {
         message,
       });
 
-      dispatch(setCredentials());
+      dispatch(setCredentials(data));
+      const from = location.state?.from?.pathname || "/app/dashboard";
 
       setTimeout(() => {
-        navigate("/app/dashboard", { replace: true });
+        navigate(from, { replace: true });
       }, 850);
     } catch (error) {
       const { message, validationErrors } = error.data;

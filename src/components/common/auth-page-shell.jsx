@@ -93,7 +93,7 @@ function AuthPageShell({
         <section className="flex min-h-full flex-col">
           <div className="mb-6 flex items-center justify-between">
             <Link
-              to="/home"
+              to="/"
               className="inline-flex items-center gap-2 rounded-md px-1 py-1 text-sm font-medium"
             >
               <img

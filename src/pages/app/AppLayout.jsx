@@ -11,6 +11,7 @@ import {
   IconChevronDown,
   IconChecklist,
   IconLayoutDashboard,
+  IconLoader,
   IconLogout2,
   IconUserCircle,
   IconUsers,
@@ -18,6 +19,7 @@ import {
 
 import ThemeToggleButton from "@/components/common/theme-toggle-button";
 import { Card } from "@/components/ui/card";
+import StatusCallout from "@/components/ui/status-callout";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -41,8 +43,11 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { useDispatch } from "react-redux";
 import { useSidebar } from "@/hooks/useSidebar";
-import { cn } from "@/lib/utils";
+import { cn, getApiErrorDetails } from "@/lib/utils";
+import { authApi, useSignoutMutation } from "@/modules/auth/authApi";
+import { clearCredentials } from "@/modules/auth/authSlice";
 
 const navigationItems = [
   {
@@ -69,9 +74,20 @@ const navigationItems = [
     path: "/app/team",
     Icon: IconUsers,
   },
+  {
+    title: "Profile",
+    description: "Personal settings",
+    path: "/app/profile",
+    Icon: IconUserCircle,
+  },
 ];
 
-function WorkspaceSidebar({ onNavigate, onOpenProfile, onLogout }) {
+function WorkspaceSidebar({
+  onNavigate,
+  onOpenProfile,
+  onSignout,
+  isSignoutLoading,
+}) {
   const { isCollapsed } = useSidebar();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
@@ -79,7 +95,7 @@ function WorkspaceSidebar({ onNavigate, onOpenProfile, onLogout }) {
     <Sidebar>
       <SidebarHeader>
         <Link
-          to="/home"
+          to="/app/dashboard"
           onClick={onNavigate}
           className={cn(
             "group flex min-w-0 items-center gap-2 rounded-xl border border-sidebar-border/70 bg-sidebar-accent/35 p-2 transition-colors duration-500 hover:bg-sidebar-accent",
@@ -262,11 +278,16 @@ function WorkspaceSidebar({ onNavigate, onOpenProfile, onLogout }) {
             <DropdownMenuSeparator className="bg-sidebar-border/80" />
 
             <DropdownMenuItem
-              onSelect={onLogout}
+              onSelect={onSignout}
+              disabled={isSignoutLoading}
               className="gap-2 rounded-lg text-destructive focus:bg-destructive/15 focus:text-destructive"
             >
-              <IconLogout2 className="size-4" />
-              Logout
+              {isSignoutLoading ? (
+                <IconLoader className="size-4 animate-spin" />
+              ) : (
+                <IconLogout2 className="size-4" />
+              )}
+              {isSignoutLoading ? "Signing out..." : "Sign out"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -277,7 +298,13 @@ function WorkspaceSidebar({ onNavigate, onOpenProfile, onLogout }) {
   );
 }
 
-function WorkspaceFrame({ pageMeta, onLogout }) {
+function WorkspaceFrame({
+  pageMeta,
+  onSignout,
+  isSignoutLoading,
+  signoutError,
+  onDismissSignoutError,
+}) {
   const navigate = useNavigate();
   const location = useLocation();
   const { isMobile, setMobileOpen } = useSidebar();
@@ -301,12 +328,13 @@ function WorkspaceFrame({ pageMeta, onLogout }) {
             }
           }}
           onOpenProfile={() => {
-            navigate("/app/team");
+            navigate("/app/profile");
             if (isMobile) {
               setMobileOpen(false);
             }
           }}
-          onLogout={onLogout}
+          onSignout={onSignout}
+          isSignoutLoading={isSignoutLoading}
         />
 
         <SidebarInset>
@@ -336,6 +364,16 @@ function WorkspaceFrame({ pageMeta, onLogout }) {
           </header>
 
           <main className="min-h-0 flex-1 px-3 pt-3 pb-3 md:px-4 md:pt-4 md:pb-4">
+            {signoutError ? (
+              <StatusCallout
+                variant="error"
+                title="Sign out failed"
+                message={signoutError}
+                onDismiss={onDismissSignoutError}
+                className="mb-3"
+              />
+            ) : null}
+
             <Card className="min-h-full border-border/70 bg-card/65 p-3 shadow-sm md:p-5">
               <div className="min-h-full animate-in duration-700 fade-in slide-in-from-bottom-2">
                 <Outlet />
@@ -344,13 +382,34 @@ function WorkspaceFrame({ pageMeta, onLogout }) {
           </main>
         </SidebarInset>
       </div>
+
+      {isSignoutLoading ? (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/70 px-4 backdrop-blur-sm">
+          <Card className="w-full max-w-sm rounded-xl border-border/70 bg-card/95 p-4 shadow-xl">
+            <div className="flex items-center gap-3">
+              <span className="inline-flex size-9 items-center justify-center rounded-md border border-primary/25 bg-primary/10 text-primary">
+                <IconLoader className="size-4 animate-spin" />
+              </span>
+              <div>
+                <p className="text-sm font-semibold">Signing you out...</p>
+                <p className="text-xs text-muted-foreground">
+                  Closing your active workspace session safely.
+                </p>
+              </div>
+            </div>
+          </Card>
+        </div>
+      ) : null}
     </div>
   );
 }
 
 function AppLayout() {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const [signout, { isLoading: isSignoutLoading }] = useSignoutMutation();
+  const [signoutError, setSignoutError] = useState("");
 
   const pageMeta = useMemo(() => {
     const active = navigationItems.find((item) =>
@@ -372,14 +431,40 @@ function AppLayout() {
     };
   }, [location.pathname]);
 
-  const handleLogout = () => {
-    window.localStorage.removeItem("nexflow:mock-auth");
-    navigate("/login");
+  const dismissSignoutError = () => {
+    setSignoutError("");
+  };
+
+  const handleSignout = async () => {
+    if (isSignoutLoading) {
+      return;
+    }
+
+    setSignoutError("");
+
+    try {
+      await signout().unwrap();
+      dispatch(clearCredentials());
+      dispatch(authApi.util.resetApiState());
+      navigate("/signin", { replace: true });
+    } catch (error) {
+      const { message } = getApiErrorDetails(
+        error,
+        "Unable to sign out right now. Please try again."
+      );
+      setSignoutError(message);
+    }
   };
 
   return (
     <SidebarProvider defaultOpen>
-      <WorkspaceFrame pageMeta={pageMeta} onLogout={handleLogout} />
+      <WorkspaceFrame
+        pageMeta={pageMeta}
+        onSignout={handleSignout}
+        isSignoutLoading={isSignoutLoading}
+        signoutError={signoutError}
+        onDismissSignoutError={dismissSignoutError}
+      />
     </SidebarProvider>
   );
 }

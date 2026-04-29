@@ -23,7 +23,7 @@ function AccessDenied() {
         <div className="mb-10 flex items-center justify-between">
           <button
             type="button"
-            onClick={() => navigate("/home")}
+            onClick={() => navigate("/")}
             className="inline-flex items-center gap-2 rounded-md px-1 py-1 text-sm font-medium"
           >
             <img
