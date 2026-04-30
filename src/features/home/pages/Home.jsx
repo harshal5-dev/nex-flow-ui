@@ -172,7 +172,7 @@ const Home = () => {
     <AppLayout>
       <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-4 sm:px-6 md:py-10">
         {/* ── NAVBAR ── */}
-        <nav className="animate-in fade-in slide-in-from-top-3 duration-700">
+        <nav className="animate-in duration-700 fade-in slide-in-from-top-3">
           <Card className="flex items-center justify-between gap-4 rounded-2xl border-border/50 bg-card/60 px-4 py-2.5 shadow-sm backdrop-blur-xl">
             <div className="flex items-center gap-3">
               <div className="relative">
@@ -207,7 +207,7 @@ const Home = () => {
         </nav>
 
         {/* ── HERO ── */}
-        <section className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <section className="animate-in duration-700 fade-in slide-in-from-bottom-4">
           <Card className="relative overflow-hidden rounded-3xl border-border/50 bg-card/60 p-0 shadow-lg backdrop-blur-xl">
             {/* Decorative gradient mesh */}
             <div className="pointer-events-none absolute -top-32 -right-32 size-80 rounded-full bg-primary/8 blur-3xl" />
@@ -228,7 +228,7 @@ const Home = () => {
 
                 <h1 className="mt-5 max-w-xl text-3xl font-bold tracking-tight sm:text-4xl md:text-[2.75rem] md:leading-[1.15]">
                   Modern multi-tenant platform for{" "}
-                  <span className="bg-gradient-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
+                  <span className="bg-linear-to-r from-primary via-primary/80 to-primary/60 bg-clip-text text-transparent">
                     project delivery
                   </span>
                 </h1>
@@ -336,7 +336,7 @@ const Home = () => {
               className="group relative overflow-hidden rounded-2xl border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/25 hover:shadow-md"
             >
               {/* Top accent line */}
-              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+              <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-primary/40 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
               <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
@@ -493,7 +493,7 @@ const Home = () => {
                 </div>
 
                 {/* Quick CTA */}
-                <Card className="mt-4 rounded-2xl border-primary/20 bg-gradient-to-br from-primary/8 via-primary/5 to-transparent p-5">
+                <Card className="mt-4 rounded-2xl border-primary/20 bg-linear-to-br from-primary/8 via-primary/5 to-transparent p-5">
                   <p className="text-sm font-semibold">Ready to explore?</p>
                   <p className="mt-1 text-[13px] text-muted-foreground">
                     Sign up to experience the multi-tenant workflow firsthand.

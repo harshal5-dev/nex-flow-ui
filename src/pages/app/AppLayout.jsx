@@ -7,18 +7,24 @@ import {
   useNavigate,
 } from "react-router-dom";
 import {
+  IconBell,
   IconBuildingSkyscraper,
   IconChevronDown,
+  IconChevronRight,
   IconChecklist,
   IconLayoutDashboard,
   IconLoader,
   IconLogout2,
+  IconSearch,
   IconUserCircle,
   IconUsers,
 } from "@tabler/icons-react";
 
 import ThemeToggleButton from "@/components/common/theme-toggle-button";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import StatusCallout from "@/components/ui/status-callout";
 import {
   DropdownMenu,
@@ -94,24 +100,30 @@ function WorkspaceSidebar({
   return (
     <Sidebar>
       <SidebarHeader>
+        {/* Accent gradient line */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-sidebar-primary/50 to-transparent" />
+
         <Link
           to="/app/dashboard"
           onClick={onNavigate}
           className={cn(
-            "group flex min-w-0 items-center gap-2 rounded-xl border border-sidebar-border/70 bg-sidebar-accent/35 p-2 transition-colors duration-500 hover:bg-sidebar-accent",
+            "group flex min-w-0 items-center gap-2.5 rounded-xl border border-sidebar-border/60 bg-gradient-to-br from-sidebar-accent/40 via-sidebar/80 to-sidebar-accent/30 p-2.5 transition-all duration-500 hover:border-sidebar-primary/25 hover:shadow-sm",
             isCollapsed && "lg:justify-center"
           )}
         >
-          <img
-            src="/branding/next-flow-mark.svg"
-            alt="Next Flow"
-            className="size-8 shrink-0 rounded-md border border-sidebar-border/70 bg-sidebar"
-          />
+          <div className="relative">
+            <div className="absolute -inset-1 rounded-lg bg-sidebar-primary/15 blur-sm transition-all duration-500 group-hover:bg-sidebar-primary/25" />
+            <img
+              src="/branding/next-flow-mark.svg"
+              alt="Next Flow"
+              className="relative size-8 shrink-0 rounded-md border border-sidebar-border/50 bg-sidebar shadow-sm"
+            />
+          </div>
           <div className={cn("min-w-0", isCollapsed && "lg:hidden")}>
             <p className="truncate text-[13px] font-semibold tracking-tight">
               Next Flow
             </p>
-            <p className="truncate text-[11px] text-sidebar-foreground/60">
+            <p className="truncate text-[11px] text-sidebar-foreground/55">
               Workspace Console
             </p>
           </div>
@@ -123,8 +135,8 @@ function WorkspaceSidebar({
           <SidebarGroupLabel className={cn(isCollapsed && "lg:sr-only")}>
             Navigation
           </SidebarGroupLabel>
-          <SidebarGroupContent className="rounded-xl border border-sidebar-border/60 bg-sidebar/35 p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.22)]">
-            <SidebarMenu className="gap-1.5">
+          <SidebarGroupContent className="rounded-xl border border-sidebar-border/50 bg-gradient-to-b from-sidebar/50 to-sidebar-accent/20 p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+            <SidebarMenu className="gap-1">
               {navigationItems.map((item, index) => {
                 return (
                   <SidebarMenuItem
@@ -138,10 +150,10 @@ function WorkspaceSidebar({
                       title={item.title}
                       className={({ isActive }) =>
                         cn(
-                          "group/nav relative flex items-center gap-2.5 overflow-hidden rounded-xl border px-2 py-2 text-[13px] font-medium transition-all duration-700 ease-out",
+                          "group/nav relative flex items-center gap-2.5 overflow-hidden rounded-xl border px-2 py-2 text-[13px] font-medium transition-all duration-500 ease-out",
                           isActive
-                            ? "border-sidebar-primary/30 bg-linear-to-r from-sidebar-primary/18 via-sidebar-primary/10 to-sidebar-accent/55 text-sidebar-primary shadow-[0_16px_34px_-24px_var(--color-sidebar-primary)]"
-                            : "border-transparent bg-transparent text-sidebar-foreground/80 hover:border-sidebar-border/75 hover:bg-sidebar-accent/85 hover:text-sidebar-accent-foreground",
+                            ? "border-sidebar-primary/25 bg-gradient-to-r from-sidebar-primary/15 via-sidebar-primary/8 to-sidebar-accent/40 text-sidebar-primary shadow-[0_8px_24px_-16px_var(--color-sidebar-primary)]"
+                            : "border-transparent bg-transparent text-sidebar-foreground/75 hover:border-sidebar-border/60 hover:bg-sidebar-accent/70 hover:text-sidebar-accent-foreground",
                           isCollapsed && "lg:justify-center lg:px-1.5 lg:py-1.5"
                         )
                       }
@@ -152,7 +164,7 @@ function WorkspaceSidebar({
                             <span
                               aria-hidden
                               className={cn(
-                                "pointer-events-none absolute inset-y-1.5 left-0 w-0.5 rounded-r-full bg-sidebar-primary",
+                                "pointer-events-none absolute inset-y-1.5 left-0 w-0.5 rounded-r-full bg-sidebar-primary shadow-[0_0_8px_var(--color-sidebar-primary)]",
                                 isCollapsed && "lg:hidden"
                               )}
                             />
@@ -160,10 +172,10 @@ function WorkspaceSidebar({
 
                           <span
                             className={cn(
-                              "relative z-10 inline-flex size-7 shrink-0 items-center justify-center rounded-lg border transition-all duration-700",
+                              "relative z-10 inline-flex size-7 shrink-0 items-center justify-center rounded-lg border transition-all duration-500",
                               isActive
-                                ? "border-sidebar-primary/35 bg-sidebar-primary/16 text-sidebar-primary shadow-[0_8px_24px_-18px_var(--color-sidebar-primary)]"
-                                : "border-sidebar-border/70 bg-sidebar text-sidebar-foreground/70 group-hover/nav:border-sidebar-border group-hover/nav:bg-sidebar-accent"
+                                ? "border-sidebar-primary/30 bg-sidebar-primary/15 text-sidebar-primary shadow-sm"
+                                : "border-sidebar-border/60 bg-sidebar/80 text-sidebar-foreground/65 group-hover/nav:border-sidebar-border/80 group-hover/nav:bg-sidebar-accent/80 group-hover/nav:text-sidebar-foreground/85"
                             )}
                           >
                             <item.Icon
@@ -171,7 +183,7 @@ function WorkspaceSidebar({
                                 "size-3.5 transition-transform duration-500",
                                 isActive
                                   ? "scale-110"
-                                  : "group-hover/nav:scale-110"
+                                  : "group-hover/nav:scale-105"
                               )}
                             />
                           </span>
@@ -189,8 +201,8 @@ function WorkspaceSidebar({
                               className={cn(
                                 "mt-0.5 truncate text-[10px]",
                                 isActive
-                                  ? "text-sidebar-primary/75"
-                                  : "text-sidebar-foreground/60"
+                                  ? "text-sidebar-primary/70"
+                                  : "text-sidebar-foreground/50"
                               )}
                             >
                               {item.description}
@@ -205,6 +217,23 @@ function WorkspaceSidebar({
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {/* Workspace info badge */}
+        {!isCollapsed && (
+          <div className="mt-auto hidden animate-in px-1 duration-700 fade-in lg:block">
+            <Card className="rounded-xl border-sidebar-border/40 bg-gradient-to-br from-sidebar-primary/8 via-sidebar/60 to-sidebar-accent/30 p-3">
+              <p className="text-[10px] font-semibold tracking-[0.18em] text-sidebar-primary/80 uppercase">
+                Workspace
+              </p>
+              <p className="mt-1 text-[12px] font-medium text-sidebar-foreground/90">
+                Next Flow Platform
+              </p>
+              <p className="mt-0.5 text-[10px] text-sidebar-foreground/50">
+                Multi-tenant SaaS
+              </p>
+            </Card>
+          </div>
+        )}
       </SidebarContent>
 
       <SidebarFooter className="pt-1.5">
@@ -214,27 +243,27 @@ function WorkspaceSidebar({
               type="button"
               aria-label="Open user menu"
               className={cn(
-                "group relative flex w-full items-center gap-2 rounded-xl border border-sidebar-border/80 bg-sidebar-accent/45 p-2 text-left text-sidebar-foreground shadow-none transition-all duration-700 hover:-translate-y-0.5 hover:border-sidebar-primary/30 hover:bg-sidebar-accent focus-visible:ring-3 focus-visible:ring-sidebar-ring/40 focus-visible:outline-none",
+                "group relative flex w-full items-center gap-2.5 rounded-xl border border-sidebar-border/60 bg-gradient-to-br from-sidebar-accent/40 via-sidebar/80 to-sidebar-accent/30 p-2.5 text-left text-sidebar-foreground shadow-none transition-all duration-500 hover:-translate-y-0.5 hover:border-sidebar-primary/25 hover:shadow-sm focus-visible:ring-3 focus-visible:ring-sidebar-ring/40 focus-visible:outline-none",
                 isCollapsed && "lg:justify-center lg:px-1.5"
               )}
             >
-              <span className="relative inline-flex size-9 shrink-0 items-center justify-center rounded-xl border border-sidebar-primary/30 bg-sidebar-primary/14 text-[11px] font-semibold text-sidebar-primary">
+              <span className="relative inline-flex size-9 shrink-0 items-center justify-center rounded-xl border border-sidebar-primary/25 bg-gradient-to-br from-sidebar-primary/15 to-sidebar-primary/8 text-[11px] font-bold text-sidebar-primary shadow-sm">
                 WA
-                <span className="absolute -right-0.5 -bottom-0.5 size-2 rounded-full border border-sidebar bg-emerald-500" />
+                <span className="absolute -right-0.5 -bottom-0.5 size-2.5 rounded-full border-2 border-sidebar bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.4)]" />
               </span>
 
               <div className={cn("min-w-0 flex-1", isCollapsed && "lg:hidden")}>
                 <p className="truncate text-xs font-semibold tracking-tight">
                   Workspace Admin
                 </p>
-                <p className="truncate text-[11px] text-sidebar-foreground/65">
+                <p className="truncate text-[11px] text-sidebar-foreground/55">
                   Product Owner
                 </p>
               </div>
 
               <span
                 className={cn(
-                  "inline-flex size-6 items-center justify-center rounded-md border border-sidebar-border/60 text-sidebar-foreground/70 transition-colors group-hover:border-sidebar-primary/30 group-hover:text-sidebar-primary",
+                  "inline-flex size-6 items-center justify-center rounded-md border border-sidebar-border/50 text-sidebar-foreground/60 transition-all duration-500 group-hover:border-sidebar-primary/25 group-hover:text-sidebar-primary",
                   isCollapsed && "lg:hidden"
                 )}
               >
@@ -254,40 +283,54 @@ function WorkspaceSidebar({
             side={isCollapsed ? "right" : "top"}
             align={isCollapsed ? "center" : "start"}
             sideOffset={10}
-            className="w-60 border-sidebar-border/80 bg-sidebar/95 text-sidebar-foreground backdrop-blur-xl"
+            className="w-60 border-border/60 bg-popover/95 text-popover-foreground shadow-xl backdrop-blur-xl"
           >
-            <DropdownMenuLabel className="px-2 pt-1.5 pb-2">
-              <p className="text-xs font-semibold tracking-tight">
-                Workspace Admin
-              </p>
-              <p className="text-[11px] font-normal text-sidebar-foreground/65">
-                admin@nexflow.local
-              </p>
+            <DropdownMenuLabel className="px-2.5 pt-2 pb-2.5">
+              <div className="flex items-center gap-2.5">
+                <span className="relative inline-flex size-8 items-center justify-center rounded-lg border border-primary/25 bg-primary/10 text-[10px] font-bold text-primary">
+                  WA
+                  <span className="absolute -right-0.5 -bottom-0.5 size-2 rounded-full border border-popover bg-emerald-500" />
+                </span>
+                <div className="min-w-0">
+                  <p className="truncate text-xs font-semibold tracking-tight">
+                    Workspace Admin
+                  </p>
+                  <p className="truncate text-[11px] font-normal text-muted-foreground">
+                    admin@nexflow.local
+                  </p>
+                </div>
+              </div>
             </DropdownMenuLabel>
 
-            <DropdownMenuSeparator className="bg-sidebar-border/80" />
+            <DropdownMenuSeparator />
 
             <DropdownMenuItem
               onSelect={onOpenProfile}
-              className="gap-2 rounded-lg text-sidebar-foreground/90 focus:bg-sidebar-accent focus:text-sidebar-accent-foreground"
+              className="gap-2.5 rounded-lg"
             >
-              <IconUserCircle className="size-4 text-sidebar-primary" />
-              View profile
+              <span className="inline-flex size-6 items-center justify-center rounded-md border border-primary/20 bg-primary/8 text-primary">
+                <IconUserCircle className="size-3.5" />
+              </span>
+              <span className="text-[13px]">View profile</span>
             </DropdownMenuItem>
 
-            <DropdownMenuSeparator className="bg-sidebar-border/80" />
+            <DropdownMenuSeparator />
 
             <DropdownMenuItem
               onSelect={onSignout}
               disabled={isSignoutLoading}
-              className="gap-2 rounded-lg text-destructive focus:bg-destructive/15 focus:text-destructive"
+              className="gap-2.5 rounded-lg text-destructive focus:text-destructive"
             >
-              {isSignoutLoading ? (
-                <IconLoader className="size-4 animate-spin" />
-              ) : (
-                <IconLogout2 className="size-4" />
-              )}
-              {isSignoutLoading ? "Signing out..." : "Sign out"}
+              <span className="inline-flex size-6 items-center justify-center rounded-md border border-destructive/20 bg-destructive/8">
+                {isSignoutLoading ? (
+                  <IconLoader className="size-3.5 animate-spin" />
+                ) : (
+                  <IconLogout2 className="size-3.5" />
+                )}
+              </span>
+              <span className="text-[13px]">
+                {isSignoutLoading ? "Signing out..." : "Sign out"}
+              </span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -316,9 +359,19 @@ function WorkspaceFrame({
     }
   }, [isMobile, location.pathname, setMobileOpen]);
 
+  // Build breadcrumb segments from current path
+  const breadcrumbs = useMemo(() => {
+    const segments = location.pathname.split("/").filter(Boolean);
+    if (segments.length <= 1) return [];
+    return segments.slice(1).map((seg) => ({
+      label: seg.charAt(0).toUpperCase() + seg.slice(1),
+    }));
+  }, [location.pathname]);
+
   return (
     <div className="relative min-h-svh w-full overflow-x-hidden bg-background text-foreground">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_9%_8%,rgba(14,165,233,0.10),transparent_36%),radial-gradient(circle_at_88%_12%,rgba(109,40,217,0.10),transparent_34%)]" />
+      {/* Background gradient mesh */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_9%_8%,rgba(14,165,233,0.07),transparent_36%),radial-gradient(circle_at_88%_12%,rgba(109,40,217,0.07),transparent_34%),radial-gradient(circle_at_50%_90%,rgba(91,33,182,0.04),transparent_40%)]" />
 
       <div className="relative flex min-h-svh w-full">
         <WorkspaceSidebar
@@ -339,26 +392,86 @@ function WorkspaceFrame({
 
         <SidebarInset>
           <header className="sticky top-0 z-30 px-3 pt-2.5 md:px-4 md:pt-3">
-            <div className="rounded-xl border border-border/70 bg-background/85 px-3 py-2.5 shadow-sm backdrop-blur-xl md:px-4">
+            <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-background/80 px-3 py-2.5 shadow-sm backdrop-blur-xl md:px-4">
+              {/* Top accent line */}
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+
               <div className="flex items-center gap-2.5">
                 <SidebarTrigger />
 
-                <div className="flex min-w-0 items-center gap-2.5">
-                  <span className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-primary/25 bg-primary/10 text-primary">
-                    <HeaderIcon className="size-4" />
-                  </span>
+                <Separator
+                  orientation="vertical"
+                  className="hidden h-5 bg-border/50 md:block"
+                />
 
-                  <div className="min-w-0">
-                    <p className="truncate text-base font-semibold tracking-tight">
-                      {pageMeta.title}
-                    </p>
-                    <p className="truncate text-xs text-muted-foreground">
-                      {pageMeta.description}
-                    </p>
-                  </div>
+                {/* Breadcrumb */}
+                <div className="hidden min-w-0 items-center gap-1 text-xs text-muted-foreground md:flex">
+                  {breadcrumbs.map((crumb, index) => (
+                    <span key={crumb.label} className="flex items-center gap-1">
+                      {index > 0 && (
+                        <IconChevronRight className="size-3 text-muted-foreground/50" />
+                      )}
+                      <span
+                        className={cn(
+                          index === breadcrumbs.length - 1
+                            ? "font-medium text-foreground"
+                            : "text-muted-foreground/70"
+                        )}
+                      >
+                        {crumb.label}
+                      </span>
+                    </span>
+                  ))}
                 </div>
 
-                <ThemeToggleButton className="ml-auto rounded-md" />
+                {/* Page title (mobile) */}
+                <div className="flex min-w-0 items-center gap-2 md:hidden">
+                  <span className="flex size-7 shrink-0 items-center justify-center rounded-lg border border-primary/20 bg-primary/8 text-primary">
+                    <HeaderIcon className="size-3.5" />
+                  </span>
+                  <p className="truncate text-sm font-semibold tracking-tight">
+                    {pageMeta.title}
+                  </p>
+                </div>
+
+                {/* Right side header actions */}
+                <div className="ml-auto flex items-center gap-1.5">
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    className="text-muted-foreground hover:text-foreground"
+                    aria-label="Search"
+                  >
+                    <IconSearch className="size-4" />
+                  </Button>
+
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    className="relative text-muted-foreground hover:text-foreground"
+                    aria-label="Notifications"
+                  >
+                    <IconBell className="size-4" />
+                    <span className="absolute top-1 right-1 size-1.5 rounded-full bg-primary shadow-[0_0_4px_var(--color-primary)]" />
+                  </Button>
+
+                  <Separator
+                    orientation="vertical"
+                    className="mx-0.5 hidden h-5 bg-border/50 sm:block"
+                  />
+
+                  <ThemeToggleButton className="rounded-md" />
+
+                  {/* User avatar in header */}
+                  <button
+                    type="button"
+                    className="hidden size-8 items-center justify-center rounded-lg border border-primary/20 bg-primary/8 text-[10px] font-bold text-primary transition-all duration-300 hover:border-primary/30 hover:bg-primary/12 sm:inline-flex"
+                    onClick={() => navigate("/app/profile")}
+                    aria-label="Go to profile"
+                  >
+                    WA
+                  </button>
+                </div>
               </div>
             </div>
           </header>
@@ -374,27 +487,57 @@ function WorkspaceFrame({
               />
             ) : null}
 
-            <Card className="min-h-full border-border/70 bg-card/65 p-3 shadow-sm md:p-5">
-              <div className="min-h-full animate-in duration-700 fade-in slide-in-from-bottom-2">
-                <Outlet />
+            {/* Page title bar (desktop) */}
+            <div className="mb-4 hidden items-center justify-between md:flex">
+              <div className="flex items-center gap-3">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-xl border border-primary/20 bg-primary/8 text-primary shadow-sm">
+                  <HeaderIcon className="size-4.5" />
+                </span>
+                <div>
+                  <h1 className="text-lg font-semibold tracking-tight">
+                    {pageMeta.title}
+                  </h1>
+                  <p className="text-xs text-muted-foreground">
+                    {pageMeta.description}
+                  </p>
+                </div>
               </div>
-            </Card>
+
+              <Badge
+                variant="outline"
+                className="gap-1.5 border-border/50 text-[10px] font-medium text-muted-foreground"
+              >
+                <span className="size-1.5 rounded-full bg-emerald-500" />
+                Online
+              </Badge>
+            </div>
+
+            {/* Content area */}
+            <div className="animate-in duration-500 fade-in slide-in-from-bottom-2">
+              <Outlet />
+            </div>
           </main>
         </SidebarInset>
       </div>
 
+      {/* Sign-out overlay */}
       {isSignoutLoading ? (
-        <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/70 px-4 backdrop-blur-sm">
-          <Card className="w-full max-w-sm rounded-xl border-border/70 bg-card/95 p-4 shadow-xl">
-            <div className="flex items-center gap-3">
-              <span className="inline-flex size-9 items-center justify-center rounded-md border border-primary/25 bg-primary/10 text-primary">
-                <IconLoader className="size-4 animate-spin" />
-              </span>
-              <div>
-                <p className="text-sm font-semibold">Signing you out...</p>
-                <p className="text-xs text-muted-foreground">
-                  Closing your active workspace session safely.
-                </p>
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/60 px-4 backdrop-blur-md">
+          <Card className="w-full max-w-sm overflow-hidden rounded-2xl border-border/50 bg-card/95 p-0 shadow-2xl">
+            {/* Gradient accent */}
+            <div className="h-1 bg-gradient-to-r from-primary/60 via-primary to-primary/60" />
+            <div className="p-5">
+              <div className="flex items-center gap-3.5">
+                <span className="relative inline-flex size-10 items-center justify-center rounded-xl border border-primary/25 bg-primary/10 text-primary">
+                  <IconLoader className="size-4.5 animate-spin" />
+                  <span className="absolute inset-0 rounded-xl bg-primary/5 animate-pulse" />
+                </span>
+                <div>
+                  <p className="text-sm font-semibold">Signing you out...</p>
+                  <p className="text-xs text-muted-foreground">
+                    Closing your workspace session safely.
+                  </p>
+                </div>
               </div>
             </div>
           </Card>

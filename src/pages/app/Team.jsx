@@ -14,6 +14,7 @@ import {
   IconX,
 } from "@tabler/icons-react";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -83,10 +84,17 @@ const INITIAL_USERS = [
 ];
 
 const statusStyles = {
-  Active: "border-emerald-500/30 bg-emerald-500/10 text-emerald-600",
-  Busy: "border-amber-500/30 bg-amber-500/10 text-amber-600",
-  Offline: "border-slate-500/30 bg-slate-500/10 text-slate-600",
+  Active: "border-emerald-500/25 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+  Busy: "border-amber-500/25 bg-amber-500/10 text-amber-600 dark:text-amber-400",
+  Offline: "border-border/60 bg-muted/50 text-muted-foreground",
 };
+
+const statColors = [
+  { color: "text-blue-500", bg: "border-blue-500/20 bg-blue-500/8" },
+  { color: "text-violet-500", bg: "border-violet-500/20 bg-violet-500/8" },
+  { color: "text-emerald-500", bg: "border-emerald-500/20 bg-emerald-500/8" },
+  { color: "text-amber-500", bg: "border-amber-500/20 bg-amber-500/8" },
+];
 
 const selectClassName =
   "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-xs transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40";
@@ -112,10 +120,11 @@ function ManagementModal({ open, onClose, title, description, children }) {
         onClick={onClose}
       />
 
-      <Card className="relative w-full max-w-xl animate-in rounded-xl border-border/70 bg-card p-4 shadow-2xl duration-500 zoom-in-95 fade-in md:p-5">
+      <Card className="relative w-full max-w-xl animate-in overflow-hidden rounded-2xl border-border/50 bg-card/95 p-0 shadow-2xl backdrop-blur-xl duration-500 zoom-in-95 fade-in">
+        <div className="h-1 bg-gradient-to-r from-primary/60 via-primary to-primary/60" />
         <div className="pointer-events-none absolute -top-16 -right-10 size-44 rounded-full bg-primary/10 blur-3xl" />
 
-        <div className="relative">
+        <div className="relative p-5">
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-sm font-semibold">{title}</p>
@@ -126,6 +135,7 @@ function ManagementModal({ open, onClose, title, description, children }) {
               type="button"
               variant="ghost"
               size="icon-sm"
+              className="rounded-lg"
               onClick={onClose}
             >
               <IconX className="size-4" />
@@ -466,72 +476,72 @@ function Team() {
 
   return (
     <main className="grid gap-4">
-      <section className="relative overflow-hidden rounded-xl border border-border/70 bg-card/70 p-4 md:p-5">
-        <div className="pointer-events-none absolute -top-12 -right-4 size-44 rounded-full bg-primary/10 blur-2xl" />
+      <Card className="relative overflow-hidden rounded-2xl border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur">
+        <div className="pointer-events-none absolute -top-16 -right-8 size-48 rounded-full bg-primary/8 blur-3xl" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
 
-        <div className="relative flex flex-wrap items-center justify-between gap-3">
+        <div className="relative flex flex-wrap items-center justify-between gap-3 p-4 md:p-5">
           <div>
             <p className="text-sm font-semibold">Team Management</p>
             <p className="text-xs text-muted-foreground">
-              Manage users, roles, permissions, and access flow with a cleaner,
-              modal-first workflow
+              Manage users, roles, permissions, and access flow
             </p>
           </div>
 
-          <div className="inline-flex rounded-lg border border-border/70 bg-background/80 p-1">
+          <div className="inline-flex rounded-xl border border-border/50 bg-background/60 p-1 backdrop-blur">
             <Button
               type="button"
               size="sm"
               variant={activeTab === "users" ? "secondary" : "ghost"}
-              className="px-3"
+              className="gap-1.5 rounded-lg px-3"
               onClick={() => handleTabChange("users")}
             >
-              <IconUsers className="size-4" />
+              <IconUsers className="size-3.5" />
               Users
             </Button>
             <Button
               type="button"
               size="sm"
               variant={activeTab === "roles" ? "secondary" : "ghost"}
-              className="px-3"
+              className="gap-1.5 rounded-lg px-3"
               onClick={() => handleTabChange("roles")}
             >
-              <IconShieldCheck className="size-4" />
+              <IconShieldCheck className="size-3.5" />
               Roles
             </Button>
           </div>
         </div>
-      </section>
+      </Card>
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {statCards.map((item, index) => (
-          <article
+          <Card
             key={item.label}
-            className="animate-in rounded-md border border-border/70 bg-background/75 p-4 duration-700 fade-in slide-in-from-bottom-2"
+            className="group rounded-2xl border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur transition-all duration-300 animate-in fade-in slide-in-from-bottom-2 hover:-translate-y-0.5 hover:shadow-md"
             style={{ animationDelay: `${60 + index * 80}ms` }}
           >
-            <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start justify-between gap-3 p-4">
               <div>
-                <p className="text-[11px] tracking-[0.14em] text-muted-foreground uppercase">
+                <p className="text-[10px] font-medium tracking-[0.12em] text-muted-foreground uppercase">
                   {item.label}
                 </p>
-                <p className="mt-1 text-2xl font-semibold tracking-tight">
+                <p className="mt-1.5 text-2xl font-bold tracking-tight">
                   {item.value}
                 </p>
-                <p className="mt-1 text-xs text-muted-foreground">
+                <p className="mt-1 text-[11px] text-muted-foreground">
                   {item.note}
                 </p>
               </div>
-              <span className="rounded-md border border-primary/25 bg-primary/10 p-2 text-primary">
-                <item.Icon className="size-4" />
+              <span className={`inline-flex size-10 items-center justify-center rounded-xl border ${statColors[index]?.bg || 'border-primary/20 bg-primary/8'} transition-transform duration-300 group-hover:scale-105`}>
+                <item.Icon className={`size-5 ${statColors[index]?.color || 'text-primary'}`} />
               </span>
             </div>
-          </article>
+          </Card>
         ))}
       </section>
 
       <section className="grid gap-4">
-        <section className="rounded-md border border-border/70 bg-background/70 p-4 md:p-5">
+        <Card className="rounded-2xl border-border/50 bg-card/60 p-4 shadow-sm backdrop-blur md:p-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
               <p className="text-sm font-semibold">
@@ -607,9 +617,9 @@ function Team() {
 
           {activeTab === "users" ? (
             activeView === "table" ? (
-              <div className="mt-3 overflow-x-auto rounded-md border border-border/70">
+              <div className="mt-3 overflow-x-auto rounded-xl border border-border/50">
                 <table className="w-full min-w-170 text-sm">
-                  <thead className="bg-muted/35 text-xs text-muted-foreground">
+                  <thead className="bg-muted/25 text-xs text-muted-foreground">
                     <tr>
                       <th className="px-3 py-2 text-left font-medium">
                         <TableHeadLabel Icon={IconUsers} label="User" />
@@ -640,7 +650,7 @@ function Team() {
                       filteredUsers.map((user) => (
                         <tr
                           key={user.id}
-                          className="border-t border-border/70 transition-colors hover:bg-muted/30"
+                          className="border-t border-border/50 transition-colors hover:bg-muted/20"
                         >
                           <td className="px-3 py-2.5">
                             <p className="font-medium">{user.name}</p>
@@ -649,19 +659,20 @@ function Team() {
                             </p>
                           </td>
                           <td className="px-3 py-2.5">
-                            <span className="rounded-sm border border-border/70 bg-background px-2 py-0.5 text-xs">
+                            <Badge variant="outline" className="border-border/50 text-[11px] font-medium">
                               {roleById[user.roleId]?.name ?? "Unassigned"}
-                            </span>
+                            </Badge>
                           </td>
                           <td className="px-3 py-2.5">
-                            <span
+                            <Badge
+                              variant="outline"
                               className={cn(
-                                "rounded-sm border px-2 py-0.5 text-xs font-medium",
+                                "px-2 py-0.5 text-[11px] font-medium",
                                 statusStyles[user.status]
                               )}
                             >
                               {user.status}
-                            </span>
+                            </Badge>
                           </td>
                           <td className="px-3 py-2.5 text-xs text-muted-foreground">
                             {user.lastActive}
@@ -931,7 +942,7 @@ function Team() {
               )}
             </div>
           )}
-        </section>
+        </Card>
       </section>
 
       <ManagementModal
