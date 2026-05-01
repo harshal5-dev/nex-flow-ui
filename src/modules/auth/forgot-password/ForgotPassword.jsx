@@ -37,22 +37,29 @@ function ForgotPassword() {
       description="Enter your email to receive a one-time password, verify ownership, and reset credentials securely."
       highlights={forgotPasswordHighlights}
     >
-      <Card className="w-full max-w-md animate-in border-border/70 bg-card/85 shadow-lg backdrop-blur duration-700 fade-in slide-in-from-right-4">
-        <CardHeader>
-          <CardTitle className="text-2xl">Forgot Password</CardTitle>
-          <CardDescription>
-            We&apos;ll send an OTP to your email for secure verification.
+      <Card className="w-full max-w-md animate-in rounded-2xl border-border/50 bg-card/90 p-0 shadow-xl backdrop-blur-sm duration-500 fade-in slide-in-from-bottom-3">
+        {/* Top gradient accent line */}
+        <div className="h-1 rounded-t-2xl bg-linear-to-r from-primary/40 via-primary to-primary/40" />
+
+        <CardHeader className="px-6 pt-6 pb-4">
+          <CardTitle className="text-2xl font-bold tracking-tight">
+            Reset password
+          </CardTitle>
+          <CardDescription className="text-sm text-muted-foreground">
+            Enter your email to receive a secure OTP code.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+
+        <CardContent className="px-6 pb-4">
           <ForgotPasswordForm />
         </CardContent>
-        <CardFooter className="justify-center">
+
+        <CardFooter className="justify-center px-6 pb-6">
           <p className="text-sm text-muted-foreground">
             Remembered your password?{" "}
             <Link
               to="/signin"
-              className="font-medium text-primary underline-offset-4 hover:underline"
+              className="font-semibold text-primary underline-offset-4 transition-colors hover:underline"
             >
               Back to sign in
             </Link>

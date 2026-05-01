@@ -37,23 +37,29 @@ const Signup = () => {
       description="Create your account and start orchestrating projects and tasks from a modern, scalable platform."
       highlights={signupHighlights}
     >
-      <Card className="w-full max-w-md animate-in border-border/70 bg-card/85 shadow-lg backdrop-blur duration-700 fade-in slide-in-from-right-4">
-        <CardHeader>
-          <CardTitle className="text-2xl">Sign Up</CardTitle>
-          <CardDescription>
-            Create your account and start your first workspace.
+      <Card className="w-full max-w-md animate-in rounded-2xl border-border/50 bg-card/90 p-0 shadow-xl backdrop-blur-sm duration-500 fade-in slide-in-from-bottom-3">
+        {/* Top gradient accent line */}
+        <div className="h-1 rounded-t-2xl bg-linear-to-r from-primary/40 via-primary to-primary/40" />
+
+        <CardHeader className="px-6 pt-6 pb-4">
+          <CardTitle className="text-2xl font-bold tracking-tight">
+            Create workspace
+          </CardTitle>
+          <CardDescription className="text-sm text-muted-foreground">
+            Set up your account and start your first workspace.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+
+        <CardContent className="px-6 pb-4">
           <SignupForm />
         </CardContent>
 
-        <CardFooter className="justify-center">
+        <CardFooter className="justify-center px-6 pb-6">
           <p className="text-sm text-muted-foreground">
             Already have an account?{" "}
             <Link
               to="/signin"
-              className="font-medium text-primary underline-offset-4 hover:underline"
+              className="font-semibold text-primary underline-offset-4 transition-colors hover:underline"
             >
               Sign in
             </Link>

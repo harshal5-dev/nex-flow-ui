@@ -20,6 +20,7 @@ import {
   IconUsers,
 } from "@tabler/icons-react";
 
+import LogoBrand from "@/components/common/LogoBrand";
 import ThemeToggleButton from "@/components/common/theme-toggle-button";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -100,33 +101,22 @@ function WorkspaceSidebar({
   return (
     <Sidebar>
       <SidebarHeader>
-        {/* Accent gradient line */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-sidebar-primary/50 to-transparent" />
-
         <Link
           to="/app/dashboard"
           onClick={onNavigate}
           className={cn(
-            "group flex min-w-0 items-center gap-2.5 rounded-xl border border-sidebar-border/60 bg-gradient-to-br from-sidebar-accent/40 via-sidebar/80 to-sidebar-accent/30 p-2.5 transition-all duration-500 hover:border-sidebar-primary/25 hover:shadow-sm",
-            isCollapsed && "lg:justify-center"
+            "flex min-w-0 items-center rounded-xl border border-sidebar-border/60 bg-sidebar-accent/50 p-2.5 transition-all duration-200 hover:border-sidebar-primary/25 hover:bg-sidebar-accent/80",
+            isCollapsed ? "lg:justify-center" : ""
           )}
         >
-          <div className="relative">
-            <div className="absolute -inset-1 rounded-lg bg-sidebar-primary/15 blur-sm transition-all duration-500 group-hover:bg-sidebar-primary/25" />
-            <img
-              src="/branding/next-flow-mark.svg"
-              alt="Next Flow"
-              className="relative size-8 shrink-0 rounded-md border border-sidebar-border/50 bg-sidebar shadow-sm"
-            />
-          </div>
-          <div className={cn("min-w-0", isCollapsed && "lg:hidden")}>
-            <p className="truncate text-[13px] font-semibold tracking-tight">
-              Next Flow
-            </p>
-            <p className="truncate text-[11px] text-sidebar-foreground/55">
-              Workspace Console
-            </p>
-          </div>
+          <LogoBrand
+            size="sm"
+            subtitle="Workspace Console"
+            showText={!isCollapsed}
+            logoClassName="border-sidebar-border/50 bg-sidebar"
+            nameClassName="text-sidebar-foreground"
+            subClassName="text-sidebar-foreground/55"
+          />
         </Link>
       </SidebarHeader>
 
@@ -135,7 +125,7 @@ function WorkspaceSidebar({
           <SidebarGroupLabel className={cn(isCollapsed && "lg:sr-only")}>
             Navigation
           </SidebarGroupLabel>
-          <SidebarGroupContent className="rounded-xl border border-sidebar-border/50 bg-gradient-to-b from-sidebar/50 to-sidebar-accent/20 p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+          <SidebarGroupContent className="rounded-xl border border-sidebar-border/50 bg-linear-to-b from-sidebar/50 to-sidebar-accent/20 p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
             <SidebarMenu className="gap-1">
               {navigationItems.map((item, index) => {
                 return (
@@ -152,7 +142,7 @@ function WorkspaceSidebar({
                         cn(
                           "group/nav relative flex items-center gap-2.5 overflow-hidden rounded-xl border px-2 py-2 text-[13px] font-medium transition-all duration-500 ease-out",
                           isActive
-                            ? "border-sidebar-primary/25 bg-gradient-to-r from-sidebar-primary/15 via-sidebar-primary/8 to-sidebar-accent/40 text-sidebar-primary shadow-[0_8px_24px_-16px_var(--color-sidebar-primary)]"
+                            ? "border-sidebar-primary/25 bg-linear-to-r from-sidebar-primary/15 via-sidebar-primary/8 to-sidebar-accent/40 text-sidebar-primary shadow-[0_8px_24px_-16px_var(--color-sidebar-primary)]"
                             : "border-transparent bg-transparent text-sidebar-foreground/75 hover:border-sidebar-border/60 hover:bg-sidebar-accent/70 hover:text-sidebar-accent-foreground",
                           isCollapsed && "lg:justify-center lg:px-1.5 lg:py-1.5"
                         )
@@ -221,7 +211,7 @@ function WorkspaceSidebar({
         {/* Workspace info badge */}
         {!isCollapsed && (
           <div className="mt-auto hidden animate-in px-1 duration-700 fade-in lg:block">
-            <Card className="rounded-xl border-sidebar-border/40 bg-gradient-to-br from-sidebar-primary/8 via-sidebar/60 to-sidebar-accent/30 p-3">
+            <Card className="rounded-xl border-sidebar-border/40 bg-linear-to-br from-sidebar-primary/8 via-sidebar/60 to-sidebar-accent/30 p-3">
               <p className="text-[10px] font-semibold tracking-[0.18em] text-sidebar-primary/80 uppercase">
                 Workspace
               </p>
@@ -243,11 +233,11 @@ function WorkspaceSidebar({
               type="button"
               aria-label="Open user menu"
               className={cn(
-                "group relative flex w-full items-center gap-2.5 rounded-xl border border-sidebar-border/60 bg-gradient-to-br from-sidebar-accent/40 via-sidebar/80 to-sidebar-accent/30 p-2.5 text-left text-sidebar-foreground shadow-none transition-all duration-500 hover:-translate-y-0.5 hover:border-sidebar-primary/25 hover:shadow-sm focus-visible:ring-3 focus-visible:ring-sidebar-ring/40 focus-visible:outline-none",
+                "group relative flex w-full items-center gap-2.5 rounded-xl border border-sidebar-border/60 bg-linear-to-br from-sidebar-accent/40 via-sidebar/80 to-sidebar-accent/30 p-2.5 text-left text-sidebar-foreground shadow-none transition-all duration-500 hover:-translate-y-0.5 hover:border-sidebar-primary/25 hover:shadow-sm focus-visible:ring-3 focus-visible:ring-sidebar-ring/40 focus-visible:outline-none",
                 isCollapsed && "lg:justify-center lg:px-1.5"
               )}
             >
-              <span className="relative inline-flex size-9 shrink-0 items-center justify-center rounded-xl border border-sidebar-primary/25 bg-gradient-to-br from-sidebar-primary/15 to-sidebar-primary/8 text-[11px] font-bold text-sidebar-primary shadow-sm">
+              <span className="relative inline-flex size-9 shrink-0 items-center justify-center rounded-xl border border-sidebar-primary/25 bg-linear-to-br from-sidebar-primary/15 to-sidebar-primary/8 text-[11px] font-bold text-sidebar-primary shadow-sm">
                 WA
                 <span className="absolute -right-0.5 -bottom-0.5 size-2.5 rounded-full border-2 border-sidebar bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.4)]" />
               </span>
@@ -394,7 +384,7 @@ function WorkspaceFrame({
           <header className="sticky top-0 z-30 px-3 pt-2.5 md:px-4 md:pt-3">
             <div className="relative overflow-hidden rounded-2xl border border-border/50 bg-background/80 px-3 py-2.5 shadow-sm backdrop-blur-xl md:px-4">
               {/* Top accent line */}
-              <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+              <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-primary/30 to-transparent" />
 
               <div className="flex items-center gap-2.5">
                 <SidebarTrigger />
@@ -525,12 +515,12 @@ function WorkspaceFrame({
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/60 px-4 backdrop-blur-md">
           <Card className="w-full max-w-sm overflow-hidden rounded-2xl border-border/50 bg-card/95 p-0 shadow-2xl">
             {/* Gradient accent */}
-            <div className="h-1 bg-gradient-to-r from-primary/60 via-primary to-primary/60" />
+            <div className="h-1 bg-linear-to-r from-primary/60 via-primary to-primary/60" />
             <div className="p-5">
               <div className="flex items-center gap-3.5">
                 <span className="relative inline-flex size-10 items-center justify-center rounded-xl border border-primary/25 bg-primary/10 text-primary">
                   <IconLoader className="size-4.5 animate-spin" />
-                  <span className="absolute inset-0 rounded-xl bg-primary/5 animate-pulse" />
+                  <span className="absolute inset-0 animate-pulse rounded-xl bg-primary/5" />
                 </span>
                 <div>
                   <p className="text-sm font-semibold">Signing you out...</p>

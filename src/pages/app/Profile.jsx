@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import {
   IconArrowRight,
   IconBuildingSkyscraper,
@@ -89,7 +90,6 @@ function Profile() {
 
   const handleSave = (event) => {
     event.preventDefault();
-
     setStatus({
       variant: "success",
       title: "Saved",
@@ -102,50 +102,53 @@ function Profile() {
 
   return (
     <div className="grid gap-4">
-      {/* Profile header card */}
-      <Card className="relative overflow-hidden rounded-2xl border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur animate-in fade-in slide-in-from-bottom-2 duration-500">
-        {/* Cover gradient */}
-        <div className="h-24 bg-gradient-to-r from-primary/15 via-primary/8 to-violet-500/10 sm:h-28" />
+      {/* ── Profile Header Card ─────────────────────────────────────── */}
+      <Card className="relative animate-in overflow-hidden rounded-2xl border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur duration-500 fade-in slide-in-from-bottom-2">
+        {/* Cover band with decorative blobs */}
+        <div className="relative h-32 overflow-hidden bg-linear-to-br from-primary/20 via-primary/10 to-violet-500/15 sm:h-36">
+          <span className="absolute -top-8 -right-8 size-32 rounded-full bg-primary/20 blur-2xl" />
+          <span className="absolute -bottom-10 left-8 size-24 rounded-full bg-violet-500/15 blur-2xl" />
+        </div>
 
-        <CardContent className="relative px-5 pb-5">
-          {/* Avatar */}
-          <div className="-mt-10 flex items-end gap-4 sm:-mt-12">
-            <div className="relative">
-              <span className="inline-flex size-20 items-center justify-center rounded-2xl border-4 border-card bg-gradient-to-br from-primary/20 via-primary/10 to-primary/5 text-xl font-bold text-primary shadow-lg sm:size-24 sm:text-2xl">
+        <CardContent className="relative px-5 pt-0 pb-5">
+          <div className="-mt-12 flex items-end gap-4 sm:-mt-14">
+            {/* Avatar with online dot */}
+            <div className="relative shrink-0">
+              <span className="inline-flex size-20 items-center justify-center rounded-2xl border-4 border-card bg-linear-to-br from-primary/25 to-primary/10 text-2xl font-bold text-primary shadow-xl sm:size-24">
                 {initials.toUpperCase()}
               </span>
-              {/* Online status */}
-              <span className="absolute right-0 bottom-0 size-4 rounded-full border-3 border-card bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]" />
+              <span className="absolute -right-1 -bottom-1 size-4 rounded-full border-2 border-card bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
             </div>
 
+            {/* Name + role + email */}
             <div className="mb-1 min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
-                <h2 className="text-lg font-bold tracking-tight sm:text-xl">
+                <h2 className="text-xl font-bold tracking-tight">
                   {profileForm.firstName} {profileForm.lastName}
                 </h2>
                 <Badge
                   variant="outline"
-                  className="gap-1 border-primary/25 bg-primary/8 px-2 py-0.5 text-[10px] font-medium text-primary"
+                  className="gap-1 border-primary/25 bg-primary/8 px-2 py-0.5 text-[10px] font-semibold text-primary"
                 >
                   <IconShieldCheck className="size-3" />
                   Admin
                 </Badge>
               </div>
-              <div className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground">
-                <IconMail className="size-3" />
+              <p className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground">
+                <IconMail className="size-3 shrink-0" />
                 {profileForm.emailId}
-              </div>
+              </p>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Account info grid */}
+      {/* ── Account Info Grid ───────────────────────────────────────── */}
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {accountInfo.map((item, index) => (
           <Card
             key={item.label}
-            className="group rounded-xl border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur transition-all duration-300 animate-in fade-in slide-in-from-bottom-2 hover:-translate-y-0.5 hover:shadow-md"
+            className="group animate-in rounded-xl border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur transition-all duration-300 fade-in slide-in-from-bottom-2 hover:-translate-y-0.5 hover:shadow-md"
             style={{ animationDelay: `${60 + index * 70}ms` }}
           >
             <CardContent className="flex items-center gap-3 p-3.5">
@@ -155,7 +158,7 @@ function Profile() {
                 <item.Icon className={`size-4 ${item.color}`} />
               </span>
               <div className="min-w-0">
-                <p className="text-[10px] font-medium tracking-[0.12em] text-muted-foreground uppercase">
+                <p className="text-[10px] font-semibold tracking-[0.14em] text-muted-foreground uppercase">
                   {item.label}
                 </p>
                 <p className="mt-0.5 truncate text-sm font-semibold tracking-tight">
@@ -167,17 +170,19 @@ function Profile() {
         ))}
       </section>
 
-      {/* Form + Actions */}
+      {/* ── Basic Info Form + Account Actions ──────────────────────── */}
       <div className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
         {/* Basic Information */}
-        <Card className="rounded-2xl border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur animate-in delay-100 fade-in slide-in-from-bottom-2 duration-500">
+        <Card className="animate-in rounded-2xl border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur delay-100 duration-500 fade-in slide-in-from-bottom-2">
           <CardHeader>
-            <div className="flex items-center gap-2">
-              <span className="inline-flex size-8 items-center justify-center rounded-lg border border-primary/20 bg-primary/8 text-primary">
-                <IconUserCircle className="size-4" />
+            <div className="flex items-center gap-2.5">
+              <span className="inline-flex size-8 items-center justify-center rounded-lg border border-primary/20 bg-primary/8">
+                <IconUserCircle className="size-4 text-primary" />
               </span>
               <div>
-                <CardTitle className="text-sm">Basic Information</CardTitle>
+                <CardTitle className="text-sm font-semibold">
+                  Basic Information
+                </CardTitle>
                 <CardDescription className="text-[11px]">
                   Keep your profile details up to date.
                 </CardDescription>
@@ -197,7 +202,8 @@ function Profile() {
             ) : null}
 
             <form className="grid gap-4" onSubmit={handleSave}>
-              <div className="grid gap-4 md:grid-cols-2">
+              {/* Name row */}
+              <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="firstName" className="text-xs font-medium">
                     First Name
@@ -222,6 +228,7 @@ function Profile() {
                 </div>
               </div>
 
+              {/* Email row */}
               <div className="space-y-2">
                 <Label htmlFor="emailId" className="text-xs font-medium">
                   Email Address
@@ -237,7 +244,7 @@ function Profile() {
 
               <Separator className="bg-border/40" />
 
-              <div className="flex items-center gap-2">
+              <div className="flex items-center">
                 <Button type="submit" className="gap-1.5 rounded-lg">
                   Save Changes
                   <IconArrowRight className="size-3.5" />
@@ -248,14 +255,16 @@ function Profile() {
         </Card>
 
         {/* Account Actions */}
-        <Card className="rounded-2xl border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur animate-in delay-150 fade-in slide-in-from-bottom-2 duration-500">
+        <Card className="animate-in rounded-2xl border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur delay-150 duration-500 fade-in slide-in-from-bottom-2">
           <CardHeader>
-            <div className="flex items-center gap-2">
-              <span className="inline-flex size-8 items-center justify-center rounded-lg border border-primary/20 bg-primary/8 text-primary">
-                <IconShieldCheck className="size-4" />
+            <div className="flex items-center gap-2.5">
+              <span className="inline-flex size-8 items-center justify-center rounded-lg border border-primary/20 bg-primary/8">
+                <IconShieldCheck className="size-4 text-primary" />
               </span>
               <div>
-                <CardTitle className="text-sm">Account Actions</CardTitle>
+                <CardTitle className="text-sm font-semibold">
+                  Account Actions
+                </CardTitle>
                 <CardDescription className="text-[11px]">
                   Security and session management.
                 </CardDescription>
@@ -274,7 +283,7 @@ function Profile() {
                   <span
                     className={`inline-flex size-10 shrink-0 items-center justify-center rounded-xl border ${action.bg} transition-transform duration-300 group-hover:scale-105`}
                   >
-                    <action.Icon className={`size-4.5 ${action.color}`} />
+                    <action.Icon className={`size-5 ${action.color}`} />
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-semibold">{action.title}</p>
@@ -282,7 +291,7 @@ function Profile() {
                       {action.description}
                     </p>
                   </div>
-                  <IconArrowRight className="size-4 text-muted-foreground transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-primary" />
+                  <IconArrowRight className="size-4 shrink-0 text-muted-foreground transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-primary" />
                 </button>
               ))}
             </div>

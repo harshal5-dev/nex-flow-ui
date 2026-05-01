@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import {
   IconArrowRight,
   IconArrowUpRight,
@@ -193,44 +194,49 @@ function Dashboard() {
   );
 
   return (
-    <div className="grid gap-4">
-      {/* Stats cards */}
+    <div className="grid gap-5">
+      {/* ── Stat Cards ─────────────────────────────────────────────── */}
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {quickStats.map((item, index) => (
           <Card
             key={item.label}
-            className="group relative overflow-hidden rounded-2xl border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur transition-all duration-300 animate-in fade-in slide-in-from-bottom-2 hover:-translate-y-0.5 hover:shadow-md"
+            className="group relative animate-in overflow-hidden rounded-2xl border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur transition-all duration-300 fade-in slide-in-from-bottom-2 hover:-translate-y-0.5 hover:shadow-lg"
             style={{ animationDelay: `${60 + index * 80}ms` }}
           >
-            {/* Top accent gradient */}
-            <div
-              className={`absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-current to-transparent ${item.color} opacity-40`}
+            {/* Top accent shimmer line */}
+            <span
+              className={`absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-current to-transparent opacity-30 ${item.color}`}
             />
 
-            <CardContent className="p-4">
+            <CardContent className="p-5">
               <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-[11px] font-medium tracking-[0.12em] text-muted-foreground uppercase">
+                {/* Left: label · value · note */}
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10px] font-semibold tracking-[0.14em] text-muted-foreground uppercase">
                     {item.label}
                   </p>
-                  <div className="mt-1.5 flex items-baseline gap-2">
-                    <p className="text-2xl font-bold tracking-tight">
+
+                  <div className="mt-2 flex items-baseline gap-2.5">
+                    <p className="text-3xl font-bold tracking-tight tabular-nums">
                       {item.value}
                     </p>
                     <Badge
                       variant="outline"
-                      className="border-emerald-500/20 bg-emerald-500/8 px-1.5 py-0 text-[10px] font-medium text-emerald-600 dark:text-emerald-400"
+                      className="border-emerald-500/20 bg-emerald-500/10 px-1.5 py-0 text-[10px] font-semibold text-emerald-600 dark:text-emerald-400"
                     >
                       <IconTrendingUp className="mr-0.5 size-2.5" />
                       {item.trend}
                     </Badge>
                   </div>
-                  <p className="mt-1 text-[11px] text-muted-foreground">
+
+                  <p className="mt-1.5 text-[11px] text-muted-foreground">
                     {item.note}
                   </p>
                 </div>
+
+                {/* Right: icon tile */}
                 <span
-                  className={`inline-flex size-10 items-center justify-center rounded-xl border ${item.bg} transition-all duration-300 group-hover:scale-105`}
+                  className={`inline-flex size-11 shrink-0 items-center justify-center rounded-xl border ${item.bg} transition-transform duration-300 group-hover:scale-105`}
                 >
                   <item.Icon className={`size-5 ${item.color}`} />
                 </span>
@@ -240,19 +246,20 @@ function Dashboard() {
         ))}
       </section>
 
-      {/* Quick Actions */}
+      {/* ── Quick Actions ───────────────────────────────────────────── */}
       <section className="animate-in delay-100 duration-500 fade-in slide-in-from-bottom-2">
         <Card className="rounded-2xl border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <IconSparkles className="size-4 text-primary" />
-                <p className="text-[11px] font-semibold tracking-[0.15em] text-primary uppercase">
-                  Quick Actions
-                </p>
-              </div>
+          <CardContent className="p-5">
+            {/* Header row */}
+            <div className="mb-3.5 flex items-center gap-2">
+              <IconSparkles className="size-3.5 text-primary" />
+              <p className="text-[10px] font-semibold tracking-[0.14em] text-primary uppercase">
+                Quick Actions
+              </p>
             </div>
-            <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+
+            {/* Action button grid */}
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
               {quickActions.map((action) => (
                 <button
                   key={action.label}
@@ -272,53 +279,61 @@ function Dashboard() {
         </Card>
       </section>
 
-      {/* Focus + Activity */}
-      <section className="grid gap-4 animate-in delay-150 duration-500 fade-in slide-in-from-bottom-2 lg:grid-cols-[1.2fr_0.8fr]">
+      {/* ── Today's Focus + Recent Activity ─────────────────────────── */}
+      <section className="grid animate-in gap-4 delay-150 duration-500 fade-in slide-in-from-bottom-2 lg:grid-cols-[1.2fr_0.8fr]">
         {/* Today's Focus */}
         <Card className="rounded-2xl border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur">
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between gap-2">
+          <CardHeader className="pb-2">
+            <div className="flex items-start justify-between gap-3">
               <div>
-                <CardTitle className="text-sm">Today&apos;s Focus</CardTitle>
-                <CardDescription className="text-[11px]">
-                  High-impact items for current delivery cycle
+                <CardTitle className="text-sm font-semibold">
+                  Today&apos;s Focus
+                </CardTitle>
+                <CardDescription className="mt-0.5 text-[11px]">
+                  High-impact items for the current delivery cycle
                 </CardDescription>
               </div>
-              <Button size="sm" variant="outline" className="gap-1.5 rounded-lg">
+              <Button
+                size="sm"
+                variant="outline"
+                className="shrink-0 gap-1.5 rounded-lg text-xs"
+              >
                 Open Board
-                <IconArrowRight className="size-3.5" />
+                <IconArrowRight className="size-3" />
               </Button>
             </div>
 
-            {/* Progress bar */}
-            <div className="mt-3 flex items-center gap-3">
+            {/* Progress row */}
+            <div className="mt-3.5 flex items-center gap-3">
               <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
                 <div
                   className="h-full rounded-full bg-primary transition-all duration-700 ease-out"
                   style={{ width: `${progressPercent}%` }}
                 />
               </div>
-              <span className="text-[11px] font-medium text-muted-foreground">
-                {completedCount}/{priorities.length}
+              <span className="shrink-0 text-[11px] font-medium text-muted-foreground tabular-nums">
+                {completedCount}&thinsp;/&thinsp;{priorities.length} done
               </span>
             </div>
           </CardHeader>
 
-          <CardContent className="pt-0">
+          <CardContent className="pt-2">
             <div className="space-y-1.5">
               {priorities.map((item, index) => (
                 <button
                   key={item.text}
                   type="button"
                   onClick={() => togglePriority(index)}
-                  className={`group flex w-full items-center gap-3 rounded-xl border border-border/40 bg-background/50 px-3 py-2.5 text-left transition-all duration-300 hover:border-border/70 hover:bg-background/80 ${item.done ? "opacity-60" : ""}`}
+                  className={`group flex w-full items-center gap-3 rounded-xl border border-border/40 bg-background/50 px-3 py-2.5 text-left transition-all duration-200 hover:border-border/70 hover:bg-background/80 ${
+                    item.done ? "opacity-60" : ""
+                  }`}
                 >
                   {/* Checkbox */}
                   <span
-                    className={`inline-flex size-5 shrink-0 items-center justify-center rounded-md border transition-all duration-300 ${
+                    className={`inline-flex size-5 shrink-0 items-center justify-center rounded-md border transition-all duration-200 ${
                       item.done
                         ? "border-primary/30 bg-primary/15 text-primary"
-                        : "border-border/70 bg-background group-hover:border-primary/25"
+                        : "border-border/70 bg-background group-hover:border-primary/30"
                     }`}
                   >
                     {item.done && <IconCircleCheck className="size-3.5" />}
@@ -330,7 +345,11 @@ function Dashboard() {
                   />
 
                   <span
-                    className={`flex-1 text-sm ${item.done ? "text-muted-foreground line-through" : "text-foreground/90"}`}
+                    className={`flex-1 text-[13px] leading-snug ${
+                      item.done
+                        ? "text-muted-foreground line-through"
+                        : "text-foreground/90"
+                    }`}
                   >
                     {item.text}
                   </span>
@@ -342,36 +361,37 @@ function Dashboard() {
 
         {/* Recent Activity */}
         <Card className="rounded-2xl border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm">Recent Activity</CardTitle>
-            <CardDescription className="text-[11px]">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-semibold">
+              Recent Activity
+            </CardTitle>
+            <CardDescription className="mt-0.5 text-[11px]">
               Latest updates across your workspace
             </CardDescription>
           </CardHeader>
 
-          <CardContent className="pt-0">
-            <div className="space-y-0">
+          <CardContent className="pt-2">
+            <div>
               {recentUpdates.map((item, index) => (
-                <div key={item.text}>
-                  <div className="flex items-start gap-3 py-2.5">
-                    {/* Timeline indicator */}
-                    <div className="flex flex-col items-center gap-1 pt-1">
-                      <span
-                        className={`size-2 shrink-0 rounded-full ${activityTypeColors[item.type]} shadow-sm`}
-                      />
-                      {index < recentUpdates.length - 1 && (
-                        <span className="h-6 w-px bg-border/50" />
-                      )}
-                    </div>
+                <div key={item.text} className="flex items-start gap-3 py-2.5">
+                  {/* Timeline column: dot + connector line */}
+                  <div className="flex flex-col items-center self-stretch pt-1">
+                    <span
+                      className={`size-2 shrink-0 rounded-full shadow-sm ${activityTypeColors[item.type]}`}
+                    />
+                    {index < recentUpdates.length - 1 && (
+                      <span className="mt-1 w-px flex-1 rounded-full bg-border/50" />
+                    )}
+                  </div>
 
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[13px] leading-relaxed text-foreground/85">
-                        {item.text}
-                      </p>
-                      <p className="mt-0.5 text-[10px] text-muted-foreground">
-                        {item.time}
-                      </p>
-                    </div>
+                  {/* Content */}
+                  <div className="min-w-0 flex-1 pb-0.5">
+                    <p className="text-[13px] leading-relaxed text-foreground/85">
+                      {item.text}
+                    </p>
+                    <p className="mt-0.5 text-[10px] font-medium text-muted-foreground">
+                      {item.time}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -380,21 +400,23 @@ function Dashboard() {
         </Card>
       </section>
 
-      {/* Project Overview */}
+      {/* ── Project Overview ────────────────────────────────────────── */}
       <section className="animate-in delay-200 duration-500 fade-in slide-in-from-bottom-2">
         <Card className="rounded-2xl border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur">
           <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-3">
               <div>
-                <CardTitle className="text-sm">Project Overview</CardTitle>
-                <CardDescription className="text-[11px]">
-                  Active project health and progress
+                <CardTitle className="text-sm font-semibold">
+                  Project Overview
+                </CardTitle>
+                <CardDescription className="mt-0.5 text-[11px]">
+                  Active project health and delivery progress
                 </CardDescription>
               </div>
               <Button
                 size="sm"
                 variant="ghost"
-                className="gap-1 text-xs text-muted-foreground"
+                className="gap-1 text-xs text-muted-foreground hover:text-foreground"
               >
                 View All
                 <IconArrowUpRight className="size-3" />
@@ -405,29 +427,32 @@ function Dashboard() {
           <CardContent className="pt-0">
             <div className="grid gap-3 sm:grid-cols-3">
               {projectOverview.map((project) => (
-                <Card
+                <div
                   key={project.name}
-                  className="group rounded-xl border-border/50 bg-background/50 p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/20 hover:shadow-sm"
+                  className="group rounded-xl border border-border/50 bg-background/50 p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/20 hover:shadow-sm"
                 >
+                  {/* Project name + status */}
                   <div className="flex items-start justify-between gap-2">
-                    <p className="text-[13px] font-semibold tracking-tight">
+                    <p className="text-[13px] leading-snug font-semibold tracking-tight">
                       {project.name}
                     </p>
                     <Badge
                       variant="outline"
-                      className={`px-1.5 py-0 text-[10px] font-medium ${project.statusColor}`}
+                      className={`shrink-0 px-1.5 py-0 text-[10px] font-semibold ${project.statusColor}`}
                     >
                       {project.status}
                     </Badge>
                   </div>
 
-                  {/* Progress bar */}
-                  <div className="mt-3">
-                    <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                  {/* Progress */}
+                  <div className="mt-3.5">
+                    <div className="mb-1 flex items-center justify-between text-[10px] text-muted-foreground">
                       <span>Progress</span>
-                      <span className="font-medium">{project.progress}%</span>
+                      <span className="font-semibold tabular-nums">
+                        {project.progress}%
+                      </span>
                     </div>
-                    <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-muted">
+                    <div className="h-1.5 overflow-hidden rounded-full bg-muted">
                       <div
                         className="h-full rounded-full bg-primary transition-all duration-700"
                         style={{ width: `${project.progress}%` }}
@@ -435,15 +460,15 @@ function Dashboard() {
                     </div>
                   </div>
 
-                  <Separator className="my-2.5 bg-border/40" />
+                  <Separator className="my-3 bg-border/40" />
 
-                  <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-                    <span>Tasks</span>
-                    <span className="font-medium text-foreground/80">
+                  <div className="flex items-center justify-between text-[11px]">
+                    <span className="text-muted-foreground">Tasks</span>
+                    <span className="font-semibold text-foreground/80 tabular-nums">
                       {project.tasks}
                     </span>
                   </div>
-                </Card>
+                </div>
               ))}
             </div>
           </CardContent>
