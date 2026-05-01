@@ -21,7 +21,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import StatusCallout from "@/components/common/StatusCallout";
 import { useDispatch } from "react-redux";
-import { setCredentials } from "../store/authSlice";
+import { setCredentials } from "../reducer/authSlice";
 
 function RequiredMark() {
   return <span className="ml-1 text-destructive">*</span>;

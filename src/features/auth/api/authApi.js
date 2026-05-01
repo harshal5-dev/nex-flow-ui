@@ -1,6 +1,6 @@
 import { baseQuery } from "@/lib/utils";
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { setAuthError, setCredentials } from "../store/authSlice";
+import { setAuthError, setCredentials } from "../reducer/authSlice";
 
 export const authApi = createApi({
   reducerPath: "authApi",
