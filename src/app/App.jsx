@@ -1,17 +1,17 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import Home from "@/features/home/pages/Home";
-import Signin from "@/modules/auth/signin/Signin";
-import Signup from "@/modules/auth/signup/Signup";
-import ForgotPassword from "@/modules/auth/forgot-password/ForgotPassword";
+import Signin from "@/features/auth/pages/Signin";
+import Signup from "@/features/auth/pages/Signup";
+import ForgotPassword from "@/features/auth/pages/ForgotPassword";
 import AppLayout from "@/pages/app/AppLayout";
 import Dashboard from "@/pages/app/Dashboard";
 import Team from "@/pages/app/Team";
 import Profile from "@/pages/app/Profile";
 import AccessDenied from "@/pages/AccessDenied";
 import NotFound from "@/pages/NotFound";
-import ProtectedRoute from "../modules/auth/ProtectedRoute";
-import PublicOnlyRoute from "../modules/auth/PublicOnlyRoute";
-import { useIsAuthenticatedQuery } from "../api/authApi";
+import ProtectedRoute from "../features/auth/components/ProtectedRoute";
+import PublicOnlyRoute from "../features/auth/components/PublicOnlyRoute";
+import { useIsAuthenticatedQuery } from "../features/auth/api/authApi";
 
 export function App() {
   const cookies = window.document.cookie;

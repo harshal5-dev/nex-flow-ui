@@ -53,8 +53,8 @@ import {
 import { useDispatch } from "react-redux";
 import { useSidebar } from "@/hooks/useSidebar";
 import { cn, getApiErrorDetails } from "@/lib/utils";
-import { authApi, useSignoutMutation } from "@/api/authApi";
-import { clearCredentials } from "@/store/authSlice";
+import { useSignoutMutation } from "@/features/auth/api/authApi";
+import { clearCredentials } from "@/features/auth/store/authSlice";
 
 const navigationItems = [
   {
@@ -360,8 +360,10 @@ function WorkspaceFrame({
 
   return (
     <div className="relative min-h-svh w-full overflow-x-hidden bg-background text-foreground">
-      {/* Background gradient mesh */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_9%_8%,rgba(14,165,233,0.07),transparent_36%),radial-gradient(circle_at_88%_12%,rgba(109,40,217,0.07),transparent_34%),radial-gradient(circle_at_50%_90%,rgba(91,33,182,0.04),transparent_40%)]" />
+      {/* Square grid */}
+      <div className="bg-grid pointer-events-none absolute inset-0" />
+      {/* Subtle violet glow from the top — more muted than the landing page */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_45%_at_50%_-5%,rgba(109,40,217,0.06),transparent)]" />
 
       <div className="relative flex min-h-svh w-full">
         <WorkspaceSidebar
@@ -578,7 +580,6 @@ function AppLayout() {
     try {
       await signout().unwrap();
       dispatch(clearCredentials());
-      dispatch(authApi.util.resetApiState());
       navigate("/signin", { replace: true });
     } catch (error) {
       const { message } = getApiErrorDetails(

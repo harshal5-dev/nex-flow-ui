@@ -7,6 +7,8 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  --grid-line: 0 0 0;
+  --grid-alpha: 0.045;
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
   --card: oklch(1 0 0);
@@ -52,6 +54,8 @@
 }
 
 .dark {
+  --grid-line: 255 255 255;
+  --grid-alpha: 0.04;
   --background: oklch(0.141 0.005 285.823);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.21 0.006 285.885);
@@ -144,6 +148,24 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* ── Square grid background pattern ───────────────────────────────── */
+/* Layered beneath the top-center radial gradient in each layout.      */
+/* --grid-line / --grid-alpha adapt automatically to dark / light mode */
+.bg-grid {
+  background-image:
+    linear-gradient(
+      to right,
+      rgb(var(--grid-line) / var(--grid-alpha)) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      rgb(var(--grid-line) / var(--grid-alpha)) 1px,
+      transparent 1px
+    );
+  background-size: 40px 40px;
 }
 
 @layer base {

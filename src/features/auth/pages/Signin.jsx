@@ -9,33 +9,33 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import SignupForm from "./SignupForm";
+import SigninForm from "../components/SigninForm";
 
-const signupHighlights = [
+const loginHighlights = [
   {
-    title: "Fast Tenant Setup",
+    title: "Team Management",
     description:
-      "Create isolated workspaces and organization context in minutes.",
+      "View and manage workspace members with Admin, Manager, and Developer roles.",
   },
   {
-    title: "Team and Role Mapping",
+    title: "Project Tracking",
     description:
-      "Invite members and set permissions for structured collaboration.",
+      "Monitor project health and progress from kickoff to completion.",
   },
   {
-    title: "Execution-Ready Workflow",
+    title: "Task Workflows",
     description:
-      "Start tracking projects and task progress immediately after signup.",
+      "Assign, prioritize, and move tasks through clear delivery stages.",
   },
 ];
 
-const Signup = () => {
+const Signin = () => {
   return (
     <AuthPageShell
-      badge="Create Workspace"
-      title="Launch your multi-tenant project management workspace with confidence."
-      description="Create your account and start orchestrating projects and tasks from a modern, scalable platform."
-      highlights={signupHighlights}
+      badge="Welcome Back"
+      title="Sign in to manage your team, projects & tasks."
+      description="Access your workspace to track project progress, assign tasks, and keep your team aligned — all from one place."
+      highlights={loginHighlights}
     >
       <Card className="w-full max-w-md animate-in rounded-2xl border-border/50 bg-card/90 p-0 shadow-xl backdrop-blur-sm duration-500 fade-in slide-in-from-bottom-3">
         {/* Top gradient accent line */}
@@ -43,25 +43,25 @@ const Signup = () => {
 
         <CardHeader className="px-6 pt-6 pb-4">
           <CardTitle className="text-2xl font-bold tracking-tight">
-            Create workspace
+            Welcome back
           </CardTitle>
           <CardDescription className="text-sm text-muted-foreground">
-            Set up your account and start your first workspace.
+            Sign in to your Next Flow workspace.
           </CardDescription>
         </CardHeader>
 
         <CardContent className="px-6 pb-4">
-          <SignupForm />
+          <SigninForm />
         </CardContent>
 
         <CardFooter className="justify-center px-6 pb-6">
           <p className="text-sm text-muted-foreground">
-            Already have an account?{" "}
+            New to Next Flow?{" "}
             <Link
-              to="/signin"
+              to="/signup"
               className="font-semibold text-primary underline-offset-4 transition-colors hover:underline"
             >
-              Sign in
+              Create an account
             </Link>
           </p>
         </CardFooter>
@@ -70,4 +70,4 @@ const Signup = () => {
   );
 };
 
-export default Signup;
+export default Signin;

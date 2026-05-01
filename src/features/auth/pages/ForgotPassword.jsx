@@ -9,23 +9,23 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import ForgotPasswordForm from "./ForgotPasswordForm";
+import ForgotPasswordForm from "../components/ForgotPasswordForm";
 
 const forgotPasswordHighlights = [
   {
-    title: "Secure Recovery",
+    title: "Email Verification",
     description:
-      "OTP-based verification keeps your account recovery flow protected.",
+      "A 6-digit OTP is sent to your registered email address instantly.",
   },
   {
-    title: "Fast Verification",
+    title: "Secure Reset",
     description:
-      "Receive code on your registered email and confirm in seconds.",
+      "Verify your identity with the OTP and set a new password securely.",
   },
   {
-    title: "Back to Productivity",
+    title: "Back in Seconds",
     description:
-      "Reset password and return to project delivery without friction.",
+      "Regain access and return to managing your team and projects right away.",
   },
 ];
 
@@ -33,8 +33,8 @@ function ForgotPassword() {
   return (
     <AuthPageShell
       badge="Account Recovery"
-      title="Forgot your password? Recover access using email OTP verification."
-      description="Enter your email to receive a one-time password, verify ownership, and reset credentials securely."
+      title="Recover your account with secure OTP verification."
+      description="Enter your registered email to receive a one-time code and reset your password in seconds."
       highlights={forgotPasswordHighlights}
     >
       <Card className="w-full max-w-md animate-in rounded-2xl border-border/50 bg-card/90 p-0 shadow-xl backdrop-blur-sm duration-500 fade-in slide-in-from-bottom-3">
