@@ -21,12 +21,12 @@ import {
 } from "@tabler/icons-react";
 
 import LogoBrand from "@/components/common/LogoBrand";
-import ThemeToggleButton from "@/components/common/theme-toggle-button";
+import ThemeToggleButton from "@/components/common/ThemeToggleButton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import StatusCallout from "@/components/ui/status-callout";
+import StatusCallout from "@/components/common/StatusCallout";
 import {
   DropdownMenu,
   DropdownMenuContent,

@@ -19,7 +19,7 @@ import { useNavigate } from "react-router-dom";
 import { useSigninMutation } from "../api/authApi";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import StatusCallout from "@/components/ui/status-callout";
+import StatusCallout from "@/components/common/StatusCallout";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../store/authSlice";
 

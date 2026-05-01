@@ -3,7 +3,7 @@ import { IconArrowUpRight } from "@tabler/icons-react";
 
 import AppLayout from "@/app/layouts/AppLayout";
 import LogoBrand from "@/components/common/LogoBrand";
-import ThemeToggleButton from "@/components/common/theme-toggle-button";
+import ThemeToggleButton from "@/components/common/ThemeToggleButton";
 
 /* ── Stats shown in every left panel ──────────────────────────────── */
 const PANEL_STATS = [

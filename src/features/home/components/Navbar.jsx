@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { IconArrowRight } from "@tabler/icons-react";
 
-import ThemeToggleButton from "@/components/common/theme-toggle-button";
+import ThemeToggleButton from "@/components/common/ThemeToggleButton";
 import LogoBrand from "@/components/common/LogoBrand";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";

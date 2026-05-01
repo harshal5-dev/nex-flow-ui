@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-import AuthPageShell from "@/components/common/auth-page-shell";
+import AuthPageShell from "@/components/common/AuthPageShell";
 import {
   Card,
   CardContent,

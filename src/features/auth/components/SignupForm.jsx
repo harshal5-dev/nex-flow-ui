@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useSignupMutation } from "../api/authApi";
-import StatusCallout from "@/components/ui/status-callout";
+import StatusCallout from "@/components/common/StatusCallout";
 
 function RequiredMark() {
   return <span className="ml-1 text-destructive">*</span>;

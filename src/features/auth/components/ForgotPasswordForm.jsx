@@ -18,7 +18,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import StatusCallout from "@/components/ui/status-callout";
+import StatusCallout from "@/components/common/StatusCallout";
 
 const OTP_RESEND_SECONDS = 30;
 
@@ -334,7 +334,12 @@ function ForgotPasswordForm() {
         </fieldset>
 
         <div className="grid gap-2">
-          <Button type="submit" size="lg" className="w-full" disabled={isSubmitting}>
+          <Button
+            type="submit"
+            size="lg"
+            className="w-full"
+            disabled={isSubmitting}
+          >
             {isSubmitting ? (
               <>
                 <IconLoader className="animate-spin" />
