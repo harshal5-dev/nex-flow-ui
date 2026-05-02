@@ -8,7 +8,7 @@ import {
   PublicOnlyRoute,
   useIsAuthenticatedQuery,
 } from "@/features/auth";
-import AppLayout from "@/pages/app/AppLayout";
+import DashboardLayout from "@/app/layouts/DashboardLayout";
 import Dashboard from "@/pages/app/Dashboard";
 import Team from "@/pages/app/Team";
 import Profile from "@/pages/app/Profile";
@@ -30,7 +30,7 @@ export function App() {
 
       {/* Auth-protected Routes */}
       <Route element={<ProtectedRoute />}>
-        <Route path="/app" element={<AppLayout />}>
+        <Route path="/app" element={<DashboardLayout />}>
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="projects" element={<Dashboard />} />

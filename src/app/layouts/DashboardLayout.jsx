@@ -1,5 +1,90 @@
-const DashboardLayout = ({ children }) => {
-  return <div>{children}</div>;
+import { useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
+import {
+  IconChecklist,
+  IconFolders,
+  IconLayoutDashboard,
+  IconUserCircle,
+  IconUsers,
+} from "@tabler/icons-react";
+
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { useSignoutMutation } from "@/features/auth/api/authApi";
+import SidebarFrame from "@/components/common/SidebarFrame";
+
+const navigationItems = [
+  {
+    title: "Dashboard",
+    caption: "Overview",
+    path: "/app/dashboard",
+    Icon: IconLayoutDashboard,
+  },
+  {
+    title: "Projects",
+    caption: "Roadmaps",
+    path: "/app/projects",
+    Icon: IconFolders,
+  },
+  {
+    title: "Tasks",
+    caption: "Execution",
+    path: "/app/tasks",
+    Icon: IconChecklist,
+  },
+  {
+    title: "Team",
+    caption: "People",
+    path: "/app/team",
+    Icon: IconUsers,
+  },
+  {
+    title: "Profile",
+    caption: "Settings",
+    path: "/app/profile",
+    Icon: IconUserCircle,
+  },
+];
+
+const DashboardLayout = () => {
+  const location = useLocation();
+  const [signout, { isLoading: isSignoutLoading }] = useSignoutMutation();
+  const [signoutError, setSignoutError] = useState("");
+
+  const pageMeta = useMemo(() => {
+    const activePage = navigationItems.find((item) =>
+      location.pathname.startsWith(item.path)
+    );
+
+    if (activePage) {
+      return {
+        title: activePage.title,
+        description: activePage.caption,
+      };
+    }
+
+    return {
+      title: "Workspace",
+      description: "Operations",
+    };
+  }, [location.pathname]);
+
+  const dismissSignoutError = () => {
+    setSignoutError("");
+  };
+
+  return (
+    <SidebarProvider defaultOpen>
+      <SidebarFrame
+        pageMeta={pageMeta}
+        setSignoutError={setSignoutError}
+        isSignoutLoading={isSignoutLoading}
+        signoutError={signoutError}
+        onDismissSignoutError={dismissSignoutError}
+        signout={signout}
+        navigationItems={navigationItems}
+      />
+    </SidebarProvider>
+  );
 };
 
 export default DashboardLayout;

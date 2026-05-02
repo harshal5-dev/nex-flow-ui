@@ -3,8 +3,12 @@ import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicOnlyRoute from "./components/PublicOnlyRoute";
-import authReducer from "./reducer/authSlice";
-import { authApi, useIsAuthenticatedQuery } from "./api/authApi";
+import authReducer, { clearCredentials } from "./reducer/authSlice";
+import {
+  authApi,
+  useIsAuthenticatedQuery,
+  useSignoutMutation,
+} from "./api/authApi";
 
 export {
   Signin,
@@ -15,4 +19,6 @@ export {
   authReducer,
   authApi,
   useIsAuthenticatedQuery,
+  useSignoutMutation,
+  clearCredentials,
 };

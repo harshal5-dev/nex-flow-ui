@@ -159,7 +159,7 @@ function SidebarTrigger({ className, onClick, ...props }) {
   return (
     <Button
       type="button"
-      variant="outline"
+      variant="ghost"
       size="icon-sm"
       className={cn("shrink-0", className)}
       onClick={(event) => {
