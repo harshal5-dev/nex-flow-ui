@@ -3,8 +3,8 @@ import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import AppSidebar from "./AppSidebar";
 import { SidebarInset } from "../ui/sidebar";
-import AppHeader from "./AppHeader";
-import StatusCallout from "./StatusCallout";
+import AppHeader from "../common/AppHeader";
+import StatusCallout from "../common/StatusCallout";
 import { Card } from "../ui/card";
 import { IconLoader } from "@tabler/icons-react";
 

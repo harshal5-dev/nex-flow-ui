@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { SidebarHeader } from "../ui/sidebar";
-import LogoBrand from "./LogoBrand";
+import LogoBrand from "../common/LogoBrand";
 import { cn } from "@/lib/utils";
 
 const AppSidebarHeader = ({ isCollapsed, onNavigate }) => {

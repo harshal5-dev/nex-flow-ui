@@ -10,7 +10,7 @@ import {
 
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { useSignoutMutation } from "@/features/auth/api/authApi";
-import SidebarFrame from "@/components/common/SidebarFrame";
+import SidebarFrame from "@/components/sidebar/SidebarFrame";
 
 const navigationItems = [
   {

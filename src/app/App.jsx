@@ -9,11 +9,11 @@ import {
   useIsAuthenticatedQuery,
 } from "@/features/auth";
 import DashboardLayout from "@/app/layouts/DashboardLayout";
-import Dashboard from "@/pages/app/Dashboard";
-import Team from "@/pages/app/Team";
-import Profile from "@/pages/app/Profile";
-import AccessDenied from "@/pages/AccessDenied";
-import NotFound from "@/pages/NotFound";
+import Dashboard from "@/features/dashboard/Dashboard";
+import Team from "@/features/user/Team";
+import Profile from "@/features/user/Profile";
+import AccessDenied from "@/app/pages/AccessDenied";
+import NotFound from "@/app/pages/NotFound";
 
 export function App() {
   useIsAuthenticatedQuery(); // Trigger auth check on app load
