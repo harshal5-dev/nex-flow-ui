@@ -19,6 +19,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import StatusCallout from "@/components/common/StatusCallout";
+import {
+  useForgotPasswordMutation,
+  useVerifyResetPasswordMutation,
+} from "../api/authApi";
 
 const OTP_RESEND_SECONDS = 30;
 
@@ -48,10 +52,13 @@ function maskEmail(emailId) {
 function ForgotPasswordForm() {
   const navigate = useNavigate();
   const [step, setStep] = useState("email");
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [resendIn, setResendIn] = useState(0);
   const [maskedEmail, setMaskedEmail] = useState("");
   const [status, setStatus] = useState(null);
+  const [forgotPassword, { isLoading }] = useForgotPasswordMutation();
+  const [verifyResetPassword, { isLoading: isVerifying }] =
+    useVerifyResetPasswordMutation();
+  const isSubmitting = isLoading || isVerifying;
 
   const form = useForm({
     mode: "onBlur",
@@ -84,23 +91,31 @@ function ForgotPasswordForm() {
   const handleSendOtp = async ({ emailId }) => {
     form.clearErrors();
     setStatus(null);
-    setIsSubmitting(true);
-
-    await delay(650);
-
-    setMaskedEmail(maskEmail(emailId));
-    setStep("verify");
-    setResendIn(OTP_RESEND_SECONDS);
-    setStatus({
-      variant: "success",
-      title: "OTP sent",
-      message: `A 6-digit verification code was sent to ${maskEmail(emailId)}.`,
-    });
-
-    setIsSubmitting(false);
+    try {
+      await forgotPassword({ emailId }).unwrap();
+      setMaskedEmail(maskEmail(emailId));
+      setStep("verify");
+      setResendIn(OTP_RESEND_SECONDS);
+      setStatus({
+        variant: "success",
+        title: "OTP sent",
+        message: `A 6-digit verification code was sent to ${maskEmail(emailId)}.`,
+      });
+    } catch (error) {
+      setStatus({
+        variant: "error",
+        title: "Error",
+        message: error?.message || "Failed to send OTP. Please try again.",
+      });
+    }
   };
 
-  const handleVerifyOtp = async ({ otp, password, confirmPassword }) => {
+  const handleVerifyOtp = async ({
+    otp,
+    password,
+    confirmPassword,
+    emailId,
+  }) => {
     form.clearErrors();
     setStatus(null);
 
@@ -120,21 +135,24 @@ function ForgotPasswordForm() {
       return;
     }
 
-    setIsSubmitting(true);
-    await delay(750);
-
-    setStatus({
-      variant: "success",
-      title: "Password updated",
-      message: "Your password was reset successfully.",
-      details: "Redirecting to sign in...",
-    });
-
-    setTimeout(() => {
-      navigate("/signin", { replace: true });
-    }, 900);
-
-    setIsSubmitting(false);
+    try {
+      await verifyResetPassword({ otp, password, emailId });
+      setStatus({
+        variant: "success",
+        title: "Password updated",
+        message: "Your password was reset successfully.",
+      });
+      setTimeout(() => {
+        navigate("/signin", { replace: true });
+      }, 900);
+    } catch (error) {
+      setStatus({
+        variant: "error",
+        title: "Error",
+        message:
+          error?.message || "Failed to reset password. Please try again.",
+      });
+    }
   };
 
   const handleSubmit = async (values) => {
@@ -151,7 +169,6 @@ function ForgotPasswordForm() {
       return;
     }
 
-    setIsSubmitting(true);
     await delay(500);
     setResendIn(OTP_RESEND_SECONDS);
     setStatus({
@@ -159,7 +176,6 @@ function ForgotPasswordForm() {
       title: "OTP resent",
       message: `A new verification code was sent to ${maskedEmail}.`,
     });
-    setIsSubmitting(false);
   };
 
   const handleChangeEmail = () => {

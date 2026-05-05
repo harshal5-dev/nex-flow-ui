@@ -6,7 +6,7 @@ import {
   ForgotPassword,
   ProtectedRoute,
   PublicOnlyRoute,
-  useIsAuthenticatedQuery,
+  useGetUserProfileQuery,
 } from "@/features/auth";
 import DashboardLayout from "@/app/layouts/DashboardLayout";
 import Dashboard from "@/features/dashboard/Dashboard";
@@ -14,9 +14,15 @@ import Team from "@/features/user/Team";
 import Profile from "@/features/user/Profile";
 import AccessDenied from "@/app/pages/AccessDenied";
 import NotFound from "@/app/pages/NotFound";
+import LoadingScreen from "@/components/common/LoadingScreen";
 
 export function App() {
-  useIsAuthenticatedQuery(); // Trigger auth check on app load
+  const { isLoading } = useGetUserProfileQuery();
+
+  if (isLoading) {
+    return <LoadingScreen message="Loading..." />;
+  }
+
   return (
     <Routes>
       {/* Public Routes */}

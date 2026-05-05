@@ -44,7 +44,6 @@ const rawBaseQuery = fetchBaseQuery({
 
 export const baseQuery = async (args, api, extraOptions) => {
   let result = await rawBaseQuery(args, api, extraOptions);
-  console.log("BaseQuery - Raw result:", result);
 
   // Normalize error shape
   if (result?.error) {
@@ -61,4 +60,34 @@ export const baseQuery = async (args, api, extraOptions) => {
   }
 
   return result;
+};
+
+export const getUserOrganization = (user) => {
+  if (!user) return "Organization";
+  const tenantInfo = user.tenant;
+  const organizationName = tenantInfo.name;
+  return organizationName;
+};
+
+export const getUserPrimaryRole = (user) => {
+  if (!user) return "User";
+  const firstRole = user.roles[0].name;
+  return firstRole;
+};
+
+export const getUserFullName = (user) => {
+  if (!user) return "User";
+  const fullName = `${user.firstName} ${user.lastName}`;
+  return fullName;
+};
+
+export const getUserInitials = (user) => {
+  const fullName = getUserFullName(user);
+  return fullName
+    .split(" ")
+    .filter(Boolean)
+    .map((part) => part[0] || "")
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
 };

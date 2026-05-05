@@ -1,5 +1,13 @@
 import { useState } from "react";
-import { cn } from "@/lib/utils";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
+import {
+  cn,
+  getUserFullName,
+  getUserInitials,
+  getUserPrimaryRole,
+} from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,15 +23,13 @@ import {
   IconLogout2,
   IconUserCircle,
 } from "@tabler/icons-react";
-import { clearCredentials } from "@/features/auth";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-
-const profileBrand = {
-  name: "Shraddha Dev",
-  role: "UI/UX Engineer",
-  email: "hello@shraddhadev.com",
-};
+import {
+  clearCredentials,
+  selectAuthError,
+  selectCurrentUser,
+  selectIsAuthLoading,
+} from "@/features/auth";
+import { Skeleton } from "../ui/skeleton";
 
 const AppSidebarFooter = ({
   isCollapsed,
@@ -34,15 +40,14 @@ const AppSidebarFooter = ({
   isSignoutLoading,
 }) => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const user = useSelector(selectCurrentUser);
+  const isProfileLoading = useSelector(selectIsAuthLoading);
+  const authError = useSelector(selectAuthError);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const profileInitials = profileBrand.name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join("")
-    .toUpperCase();
+  const profileInitials = getUserInitials(user);
+  const profileName = getUserFullName(user);
+  const profileRole = getUserPrimaryRole(user);
 
   const handleSignout = async () => {
     if (isSignoutLoading) {
@@ -68,6 +73,16 @@ const AppSidebarFooter = ({
     }
   };
 
+  if (isProfileLoading) {
+    return (
+      <Skeleton className="h-14 w-full rounded-xl bg-slate-200 dark:bg-slate-800" />
+    );
+  }
+
+  if (authError) {
+    return <div>{authError}</div>;
+  }
+
   return (
     <SidebarFooter>
       <DropdownMenu onOpenChange={setIsUserMenuOpen}>
@@ -87,10 +102,10 @@ const AppSidebarFooter = ({
 
             <span className={cn("min-w-0 flex-1", isCollapsed && "lg:hidden")}>
               <span className="block truncate text-xs font-semibold text-sidebar-foreground">
-                {profileBrand.name}
+                {profileName}
               </span>
               <span className="block truncate text-[11px] text-sidebar-foreground/55">
-                {profileBrand.role}
+                {profileRole}
               </span>
             </span>
 
@@ -118,11 +133,9 @@ const AppSidebarFooter = ({
                 {profileInitials}
               </span>
               <div className="min-w-0">
-                <p className="truncate text-xs font-semibold">
-                  {profileBrand.name}
-                </p>
+                <p className="truncate text-xs font-semibold">{profileName}</p>
                 <p className="truncate text-[11px] text-muted-foreground">
-                  {profileBrand.email}
+                  {user.emailId}
                 </p>
               </div>
             </div>

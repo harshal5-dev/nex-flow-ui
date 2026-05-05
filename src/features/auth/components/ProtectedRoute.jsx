@@ -16,11 +16,10 @@ const ProtectedRoute = () => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const isLoading = useSelector(selectIsAuthLoading);
 
-  console.log("ProtectedRoute - isAuthenticated:", isAuthenticated);
-
   if (isLoading) {
     return <LoadingScreen message="Verifying access..." />;
   }
+
   if (!isAuthenticated) {
     return (
       <Navigate

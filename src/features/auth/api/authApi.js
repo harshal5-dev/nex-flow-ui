@@ -23,16 +23,16 @@ export const authApi = createApi({
       }),
     }),
 
-    isAuthenticated: builder.query({
+    getUserProfile: builder.query({
       query: () => ({
-        url: "/auth/is-authenticated",
+        url: "/auth/me",
         method: "GET",
       }),
       providesTags: ["Auth"],
+      transformResponse: (response) => response.data,
       async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          console.log("isAuthenticated - API response:", data);
           dispatch(setCredentials(data));
         } catch {
           dispatch(
@@ -43,10 +43,18 @@ export const authApi = createApi({
     }),
 
     forgotPassword: builder.mutation({
-      query: (email) => ({
+      query: ({ emailId }) => ({
         url: "/auth/forgot-password",
         method: "POST",
-        body: { emailId: email },
+        body: { emailId },
+      }),
+    }),
+
+    verifyResetPassword: builder.mutation({
+      query: (resetPasswordData) => ({
+        url: "/auth/reset-password",
+        method: "POST",
+        body: resetPasswordData,
       }),
     }),
 
@@ -62,7 +70,8 @@ export const authApi = createApi({
 export const {
   useSignupMutation,
   useSigninMutation,
-  useIsAuthenticatedQuery,
   useForgotPasswordMutation,
+  useVerifyResetPasswordMutation,
   useSignoutMutation,
+  useGetUserProfileQuery,
 } = authApi;

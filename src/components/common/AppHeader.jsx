@@ -9,8 +9,14 @@ import {
 import { Separator } from "../ui/separator";
 import { SidebarTrigger } from "../ui/sidebar";
 import ThemeToggleButton from "./ThemeToggleButton";
+import { useSelector } from "react-redux";
+import { selectCurrentUser } from "@/features/auth";
+import { getUserOrganization } from "@/lib/utils";
 
 const AppHeader = ({ pageMeta }) => {
+  const user = useSelector(selectCurrentUser);
+  const organization = getUserOrganization(user);
+
   return (
     <header className="shrink-0 border-b border-border/50 bg-linear-to-r from-background via-background to-primary/10 backdrop-blur-sm transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-14">
       <div className="flex h-15 items-center justify-between gap-2 px-3 sm:gap-3 sm:px-4">
@@ -47,7 +53,7 @@ const AppHeader = ({ pageMeta }) => {
           {/* Organization Badge */}
           <div className="hidden min-w-0 items-center gap-2 rounded-lg bg-muted/50 px-3 py-1.5 sm:flex">
             <IconBuilding className="size-4 shrink-0 text-primary" />
-            <span className="truncate text-sm font-medium">{"Team Nest"}</span>
+            <span className="truncate text-sm font-medium">{organization}</span>
           </div>
 
           <div className="hidden h-6 w-px bg-border/30 sm:block" />
