@@ -4,6 +4,7 @@ import { IconChevronLeft, IconMenu2, IconX } from "@tabler/icons-react";
 import { SidebarContext } from "@/components/ui/sidebar-context";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { Slot } from "@radix-ui/react-slot";
 
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(() => {
@@ -294,18 +295,20 @@ function SidebarMenuItem({ className, ...props }) {
   );
 }
 
-function SidebarMenuButton({ className, isActive = false, ...props }) {
+function SidebarMenuButton({ className, asChild = false, isActive = false, ...props }) {
   const { isCollapsed } = useSidebarContext();
+  const Comp = asChild ? Slot : "button";
 
   return (
-    <button
+    <Comp
       data-slot="sidebar-menu-button"
       data-active={isActive ? "true" : "false"}
       className={cn(
-        "flex w-full items-center gap-2.5 rounded-md border px-2.5 py-2 text-left text-sm font-medium transition-all duration-300 outline-none focus-visible:ring-3 focus-visible:ring-sidebar-ring/40",
+        "relative flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2.5 text-left text-sm font-medium transition-all duration-500 outline-none focus-visible:ring-3 focus-visible:ring-sidebar-ring/40 hover:-translate-y-px",
         isActive
-          ? "border-sidebar-primary/30 bg-sidebar-primary/15 text-sidebar-primary"
-          : "border-transparent text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+          ? "bg-primary/10 text-primary shadow-[0_4px_12px_-4px_rgba(var(--primary-rgb),0.3)] dark:bg-primary/20 dark:text-primary-foreground dark:shadow-none " +
+            (!isCollapsed ? "before:absolute before:left-0 before:top-1/2 before:h-2/3 before:w-1 before:-translate-y-1/2 before:rounded-r-md before:bg-primary before:shadow-[0_0_8px_var(--primary)] dark:before:shadow-none before:transition-all before:duration-500" : "")
+          : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
         isCollapsed && "lg:justify-center lg:px-2",
         className
       )}

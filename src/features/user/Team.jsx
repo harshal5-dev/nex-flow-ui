@@ -129,14 +129,14 @@ const INITIAL_USERS = [
 
 const STATUS_STYLES = {
   Active:
-    "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-  Busy: "border-amber-500/30  bg-amber-500/10  text-amber-600  dark:text-amber-400",
+    "border-success/30 bg-success/10 text-success",
+  Busy: "border-warning/30  bg-warning/10  text-warning",
   Offline: "border-border/60     bg-muted/50       text-muted-foreground",
 };
 
 const STATUS_DOT = {
-  Active: "bg-emerald-500",
-  Busy: "bg-amber-500",
+  Active: "bg-success",
+  Busy: "bg-warning",
   Offline: "bg-muted-foreground/40",
 };
 
@@ -153,47 +153,47 @@ const AVATAR_GRADIENTS = [
 
 const ROLE_COLORS = [
   {
-    icon: "text-violet-500",
-    bg: "border-violet-500/20 bg-violet-500/10",
+    icon: "text-primary",
+    bg: "border-primary/20 bg-primary/10",
   },
   {
-    icon: "text-blue-500",
-    bg: "border-blue-500/20   bg-blue-500/10",
+    icon: "text-info",
+    bg: "border-info/20 bg-info/10",
   },
   {
-    icon: "text-emerald-500",
-    bg: "border-emerald-500/20 bg-emerald-500/10",
+    icon: "text-success",
+    bg: "border-success/20 bg-success/10",
   },
   {
-    icon: "text-rose-500",
-    bg: "border-rose-500/20   bg-rose-500/10",
+    icon: "text-destructive",
+    bg: "border-destructive/20 bg-destructive/10",
   },
   {
-    icon: "text-amber-500",
-    bg: "border-amber-500/20  bg-amber-500/10",
+    icon: "text-warning",
+    bg: "border-warning/20 bg-warning/10",
   },
   {
-    icon: "text-sky-500",
-    bg: "border-sky-500/20    bg-sky-500/10",
+    icon: "text-pending",
+    bg: "border-pending/20 bg-pending/10",
   },
 ];
 
 const PERMISSION_STYLES = {
-  manage_users: "bg-violet-500/10 text-violet-600",
-  manage_roles: "bg-purple-500/10 text-purple-600",
-  view_reports: "bg-blue-500/10 text-blue-600",
-  assign_tasks: "bg-amber-500/10 text-amber-600",
-  manage_projects: "bg-emerald-500/10 text-emerald-600",
-  update_tasks: "bg-cyan-500/10 text-cyan-600",
-  view_projects: "bg-sky-500/10 text-sky-600",
-  comment_tasks: "bg-rose-500/10 text-rose-600",
+  manage_users: "bg-primary/10 text-primary",
+  manage_roles: "bg-info/10 text-info",
+  view_reports: "bg-success/10 text-success",
+  assign_tasks: "bg-warning/10 text-warning",
+  manage_projects: "bg-pending/10 text-pending",
+  update_tasks: "bg-destructive/10 text-destructive",
+  view_projects: "bg-primary/10 text-primary",
+  comment_tasks: "bg-info/10 text-info",
 };
 
 const STAT_COLORS = [
-  { color: "text-blue-500", bg: "border-blue-500/20    bg-blue-500/8" },
-  { color: "text-violet-500", bg: "border-violet-500/20  bg-violet-500/8" },
-  { color: "text-emerald-500", bg: "border-emerald-500/20 bg-emerald-500/8" },
-  { color: "text-amber-500", bg: "border-amber-500/20   bg-amber-500/8" },
+  { color: "text-info", bg: "border-info/20 bg-info/8" },
+  { color: "text-primary", bg: "border-primary/20 bg-primary/8" },
+  { color: "text-success", bg: "border-success/20 bg-success/8" },
+  { color: "text-warning", bg: "border-warning/20 bg-warning/8" },
 ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────

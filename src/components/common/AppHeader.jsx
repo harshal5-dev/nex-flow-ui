@@ -1,4 +1,4 @@
-import { IconArrowBadgeRightFilled, IconBuilding } from "@tabler/icons-react";
+import { IconChevronRight, IconBuildingSkyscraper } from "@tabler/icons-react";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,6 +8,7 @@ import {
 } from "../ui/breadcrumb";
 import { Separator } from "../ui/separator";
 import { SidebarTrigger } from "../ui/sidebar";
+import { Badge } from "../ui/badge";
 import ThemeToggleButton from "./ThemeToggleButton";
 import { useSelector } from "react-redux";
 import { selectCurrentUser } from "@/features/auth";
@@ -18,47 +19,59 @@ const AppHeader = ({ pageMeta }) => {
   const organization = getUserOrganization(user);
 
   return (
-    <header className="shrink-0 border-b border-border/50 bg-linear-to-r from-background via-background to-primary/10 backdrop-blur-sm transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-14">
-      <div className="flex h-15 items-center justify-between gap-2 px-3 sm:gap-3 sm:px-4">
-        {/* Left section */}
-        <div className="flex h-full min-w-0 items-center gap-2 sm:gap-3">
-          <SidebarTrigger className="size-9 shrink-0 transition-colors" />
+    <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between border-b border-border/40 bg-sidebar px-3 backdrop-blur transition-[width,height] ease-linear supports-backdrop-filter:bg-sidebar sm:h-16 sm:px-6">
+      {/* Left section */}
+      <div className="flex min-w-0 items-center gap-2 sm:gap-4">
+        <SidebarTrigger className="size-9 shrink-0" />
 
-          <Separator
-            orientation="vertical"
-            className="hidden h-5 bg-border/75 md:block"
-          />
+        <Separator
+          orientation="vertical"
+          className="hidden h-4 bg-border/60 md:block"
+        />
 
-          <div className="relative min-w-0 flex-1">
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbPage>{pageMeta.title}</BreadcrumbPage>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block">
-                  <IconArrowBadgeRightFilled />
+        <Breadcrumb className="hidden min-w-0 md:flex">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbPage className="font-semibold text-foreground">
+                {pageMeta.title}
+              </BreadcrumbPage>
+            </BreadcrumbItem>
+
+            {pageMeta.description && (
+              <>
+                <BreadcrumbSeparator>
+                  <IconChevronRight className="size-3.5 text-muted-foreground/70" />
                 </BreadcrumbSeparator>
                 <BreadcrumbItem>
-                  <BreadcrumbPage className="hidden md:block">
+                  <BreadcrumbPage className="font-normal text-muted-foreground">
                     {pageMeta.description}
                   </BreadcrumbPage>
                 </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-        </div>
+              </>
+            )}
+          </BreadcrumbList>
+        </Breadcrumb>
+      </div>
 
-        {/* Right section */}
-        <div className="flex h-full items-center gap-2">
-          {/* Organization Badge */}
-          <div className="hidden min-w-0 items-center gap-2 rounded-lg bg-muted/50 px-3 py-1.5 sm:flex">
-            <IconBuilding className="size-4 shrink-0 text-primary" />
-            <span className="truncate text-sm font-medium">{organization}</span>
-          </div>
+      {/* Right section */}
+      <div className="flex shrink-0 items-center gap-3">
+        {/* Organization Badge */}
+        <Badge
+          variant="secondary"
+          className="hidden items-center gap-1.5 border border-border/30 bg-secondary/40 px-3 py-1 text-secondary-foreground shadow-sm transition-colors hover:bg-secondary/60 sm:flex"
+        >
+          <IconBuildingSkyscraper className="size-3.5 text-primary" />
+          <span className="max-w-[150px] truncate font-medium">
+            {organization}
+          </span>
+        </Badge>
 
-          <div className="hidden h-6 w-px bg-border/30 sm:block" />
-          <ThemeToggleButton />
-        </div>
+        <Separator
+          orientation="vertical"
+          className="hidden h-5 bg-border/40 sm:block"
+        />
+
+        <ThemeToggleButton />
       </div>
     </header>
   );

@@ -71,22 +71,21 @@ const Hero = () => {
               and MongoDB.
             </p>
 
-            {/* Feature pills */}
             <div className="mt-5 flex flex-wrap gap-2">
               <Badge variant="outline" className="gap-1.5 px-3 py-1.5">
-                <IconUsers className="size-3.5 text-violet-500" />
+                <IconUsers className="size-3.5 text-primary" />
                 Team Management
               </Badge>
               <Badge variant="outline" className="gap-1.5 px-3 py-1.5">
-                <IconLayoutDashboard className="size-3.5 text-blue-500" />
+                <IconLayoutDashboard className="size-3.5 text-info" />
                 Project Tracking
               </Badge>
               <Badge variant="outline" className="gap-1.5 px-3 py-1.5">
-                <IconChecklist className="size-3.5 text-emerald-500" />
+                <IconChecklist className="size-3.5 text-success" />
                 Task Workflows
               </Badge>
               <Badge variant="outline" className="gap-1.5 px-3 py-1.5">
-                <IconShieldCheck className="size-3.5 text-amber-500" />
+                <IconShieldCheck className="size-3.5 text-warning" />
                 Role-based Access
               </Badge>
             </div>

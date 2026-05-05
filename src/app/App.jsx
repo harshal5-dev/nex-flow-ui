@@ -12,6 +12,8 @@ import {
 import DashboardLayout from "@/app/layouts/DashboardLayout";
 import Dashboard from "@/features/dashboard/Dashboard";
 import Team from "@/features/user/Team";
+import Tasks from "@/features/tasks/Tasks";
+import Projects from "@/features/projects/Projects";
 import AccessDenied from "@/app/pages/AccessDenied";
 import NotFound from "@/app/pages/NotFound";
 import LoadingScreen from "@/components/common/LoadingScreen";
@@ -39,8 +41,8 @@ export function App() {
         <Route path="/app" element={<DashboardLayout />}>
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
-          <Route path="projects" element={<Dashboard />} />
-          <Route path="tasks" element={<Dashboard />} />
+          <Route path="projects" element={<Projects />} />
+          <Route path="tasks" element={<Tasks />} />
           <Route path="team" element={<Team />} />
           <Route path="profile" element={<Profile />} />
         </Route>

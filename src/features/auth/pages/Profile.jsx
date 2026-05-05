@@ -31,22 +31,22 @@ const accountInfo = (organizationName, roleName, createdAt) => [
     label: "Organization",
     value: organizationName,
     Icon: IconBuildingSkyscraper,
-    color: "text-violet-500",
-    bg: "border-violet-500/20 bg-violet-500/8",
+    color: "text-primary",
+    bg: "border-primary/20 bg-primary/8",
   },
   {
     label: "Role",
     value: roleName,
     Icon: IconShieldCheck,
-    color: "text-blue-500",
-    bg: "border-blue-500/20 bg-blue-500/8",
+    color: "text-info",
+    bg: "border-info/20 bg-info/8",
   },
   {
     label: "Member Since",
     value: createdAt,
     Icon: IconCalendar,
-    color: "text-emerald-500",
-    bg: "border-emerald-500/20 bg-emerald-500/8",
+    color: "text-success",
+    bg: "border-success/20 bg-success/8",
   },
 ];
 
@@ -66,10 +66,9 @@ const Profile = () => {
     <div className="grid gap-6">
       {/* ── Profile Header Card ─────────────────────────────────────── */}
       <Card className="relative animate-in overflow-hidden border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur duration-500 fade-in slide-in-from-bottom-2">
-        {/* Cover band with decorative blobs */}
-        <div className="relative h-32 overflow-hidden bg-linear-to-br from-primary/20 via-primary/10 to-violet-500/15 sm:h-36">
+        <div className="relative h-32 overflow-hidden bg-linear-to-br from-primary/20 via-primary/10 to-primary/15 sm:h-36">
           <span className="absolute -top-8 -right-8 size-32 rounded-full bg-primary/20 blur-2xl" />
-          <span className="absolute -bottom-10 left-8 size-24 rounded-full bg-violet-500/15 blur-2xl" />
+          <span className="absolute -bottom-10 left-8 size-24 rounded-full bg-primary/15 blur-2xl" />
         </div>
 
         <CardContent className="relative px-5 pt-0 pb-5">
@@ -87,7 +86,7 @@ const Profile = () => {
                   {profileInitials}
                 </span>
               )}
-              <span className="absolute -right-1 -bottom-1 size-4 rounded-full border-2 border-card bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+              <span className="absolute -right-1 -bottom-1 size-4 rounded-full border-2 border-card bg-success shadow-sm" />
             </div>
 
             {/* Name + role + email */}

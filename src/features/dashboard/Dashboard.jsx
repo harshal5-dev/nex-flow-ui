@@ -27,24 +27,24 @@ const quickStats = [
     value: "12",
     trend: "+2 this month",
     Icon: IconFolders,
-    tone: "text-blue-600 dark:text-blue-400",
-    bg: "border-blue-500/25 bg-blue-500/10",
+    tone: "text-info",
+    bg: "border-info/25 bg-info/10",
   },
   {
     label: "Tasks",
     value: "37",
     trend: "9 due this week",
     Icon: IconChecklist,
-    tone: "text-violet-600 dark:text-violet-400",
-    bg: "border-violet-500/25 bg-violet-500/10",
+    tone: "text-primary",
+    bg: "border-primary/25 bg-primary/10",
   },
   {
     label: "Team",
     value: "08",
     trend: "6 active today",
     Icon: IconUsers,
-    tone: "text-emerald-600 dark:text-emerald-400",
-    bg: "border-emerald-500/25 bg-emerald-500/10",
+    tone: "text-success",
+    bg: "border-success/25 bg-success/10",
   },
 ];
 
@@ -154,7 +154,7 @@ function Dashboard() {
 
                 <div className="h-2 rounded-full bg-muted">
                   <div
-                    className="h-full rounded-full bg-linear-to-r from-blue-500 to-violet-500"
+                    className="h-full rounded-full bg-linear-to-r from-info to-primary"
                     style={{ width: `${project.progress}%` }}
                   />
                 </div>
@@ -183,7 +183,7 @@ function Dashboard() {
                 className={cn(
                   "flex items-center gap-2.5 rounded-xl border px-3 py-2.5 text-left transition-colors",
                   item.done
-                    ? "border-emerald-500/30 bg-emerald-500/10"
+                    ? "border-success/30 bg-success/10"
                     : "border-border/60 bg-background/55 hover:bg-muted/60"
                 )}
               >
@@ -191,7 +191,7 @@ function Dashboard() {
                   className={cn(
                     "inline-flex size-5 items-center justify-center rounded-md border",
                     item.done
-                      ? "border-emerald-500/30 bg-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+                      ? "border-success/30 bg-success/20 text-success"
                       : "border-border/60 bg-background text-muted-foreground"
                   )}
                 >
@@ -213,7 +213,7 @@ function Dashboard() {
               </button>
             ))}
 
-            <p className="inline-flex items-center gap-1 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+            <p className="inline-flex items-center gap-1 text-xs font-medium text-success">
               <IconTrendingUp className="size-3" />
               Focus score improving
             </p>

@@ -17,9 +17,9 @@ import {
 /* ------------------------------------------------------------------ */
 
 const featureAccents = [
-  "border-violet-500/25 bg-violet-500/10 text-violet-600 dark:text-violet-400 group-hover:bg-violet-500/15",
-  "border-blue-500/25 bg-blue-500/10 text-blue-600 dark:text-blue-400 group-hover:bg-blue-500/15",
-  "border-emerald-500/25 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-500/15",
+  "border-primary/25 bg-primary/10 text-primary group-hover:bg-primary/15",
+  "border-info/25 bg-info/10 text-info group-hover:bg-info/15",
+  "border-success/25 bg-success/10 text-success group-hover:bg-success/15",
 ];
 
 /* ------------------------------------------------------------------ */

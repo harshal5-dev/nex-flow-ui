@@ -60,7 +60,7 @@ const SidebarFrame = ({
               />
             ) : null}
 
-            <div className="animate-in duration-500 fade-in slide-in-from-bottom-2">
+            <div className="w-full min-w-0 animate-in duration-500 fade-in slide-in-from-bottom-2">
               <Outlet />
             </div>
           </main>
@@ -70,7 +70,7 @@ const SidebarFrame = ({
       {isSignoutLoading ? (
         <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/60 px-4 backdrop-blur-sm">
           <Card className="w-full max-w-sm overflow-hidden rounded-2xl border-border/70 bg-card/95 p-0 shadow-2xl">
-            <div className="h-1 bg-linear-to-r from-blue-500 via-emerald-500 to-amber-500" />
+            <div className="h-1 bg-linear-to-r from-info via-success to-warning" />
             <div className="p-5">
               <div className="flex items-center gap-3">
                 <span className="inline-flex size-10 items-center justify-center rounded-xl border border-primary/25 bg-primary/10 text-primary">
