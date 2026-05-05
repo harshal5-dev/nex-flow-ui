@@ -141,7 +141,7 @@ const ProfileForm = ({ user }) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="text-xs font-medium">
-                  Email
+                  Email ID
                   <RequiredMark />
                 </FormLabel>
                 <div className="relative">

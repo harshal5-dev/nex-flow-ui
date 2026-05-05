@@ -1,29 +1,65 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
 import {
   IconActivity,
   IconBolt,
   IconChecklist,
   IconClockHour4,
   IconEdit,
-  IconLayoutGrid,
   IconMail,
   IconPlus,
   IconSearch,
   IconShieldCheck,
   IconSparkles,
-  IconTable,
   IconTrash,
-  IconUserPlus,
   IconUsers,
-  IconX,
+  IconDotsVertical,
 } from "@tabler/icons-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  FormDescription,
+} from "@/components/ui/form";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
@@ -99,7 +135,7 @@ const STATUS_STYLES = {
 };
 
 const STATUS_DOT = {
-  Active: "bg-emerald-500 shadow-emerald-500/60 shadow-[0_0_6px_1px]",
+  Active: "bg-emerald-500",
   Busy: "bg-amber-500",
   Offline: "bg-muted-foreground/40",
 };
@@ -119,52 +155,38 @@ const ROLE_COLORS = [
   {
     icon: "text-violet-500",
     bg: "border-violet-500/20 bg-violet-500/10",
-    ring: "ring-violet-500/20",
   },
   {
     icon: "text-blue-500",
     bg: "border-blue-500/20   bg-blue-500/10",
-    ring: "ring-blue-500/20",
   },
   {
     icon: "text-emerald-500",
     bg: "border-emerald-500/20 bg-emerald-500/10",
-    ring: "ring-emerald-500/20",
   },
   {
     icon: "text-rose-500",
     bg: "border-rose-500/20   bg-rose-500/10",
-    ring: "ring-rose-500/20",
   },
   {
     icon: "text-amber-500",
     bg: "border-amber-500/20  bg-amber-500/10",
-    ring: "ring-amber-500/20",
   },
   {
     icon: "text-sky-500",
     bg: "border-sky-500/20    bg-sky-500/10",
-    ring: "ring-sky-500/20",
   },
 ];
 
 const PERMISSION_STYLES = {
-  manage_users:
-    "border-violet-500/25 bg-violet-500/10 text-violet-600 dark:text-violet-400",
-  manage_roles:
-    "border-purple-500/25 bg-purple-500/10 text-purple-600 dark:text-purple-400",
-  view_reports:
-    "border-blue-500/25   bg-blue-500/10   text-blue-600   dark:text-blue-400",
-  assign_tasks:
-    "border-amber-500/25  bg-amber-500/10  text-amber-600  dark:text-amber-400",
-  manage_projects:
-    "border-emerald-500/25 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-  update_tasks:
-    "border-cyan-500/25   bg-cyan-500/10   text-cyan-600   dark:text-cyan-400",
-  view_projects:
-    "border-sky-500/25    bg-sky-500/10    text-sky-600    dark:text-sky-400",
-  comment_tasks:
-    "border-rose-500/25   bg-rose-500/10   text-rose-600   dark:text-rose-400",
+  manage_users: "bg-violet-500/10 text-violet-600",
+  manage_roles: "bg-purple-500/10 text-purple-600",
+  view_reports: "bg-blue-500/10 text-blue-600",
+  assign_tasks: "bg-amber-500/10 text-amber-600",
+  manage_projects: "bg-emerald-500/10 text-emerald-600",
+  update_tasks: "bg-cyan-500/10 text-cyan-600",
+  view_projects: "bg-sky-500/10 text-sky-600",
+  comment_tasks: "bg-rose-500/10 text-rose-600",
 };
 
 const STAT_COLORS = [
@@ -173,12 +195,6 @@ const STAT_COLORS = [
   { color: "text-emerald-500", bg: "border-emerald-500/20 bg-emerald-500/8" },
   { color: "text-amber-500", bg: "border-amber-500/20   bg-amber-500/8" },
 ];
-
-const SELECT_CLS =
-  "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-xs transition-colors outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40";
-
-const TEXTAREA_CLS =
-  "min-h-20 w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground shadow-xs transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/40";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -199,10 +215,7 @@ function getAvatarGradient(name) {
 }
 
 function getPermissionStyle(permission) {
-  return (
-    PERMISSION_STYLES[permission] ??
-    "border-border/50 bg-muted/50 text-muted-foreground"
-  );
+  return PERMISSION_STYLES[permission] ?? "bg-muted text-muted-foreground";
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -244,7 +257,7 @@ function PermissionChip({ permission }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-medium",
+        "inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium",
         getPermissionStyle(permission)
       )}
     >
@@ -253,88 +266,22 @@ function PermissionChip({ permission }) {
   );
 }
 
-function ManagementModal({
-  open,
-  onClose,
-  title,
-  description,
-  icon: Icon,
-  children,
-}) {
-  if (!open) return null;
-
+function TableHeadLabel({ Icon, label }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6">
-      <button
-        type="button"
-        aria-label="Close modal"
-        className="absolute inset-0 bg-background/70 backdrop-blur-sm"
-        onClick={onClose}
-      />
-
-      <Card className="relative w-full max-w-xl animate-in overflow-hidden rounded-2xl border-border/50 bg-card/95 p-0 shadow-2xl backdrop-blur-xl duration-200 zoom-in-95 fade-in">
-        {/* Gradient accent line */}
-        <div className="h-1 bg-linear-to-r from-primary/40 via-primary to-primary/40" />
-
-        {/* Ambient glow */}
-        <div className="pointer-events-none absolute -top-20 -right-12 size-52 rounded-full bg-primary/8 blur-3xl" />
-
-        <div className="relative p-6">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex items-center gap-3">
-              {Icon && (
-                <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-xl border border-primary/20 bg-primary/10">
-                  <Icon className="size-4.5 text-primary" />
-                </span>
-              )}
-              <div>
-                <p className="font-semibold tracking-tight">{title}</p>
-                <p className="text-xs text-muted-foreground">{description}</p>
-              </div>
-            </div>
-
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon-sm"
-              className="rounded-lg"
-              onClick={onClose}
-            >
-              <IconX className="size-4" />
-            </Button>
-          </div>
-
-          <div className="mt-5 border-t border-border/40 pt-5">{children}</div>
-        </div>
-      </Card>
-    </div>
-  );
-}
-
-function TableHeadLabel({ Icon, label, align = "left" }) {
-  return (
-    <span
-      className={cn(
-        "inline-flex items-center gap-1.5",
-        align === "right" && "w-full justify-end"
-      )}
-    >
-      <Icon className="size-3.5 text-muted-foreground/70" />
-      <span>{label}</span>
+    <span className="inline-flex items-center gap-1.5 font-semibold text-foreground/80">
+      <Icon className="size-3.5 text-muted-foreground" />
+      {label}
     </span>
   );
 }
 
 function EmptyState({ message }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-2 py-14 text-center">
-      <span className="inline-flex size-10 items-center justify-center rounded-xl border border-border/60 bg-muted/30">
-        <IconSearch className="size-4.5 text-muted-foreground/60" />
+    <div className="flex flex-col items-center justify-center gap-2 py-10 text-center">
+      <span className="text-muted-foreground/40">
+        <IconSearch className="size-8" />
       </span>
       <p className="text-sm font-medium text-muted-foreground">{message}</p>
-      <p className="text-xs text-muted-foreground/60">
-        Try adjusting your search query
-      </p>
     </div>
   );
 }
@@ -346,283 +293,150 @@ function Team() {
   const [users, setUsers] = useState(INITIAL_USERS);
   const [roles, setRoles] = useState(INITIAL_ROLES);
   const [searchQuery, setSearchQuery] = useState("");
-  const [userView, setUserView] = useState("table");
-  const [roleView, setRoleView] = useState("table");
+
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
-  const [userError, setUserError] = useState("");
-  const [roleError, setRoleError] = useState("");
 
-  const [userForm, setUserForm] = useState({
-    id: "",
-    name: "",
-    email: "",
-    roleId: INITIAL_ROLES[0]?.id ?? "",
-    status: "Active",
+  const userForm = useForm({
+    defaultValues: {
+      id: "",
+      name: "",
+      email: "",
+      roleId: INITIAL_ROLES[0]?.id ?? "",
+      status: "Active",
+    },
   });
 
-  const [roleForm, setRoleForm] = useState({
-    id: "",
-    name: "",
-    description: "",
-    permissions: "",
+  const roleForm = useForm({
+    defaultValues: {
+      id: "",
+      name: "",
+      description: "",
+      permissions: "",
+    },
   });
 
   // ── Derived data ─────────────────────────────────────────────────────────
 
   const roleById = useMemo(
-    () =>
-      roles.reduce((acc, r) => {
-        acc[r.id] = r;
-        return acc;
-      }, {}),
+    () => roles.reduce((acc, r) => ({ ...acc, [r.id]: r }), {}),
     [roles]
   );
 
   const roleColorByIndex = useMemo(
     () =>
-      roles.reduce((acc, r, i) => {
-        acc[r.id] = ROLE_COLORS[i % ROLE_COLORS.length];
-        return acc;
-      }, {}),
+      roles.reduce(
+        (acc, r, i) => ({
+          ...acc,
+          [r.id]: ROLE_COLORS[i % ROLE_COLORS.length],
+        }),
+        {}
+      ),
     [roles]
   );
 
   const membersByRoleId = useMemo(
     () =>
-      users.reduce((acc, u) => {
-        if (u.roleId) {
-          acc[u.roleId] = [...(acc[u.roleId] ?? []), u];
-        }
-        return acc;
-      }, {}),
+      users.reduce(
+        (acc, u) => ({ ...acc, [u.roleId]: [...(acc[u.roleId] ?? []), u] }),
+        {}
+      ),
     [users]
   );
 
   const filteredUsers = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
-    if (!q) return users;
+    const q = searchQuery.toLowerCase();
     return users.filter((u) =>
-      [u.name, u.email, roleById[u.roleId]?.name ?? "Unassigned", u.status]
-        .join(" ")
-        .toLowerCase()
-        .includes(q)
+      [u.name, u.email, u.status].some((val) => val?.toLowerCase().includes(q))
     );
-  }, [users, searchQuery, roleById]);
+  }, [users, searchQuery]);
 
   const filteredRoles = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
-    if (!q) return roles;
+    const q = searchQuery.toLowerCase();
     return roles.filter((r) =>
-      [
-        r.name,
-        r.description,
-        r.permissions.join(" "),
-        String(membersByRoleId[r.id]?.length ?? 0),
-      ]
-        .join(" ")
-        .toLowerCase()
-        .includes(q)
+      [r.name, r.description].some((val) => val?.toLowerCase().includes(q))
     );
-  }, [roles, searchQuery, membersByRoleId]);
+  }, [roles, searchQuery]);
 
-  const statCards = useMemo(() => {
-    const activeCount = users.filter((u) => u.status === "Active").length;
-    const unassigned = users.filter((u) => !u.roleId).length;
-    return [
-      {
-        label: "Total Users",
-        value: users.length,
-        note: "Workspace members",
-        Icon: IconUsers,
-      },
-      {
-        label: "Total Roles",
-        value: roles.length,
-        note: "Permission groups",
-        Icon: IconShieldCheck,
-      },
+  const statCards = useMemo(
+    () => [
+      { label: "Total Users", value: users.length, Icon: IconUsers },
+      { label: "Total Roles", value: roles.length, Icon: IconShieldCheck },
       {
         label: "Active Now",
-        value: activeCount,
-        note: "Currently available",
+        value: users.filter((u) => u.status === "Active").length,
         Icon: IconActivity,
       },
       {
         label: "Unassigned",
-        value: unassigned,
-        note: "Members without a role",
+        value: users.filter((u) => !u.roleId).length,
         Icon: IconBolt,
       },
-    ];
-  }, [users, roles]);
+    ],
+    [users, roles]
+  );
 
-  const activeView = activeTab === "users" ? userView : roleView;
-
-  // ── Effects ───────────────────────────────────────────────────────────────
-
-  useEffect(() => {
-    if (!isUserModalOpen && !isRoleModalOpen) return undefined;
-    const handler = (e) => {
-      if (e.key === "Escape") {
-        setIsUserModalOpen(false);
-        setIsRoleModalOpen(false);
-        setUserError("");
-        setRoleError("");
-      }
-    };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [isUserModalOpen, isRoleModalOpen]);
-
-  // ── Form helpers ──────────────────────────────────────────────────────────
-
-  const clearUserForm = () => {
-    setUserForm({
+  const openCreateUserModal = () => {
+    userForm.reset({
       id: "",
       name: "",
       email: "",
       roleId: roles[0]?.id ?? "",
       status: "Active",
     });
-    setUserError("");
-  };
-
-  const clearRoleForm = () => {
-    setRoleForm({ id: "", name: "", description: "", permissions: "" });
-    setRoleError("");
-  };
-
-  const openCreateUserModal = () => {
-    clearUserForm();
     setIsUserModalOpen(true);
   };
+
   const openCreateRoleModal = () => {
-    clearRoleForm();
+    roleForm.reset({ id: "", name: "", description: "", permissions: "" });
     setIsRoleModalOpen(true);
   };
-  const closeUserModal = () => {
-    setIsUserModalOpen(false);
-    clearUserForm();
-  };
-  const closeRoleModal = () => {
-    setIsRoleModalOpen(false);
-    clearRoleForm();
-  };
 
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-    setSearchQuery("");
-    setIsUserModalOpen(false);
-    setIsRoleModalOpen(false);
-  };
-
-  // ── CRUD ──────────────────────────────────────────────────────────────────
-
-  const handleUserSubmit = (e) => {
-    e.preventDefault();
-    const name = userForm.name.trim();
-    const email = userForm.email.trim();
-    if (!name || !email) {
-      setUserError("Name and email are required.");
-      return;
-    }
-    setUserError("");
-    const roleId = roles.some((r) => r.id === userForm.roleId)
-      ? userForm.roleId
-      : "";
-    const payload = {
-      name,
-      email: email.toLowerCase(),
-      roleId,
-      status: userForm.status,
-      lastActive: "Just now",
-    };
-    if (userForm.id) {
+  const handleUserSubmit = (values) => {
+    const payload = { ...values, lastActive: "Just now" };
+    if (values.id)
       setUsers((cur) =>
-        cur.map((u) => (u.id === userForm.id ? { ...u, ...payload } : u))
+        cur.map((u) => (u.id === values.id ? { ...u, ...payload } : u))
       );
-    } else {
-      setUsers((cur) => [{ id: createId("user"), ...payload }, ...cur]);
-    }
+    else setUsers((cur) => [{ id: createId("user"), ...payload }, ...cur]);
     setIsUserModalOpen(false);
-    clearUserForm();
   };
 
-  const handleRoleSubmit = (e) => {
-    e.preventDefault();
-    const name = roleForm.name.trim();
-    const description = roleForm.description.trim();
-    const permissions = roleForm.permissions
-      .split(",")
-      .map((p) => p.trim().toLowerCase())
-      .filter(Boolean);
-    if (!name || !description || permissions.length === 0) {
-      setRoleError(
-        "Name, description, and at least one permission are required."
-      );
-      return;
-    }
-    setRoleError("");
-    const payload = { name, description, permissions };
-    if (roleForm.id) {
+  const handleRoleSubmit = (values) => {
+    const payload = {
+      ...values,
+      permissions: values.permissions.split(",").map((p) => p.trim()),
+    };
+    if (values.id)
       setRoles((cur) =>
-        cur.map((r) => (r.id === roleForm.id ? { ...r, ...payload } : r))
+        cur.map((r) => (r.id === values.id ? { ...r, ...payload } : r))
       );
-    } else {
-      setRoles((cur) => [{ id: createId("role"), ...payload }, ...cur]);
-    }
+    else setRoles((cur) => [{ id: createId("role"), ...payload }, ...cur]);
     setIsRoleModalOpen(false);
-    clearRoleForm();
   };
 
   const beginUserEdit = (user) => {
-    setUserForm({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      roleId: user.roleId,
-      status: user.status,
-    });
-    setUserError("");
+    userForm.reset(user);
     setIsUserModalOpen(true);
   };
 
   const beginRoleEdit = (role) => {
-    setRoleForm({
-      id: role.id,
-      name: role.name,
-      description: role.description,
-      permissions: role.permissions.join(", "),
-    });
-    setRoleError("");
+    roleForm.reset({ ...role, permissions: role.permissions.join(", ") });
     setIsRoleModalOpen(true);
   };
 
-  const removeUser = (userId) => {
-    setUsers((cur) => cur.filter((u) => u.id !== userId));
-    if (userForm.id === userId) clearUserForm();
-  };
-
-  const removeRole = (roleId) => {
-    setRoles((cur) => cur.filter((r) => r.id !== roleId));
+  const removeUser = (id) => setUsers((cur) => cur.filter((u) => u.id !== id));
+  const removeRole = (id) => {
+    setRoles((cur) => cur.filter((r) => r.id !== id));
     setUsers((cur) =>
-      cur.map((u) =>
-        u.roleId === roleId ? { ...u, roleId: "", lastActive: "Just now" } : u
-      )
+      cur.map((u) => (u.roleId === id ? { ...u, roleId: "" } : u))
     );
-    if (roleForm.id === roleId) {
-      setIsRoleModalOpen(false);
-      clearRoleForm();
-    }
-    if (userForm.roleId === roleId)
-      setUserForm((cur) => ({ ...cur, roleId: "" }));
   };
 
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <main className="grid gap-5">
+    <main className="grid gap-6">
       {/* ── Page Header ──────────────────────────────────────────────────── */}
       <Card className="relative overflow-hidden rounded-2xl border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur">
         <div className="pointer-events-none absolute -top-20 -right-10 size-60 rounded-full bg-primary/6 blur-3xl" />
@@ -641,36 +455,6 @@ function Team() {
               </p>
             </div>
           </div>
-
-          {/* Tab switcher */}
-          <div className="inline-flex rounded-xl border border-border/60 bg-background/70 p-1 backdrop-blur">
-            <Button
-              type="button"
-              size="sm"
-              variant={activeTab === "users" ? "secondary" : "ghost"}
-              className="gap-1.5 rounded-lg px-3.5"
-              onClick={() => handleTabChange("users")}
-            >
-              <IconUsers className="size-3.5" />
-              Users
-              <span className="ml-0.5 rounded-full border border-border/60 bg-muted px-1.5 py-0 text-[10px] font-medium text-muted-foreground">
-                {users.length}
-              </span>
-            </Button>
-            <Button
-              type="button"
-              size="sm"
-              variant={activeTab === "roles" ? "secondary" : "ghost"}
-              className="gap-1.5 rounded-lg px-3.5"
-              onClick={() => handleTabChange("roles")}
-            >
-              <IconShieldCheck className="size-3.5" />
-              Roles
-              <span className="ml-0.5 rounded-full border border-border/60 bg-muted px-1.5 py-0 text-[10px] font-medium text-muted-foreground">
-                {roles.length}
-              </span>
-            </Button>
-          </div>
         </div>
       </Card>
 
@@ -682,7 +466,6 @@ function Team() {
             className="group relative animate-in overflow-hidden rounded-2xl border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur transition-all duration-300 fade-in slide-in-from-bottom-2 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/5"
             style={{ animationDelay: `${index * 60}ms` }}
           >
-            {/* Subtle ambient at icon color */}
             <div
               className="pointer-events-none absolute -top-8 -right-6 size-32 rounded-full opacity-30 blur-2xl"
               style={{ background: `var(--tw-gradient-from, transparent)` }}
@@ -696,9 +479,6 @@ function Team() {
                 </p>
                 <p className="mt-1.5 text-3xl font-bold tracking-tight tabular-nums">
                   {String(item.value)}
-                </p>
-                <p className="mt-1 text-[11px] text-muted-foreground">
-                  {item.note}
                 </p>
               </div>
 
@@ -723,813 +503,495 @@ function Team() {
       {/* ── Directory Section ─────────────────────────────────────────────── */}
       <section>
         <Card className="rounded-2xl border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur">
-          {/* Toolbar */}
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/40 p-4 md:p-5">
-            <div>
-              <p className="text-sm font-semibold tracking-tight">
-                {activeTab === "users" ? "Users Directory" : "Roles Directory"}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                {activeTab === "users"
-                  ? "Browse and update workspace members"
-                  : "Browse and update role definitions"}
-              </p>
-            </div>
+          <Tabs
+            defaultValue="users"
+            value={activeTab}
+            onValueChange={setActiveTab}
+          >
+            {/* Toolbar */}
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/40 p-4 md:p-5">
+              <TabsList className="bg-background/50">
+                <TabsTrigger value="users" className="gap-1.5">
+                  <IconUsers className="size-4" />
+                  Users
+                  <Badge
+                    variant="secondary"
+                    className="ml-1 h-5 px-1.5 text-[10px]"
+                  >
+                    {users.length}
+                  </Badge>
+                </TabsTrigger>
+                <TabsTrigger value="roles" className="gap-1.5">
+                  <IconShieldCheck className="size-4" />
+                  Roles
+                  <Badge
+                    variant="secondary"
+                    className="ml-1 h-5 px-1.5 text-[10px]"
+                  >
+                    {roles.length}
+                  </Badge>
+                </TabsTrigger>
+              </TabsList>
 
-            <div className="flex flex-wrap items-center gap-2">
-              {/* View toggle */}
-              <div className="inline-flex rounded-lg border border-border/70 bg-background p-1">
+              <div className="flex items-center gap-2">
+                <div className="relative">
+                  <IconSearch className="pointer-events-none absolute top-1/2 left-3 size-3.5 -translate-y-1/2 text-muted-foreground/70" />
+                  <Input
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder={
+                      activeTab === "users"
+                        ? "Search users..."
+                        : "Search roles..."
+                    }
+                    className="h-9 w-64 rounded-lg bg-background/70 pl-8 text-sm"
+                  />
+                </div>
                 <Button
                   type="button"
                   size="sm"
-                  variant={activeView === "table" ? "secondary" : "ghost"}
-                  className="px-2"
-                  onClick={() =>
+                  className="gap-1.5"
+                  onClick={
                     activeTab === "users"
-                      ? setUserView("table")
-                      : setRoleView("table")
+                      ? openCreateUserModal
+                      : openCreateRoleModal
                   }
-                  aria-label="Table view"
                 >
-                  <IconTable className="size-4" />
-                </Button>
-                <Button
-                  type="button"
-                  size="sm"
-                  variant={activeView === "grid" ? "secondary" : "ghost"}
-                  className="px-2"
-                  onClick={() =>
-                    activeTab === "users"
-                      ? setUserView("grid")
-                      : setRoleView("grid")
-                  }
-                  aria-label="Grid view"
-                >
-                  <IconLayoutGrid className="size-4" />
+                  <IconPlus className="size-4" />
+                  {activeTab === "users" ? "Add User" : "Add Role"}
                 </Button>
               </div>
-
-              {/* Add button */}
-              <Button
-                type="button"
-                size="sm"
-                className="gap-1.5"
-                onClick={
-                  activeTab === "users"
-                    ? openCreateUserModal
-                    : openCreateRoleModal
-                }
-              >
-                <IconPlus className="size-4" />
-                {activeTab === "users" ? "Add User" : "Add Role"}
-              </Button>
             </div>
-          </div>
 
-          {/* Search bar */}
-          <div className="relative border-b border-border/40 px-4 py-3 md:px-5">
-            <IconSearch className="pointer-events-none absolute top-1/2 left-7 size-3.5 -translate-y-1/2 text-muted-foreground/70 md:left-8" />
-            <Input
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={
-                activeTab === "users"
-                  ? "Search by name, email, role, or status…"
-                  : "Search by role name, permission, or member count…"
-              }
-              className="h-9 rounded-lg bg-background/70 pl-8 text-sm"
-            />
-          </div>
-
-          {/* Content */}
-          <div className="p-4 md:p-5">
-            {/* ════ USERS ════ */}
-            {activeTab === "users" ? (
-              activeView === "table" ? (
-                /* Users — Table */
-                <div className="overflow-x-auto rounded-xl border border-border/50">
-                  <table className="w-full min-w-160 text-sm">
-                    <thead>
-                      <tr className="border-b border-border/40 bg-muted/30 text-xs text-muted-foreground">
-                        <th className="px-4 py-3 text-left font-medium">
+            {/* Content */}
+            <div className="p-4 md:p-5">
+              <TabsContent value="users" className="mt-0 outline-none">
+                <div className="overflow-x-auto rounded-xl border border-border/50 bg-background/30">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="hover:bg-transparent">
+                        <TableHead>
                           <TableHeadLabel Icon={IconUsers} label="Member" />
-                        </th>
-                        <th className="px-4 py-3 text-left font-medium">
+                        </TableHead>
+                        <TableHead>
                           <TableHeadLabel Icon={IconShieldCheck} label="Role" />
-                        </th>
-                        <th className="px-4 py-3 text-left font-medium">
+                        </TableHead>
+                        <TableHead>
                           <TableHeadLabel Icon={IconChecklist} label="Status" />
-                        </th>
-                        <th className="px-4 py-3 text-left font-medium">
+                        </TableHead>
+                        <TableHead>
                           <TableHeadLabel
                             Icon={IconClockHour4}
                             label="Last Active"
                           />
-                        </th>
-                        <th className="px-4 py-3 text-right font-medium">
-                          <TableHeadLabel
-                            Icon={IconEdit}
-                            label="Actions"
-                            align="right"
-                          />
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border/30">
-                      {filteredUsers.length ? (
+                        </TableHead>
+                        <TableHead className="w-16 text-right">
+                          <span className="sr-only">Actions</span>
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredUsers.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={5}>
+                            <EmptyState message="No users found." />
+                          </TableCell>
+                        </TableRow>
+                      ) : (
                         filteredUsers.map((user) => {
                           const role = roleById[user.roleId];
                           const roleColor = roleColorByIndex[user.roleId];
                           return (
-                            <tr
+                            <TableRow
                               key={user.id}
-                              className="group/row transition-colors duration-150 hover:bg-muted/20"
+                              className="group/row transition-colors duration-150"
                             >
-                              {/* Member */}
-                              <td className="px-4 py-3">
+                              <TableCell>
                                 <div className="flex items-center gap-3">
                                   <UserAvatar name={user.name} size="md" />
                                   <div>
-                                    <p className="leading-tight font-medium">
+                                    <p className="leading-none font-medium">
                                       {user.name}
                                     </p>
-                                    <p className="flex items-center gap-1 text-xs text-muted-foreground">
+                                    <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
                                       <IconMail className="size-3" />
                                       {user.email}
                                     </p>
                                   </div>
                                 </div>
-                              </td>
-
-                              {/* Role */}
-                              <td className="px-4 py-3">
+                              </TableCell>
+                              <TableCell>
                                 {role ? (
                                   <Badge
                                     variant="outline"
                                     className={cn(
-                                      "gap-1 rounded-full border px-2.5 text-[11px] font-medium",
-                                      roleColor?.bg ??
-                                        "border-border/50 bg-muted/30"
+                                      "gap-1 border-transparent px-2 py-0.5 text-[10px] font-semibold",
+                                      roleColor?.bg,
+                                      roleColor?.icon
                                     )}
                                   >
-                                    <IconShieldCheck
-                                      className={cn(
-                                        "size-3",
-                                        roleColor?.icon ??
-                                          "text-muted-foreground"
-                                      )}
-                                    />
+                                    <IconShieldCheck className="size-3" />
                                     {role.name}
                                   </Badge>
                                 ) : (
-                                  <Badge
-                                    variant="outline"
-                                    className="rounded-full border-border/50 text-[11px] text-muted-foreground"
-                                  >
+                                  <span className="text-xs text-muted-foreground italic">
                                     Unassigned
-                                  </Badge>
+                                  </span>
                                 )}
-                              </td>
-
-                              {/* Status */}
-                              <td className="px-4 py-3">
-                                <span
+                              </TableCell>
+                              <TableCell>
+                                <Badge
+                                  variant="outline"
                                   className={cn(
-                                    "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[11px] font-medium",
-                                    STATUS_STYLES[user.status]
+                                    "gap-1.5 border-transparent px-2 py-0.5 text-xs font-medium",
+                                    STATUS_STYLES[user.status] ??
+                                      STATUS_STYLES.Offline
                                   )}
                                 >
                                   <StatusDot status={user.status} />
                                   {user.status}
-                                </span>
-                              </td>
-
-                              {/* Last Active */}
-                              <td className="px-4 py-3">
-                                <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                                  <IconClockHour4 className="size-3.5" />
-                                  {user.lastActive}
-                                </span>
-                              </td>
-
-                              {/* Actions */}
-                              <td className="px-4 py-3">
-                                <div className="flex justify-end gap-1">
-                                  <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="icon-xs"
-                                    className="opacity-0 transition-opacity group-hover/row:opacity-100"
-                                    onClick={() => beginUserEdit(user)}
-                                    aria-label={`Edit ${user.name}`}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="text-xs text-muted-foreground">
+                                {user.lastActive}
+                              </TableCell>
+                              <TableCell className="text-right">
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button
+                                      variant="ghost"
+                                      size="icon-sm"
+                                      className="opacity-0 group-hover/row:opacity-100 data-[state=open]:opacity-100"
+                                    >
+                                      <IconDotsVertical className="size-4" />
+                                      <span className="sr-only">Open menu</span>
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent
+                                    align="end"
+                                    className="w-40"
                                   >
-                                    <IconEdit className="size-3.5" />
-                                  </Button>
-                                  <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="icon-xs"
-                                    className="text-destructive opacity-0 transition-opacity group-hover/row:opacity-100 hover:text-destructive"
-                                    onClick={() => removeUser(user.id)}
-                                    aria-label={`Delete ${user.name}`}
-                                  >
-                                    <IconTrash className="size-3.5" />
-                                  </Button>
-                                </div>
-                              </td>
-                            </tr>
+                                    <DropdownMenuItem
+                                      onClick={() => beginUserEdit(user)}
+                                    >
+                                      <IconEdit className="mr-2 size-4" />
+                                      Edit
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem
+                                      className="text-destructive focus:bg-destructive/10 focus:text-destructive"
+                                      onClick={() => removeUser(user.id)}
+                                    >
+                                      <IconTrash className="mr-2 size-4" />
+                                      Delete
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </TableCell>
+                            </TableRow>
                           );
                         })
-                      ) : (
-                        <tr>
-                          <td colSpan={5}>
-                            <EmptyState message="No users match your search" />
-                          </td>
-                        </tr>
                       )}
-                    </tbody>
-                  </table>
+                    </TableBody>
+                  </Table>
                 </div>
-              ) : (
-                /* Users — Grid */
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                  {filteredUsers.length ? (
-                    filteredUsers.map((user) => {
-                      const role = roleById[user.roleId];
-                      const roleColor = roleColorByIndex[user.roleId];
-                      const gradient = getAvatarGradient(user.name);
-                      return (
-                        <div
-                          key={user.id}
-                          className="group relative flex flex-col overflow-hidden rounded-xl border border-border/50 bg-card shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/5"
-                        >
-                          {/* Gradient banner */}
-                          <div
-                            className={cn(
-                              "relative h-20 bg-linear-to-br",
-                              gradient
-                            )}
-                          >
-                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.18)_0%,transparent_60%)]" />
-                            {/* Status chip */}
-                            <span
-                              className={cn(
-                                "absolute top-2.5 right-2.5 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[10px] font-medium backdrop-blur-sm",
-                                STATUS_STYLES[user.status]
-                              )}
-                            >
-                              <StatusDot status={user.status} />
-                              {user.status}
-                            </span>
-                          </div>
+              </TabsContent>
 
-                          {/* Body */}
-                          <div className="flex flex-1 flex-col gap-0 px-4 pb-4">
-                            {/* Avatar overlapping banner */}
-                            <div className="-mt-5.5 mb-2.5">
-                              <UserAvatar
-                                name={user.name}
-                                size="lg"
-                                className="ring-3 ring-card"
-                              />
-                            </div>
-
-                            <p className="leading-tight font-semibold">
-                              {user.name}
-                            </p>
-                            <p className="flex items-center gap-1 text-[11px] text-muted-foreground">
-                              <IconMail className="size-3 shrink-0" />
-                              {user.email}
-                            </p>
-
-                            {/* Meta row */}
-                            <div className="mt-3 flex flex-wrap items-center gap-1.5">
-                              {role ? (
-                                <Badge
-                                  variant="outline"
-                                  className={cn(
-                                    "gap-1 rounded-full border px-2.5 text-[11px] font-medium",
-                                    roleColor?.bg ??
-                                      "border-border/50 bg-muted/30"
-                                  )}
-                                >
-                                  <IconShieldCheck
-                                    className={cn(
-                                      "size-3",
-                                      roleColor?.icon ?? "text-muted-foreground"
-                                    )}
-                                  />
-                                  {role.name}
-                                </Badge>
-                              ) : (
-                                <Badge
-                                  variant="outline"
-                                  className="rounded-full border-border/50 text-[11px] text-muted-foreground"
-                                >
-                                  Unassigned
-                                </Badge>
-                              )}
-                              <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
-                                <IconClockHour4 className="size-3" />
-                                {user.lastActive}
-                              </span>
-                            </div>
-
-                            {/* Actions */}
-                            <div className="mt-3.5 flex gap-1.5">
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="xs"
-                                className="flex-1 gap-1"
-                                onClick={() => beginUserEdit(user)}
-                              >
-                                <IconEdit className="size-3.5" />
-                                Edit
-                              </Button>
-                              <Button
-                                type="button"
-                                variant="outline"
-                                size="xs"
-                                className="text-destructive hover:text-destructive"
-                                onClick={() => removeUser(user.id)}
-                                aria-label="Delete user"
-                              >
-                                <IconTrash className="size-3.5" />
-                              </Button>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })
-                  ) : (
+              <TabsContent value="roles" className="mt-0 outline-none">
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {filteredRoles.length === 0 ? (
                     <div className="col-span-full">
-                      <EmptyState message="No users match your search" />
+                      <EmptyState message="No roles found." />
                     </div>
-                  )}
-                </div>
-              )
-            ) : /* ════ ROLES ════ */
-            activeView === "table" ? (
-              /* Roles — Table */
-              <div className="overflow-x-auto rounded-xl border border-border/50">
-                <table className="w-full min-w-170 text-sm">
-                  <thead>
-                    <tr className="border-b border-border/40 bg-muted/30 text-xs text-muted-foreground">
-                      <th className="px-4 py-3 text-left font-medium">
-                        <TableHeadLabel Icon={IconShieldCheck} label="Role" />
-                      </th>
-                      <th className="px-4 py-3 text-left font-medium">
-                        <TableHeadLabel
-                          Icon={IconChecklist}
-                          label="Description"
-                        />
-                      </th>
-                      <th className="px-4 py-3 text-left font-medium">
-                        <TableHeadLabel
-                          Icon={IconSparkles}
-                          label="Permissions"
-                        />
-                      </th>
-                      <th className="px-4 py-3 text-left font-medium">
-                        <TableHeadLabel Icon={IconUsers} label="Members" />
-                      </th>
-                      <th className="px-4 py-3 text-right font-medium">
-                        <TableHeadLabel
-                          Icon={IconEdit}
-                          label="Actions"
-                          align="right"
-                        />
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border/30">
-                    {filteredRoles.length ? (
-                      filteredRoles.map((role) => {
-                        const roleColor =
-                          ROLE_COLORS[roles.indexOf(role) % ROLE_COLORS.length];
-                        const members = membersByRoleId[role.id] ?? [];
-                        return (
-                          <tr
-                            key={role.id}
-                            className="group/row transition-colors duration-150 hover:bg-muted/20"
-                          >
-                            {/* Role name */}
-                            <td className="px-4 py-3.5">
-                              <div className="flex items-center gap-2.5">
+                  ) : (
+                    filteredRoles.map((role, i) => {
+                      const color = ROLE_COLORS[i % ROLE_COLORS.length];
+                      const members = membersByRoleId[role.id] ?? [];
+                      return (
+                        <Card
+                          key={role.id}
+                          className="relative overflow-hidden border-border/50 bg-background/50 backdrop-blur-sm transition-all hover:-translate-y-1 hover:shadow-md"
+                        >
+                          <CardHeader className="pb-3">
+                            <div className="flex items-start justify-between">
+                              <div className="flex items-center gap-3">
                                 <span
                                   className={cn(
-                                    "inline-flex size-7 shrink-0 items-center justify-center rounded-lg border",
-                                    roleColor?.bg ??
-                                      "border-border/50 bg-muted/30"
+                                    "inline-flex size-10 items-center justify-center rounded-xl border",
+                                    color.bg
                                   )}
                                 >
                                   <IconShieldCheck
-                                    className={cn(
-                                      "size-3.5",
-                                      roleColor?.icon ?? "text-muted-foreground"
-                                    )}
+                                    className={cn("size-5", color.icon)}
                                   />
                                 </span>
-                                <span className="font-medium">{role.name}</span>
-                              </div>
-                            </td>
-
-                            {/* Description */}
-                            <td className="max-w-56 px-4 py-3.5 text-xs text-muted-foreground">
-                              {role.description}
-                            </td>
-
-                            {/* Permissions */}
-                            <td className="py-3. 5 px-4">
-                              <div className="flex flex-wrap gap-1">
-                                {role.permissions.slice(0, 2).map((p) => (
-                                  <PermissionChip key={p} permission={p} />
-                                ))}
-                                {role.permissions.length > 2 && (
-                                  <span className="inline-flex items-center rounded-full border border-border/50 bg-muted/40 px-2 py-0.5 text-[10px] text-muted-foreground">
-                                    +{role.permissions.length - 2} more
-                                  </span>
-                                )}
-                              </div>
-                            </td>
-
-                            {/* Members */}
-                            <td className="px-4 py-3.5">
-                              {members.length > 0 ? (
-                                <div className="flex items-center gap-2">
-                                  <div className="flex -space-x-2">
-                                    {members.slice(0, 3).map((m) => (
-                                      <UserAvatar
-                                        key={m.id}
-                                        name={m.name}
-                                        size="sm"
-                                        className="ring-2 ring-card"
-                                      />
-                                    ))}
-                                    {members.length > 3 && (
-                                      <span className="inline-flex size-7 items-center justify-center rounded-full border border-border/50 bg-muted text-[10px] font-medium ring-2 ring-card">
-                                        +{members.length - 3}
-                                      </span>
-                                    )}
-                                  </div>
-                                  <span className="text-xs text-muted-foreground">
-                                    {members.length}
-                                  </span>
+                                <div>
+                                  <CardTitle className="text-base">
+                                    {role.name}
+                                  </CardTitle>
+                                  <p className="mt-0.5 text-xs text-muted-foreground">
+                                    {members.length} member
+                                    {members.length !== 1 && "s"}
+                                  </p>
                                 </div>
-                              ) : (
-                                <span className="text-xs text-muted-foreground/60">
-                                  No members
-                                </span>
-                              )}
-                            </td>
-
-                            {/* Actions */}
-                            <td className="px-4 py-3.5">
-                              <div className="flex justify-end gap-1">
-                                <Button
-                                  type="button"
-                                  variant="ghost"
-                                  size="icon-xs"
-                                  className="opacity-0 transition-opacity group-hover/row:opacity-100"
-                                  onClick={() => beginRoleEdit(role)}
-                                  aria-label={`Edit ${role.name}`}
-                                >
-                                  <IconEdit className="size-3.5" />
-                                </Button>
-                                <Button
-                                  type="button"
-                                  variant="ghost"
-                                  size="icon-xs"
-                                  className="text-destructive opacity-0 transition-opacity group-hover/row:opacity-100 hover:text-destructive"
-                                  onClick={() => removeRole(role.id)}
-                                  aria-label={`Delete ${role.name}`}
-                                >
-                                  <IconTrash className="size-3.5" />
-                                </Button>
                               </div>
-                            </td>
-                          </tr>
-                        );
-                      })
-                    ) : (
-                      <tr>
-                        <td colSpan={5}>
-                          <EmptyState message="No roles match your search" />
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              /* Roles — Grid */
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredRoles.length ? (
-                  filteredRoles.map((role) => {
-                    const roleColor =
-                      ROLE_COLORS[roles.indexOf(role) % ROLE_COLORS.length];
-                    const members = membersByRoleId[role.id] ?? [];
-                    return (
-                      <div
-                        key={role.id}
-                        className="group relative flex flex-col overflow-hidden rounded-xl border border-border/50 bg-card p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/5"
-                      >
-                        {/* Ambient glow in role color */}
-                        <div className="pointer-events-none absolute -top-8 -right-8 size-28 rounded-full opacity-20 blur-2xl" />
-
-                        {/* Header row */}
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="flex items-center gap-3">
-                            <span
-                              className={cn(
-                                "inline-flex size-10 shrink-0 items-center justify-center rounded-xl border",
-                                roleColor?.bg ?? "border-border/50 bg-muted/30"
-                              )}
-                            >
-                              <IconShieldCheck
-                                className={cn(
-                                  "size-5",
-                                  roleColor?.icon ?? "text-muted-foreground"
-                                )}
-                              />
-                            </span>
-                            <div>
-                              <p className="leading-tight font-semibold">
-                                {role.name}
-                              </p>
-                              <p className="text-[11px] text-muted-foreground">
-                                {members.length} member
-                                {members.length !== 1 ? "s" : ""}
-                              </p>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon-sm"
+                                    className="-mt-2 -mr-2"
+                                  >
+                                    <IconDotsVertical className="size-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem
+                                    onClick={() => beginRoleEdit(role)}
+                                  >
+                                    <IconEdit className="mr-2 size-4" />
+                                    Edit Role
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    className="text-destructive focus:bg-destructive/10 focus:text-destructive"
+                                    onClick={() => removeRole(role.id)}
+                                  >
+                                    <IconTrash className="mr-2 size-4" />
+                                    Delete Role
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
                             </div>
-                          </div>
-
-                          <div className="flex shrink-0 gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon-xs"
-                              onClick={() => beginRoleEdit(role)}
-                              aria-label={`Edit ${role.name}`}
-                            >
-                              <IconEdit className="size-3.5" />
-                            </Button>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon-xs"
-                              className="text-destructive hover:text-destructive"
-                              onClick={() => removeRole(role.id)}
-                              aria-label={`Delete ${role.name}`}
-                            >
-                              <IconTrash className="size-3.5" />
-                            </Button>
-                          </div>
-                        </div>
-
-                        {/* Description */}
-                        <p className="mt-3 text-xs leading-relaxed text-muted-foreground">
-                          {role.description}
-                        </p>
-
-                        {/* Permissions */}
-                        <div className="mt-3 flex flex-wrap gap-1.5">
-                          {role.permissions.map((p) => (
-                            <PermissionChip key={p} permission={p} />
-                          ))}
-                        </div>
-
-                        {/* Member avatars */}
-                        {members.length > 0 && (
-                          <div className="mt-3.5 flex items-center gap-2 border-t border-border/30 pt-3.5">
-                            <div className="flex -space-x-2">
-                              {members.slice(0, 4).map((m) => (
-                                <UserAvatar
-                                  key={m.id}
-                                  name={m.name}
-                                  size="sm"
-                                  className="ring-2 ring-card"
-                                />
+                          </CardHeader>
+                          <CardContent>
+                            <p className="mb-4 line-clamp-2 min-h-10 text-sm text-muted-foreground">
+                              {role.description}
+                            </p>
+                            <div className="flex flex-wrap gap-1.5">
+                              {role.permissions.slice(0, 3).map((p) => (
+                                <PermissionChip key={p} permission={p} />
                               ))}
-                              {members.length > 4 && (
-                                <span className="inline-flex size-7 items-center justify-center rounded-full border border-border/50 bg-muted text-[10px] font-medium ring-2 ring-card">
-                                  +{members.length - 4}
+                              {role.permissions.length > 3 && (
+                                <span className="inline-flex items-center rounded-full border border-border/50 bg-muted/50 px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                                  +{role.permissions.length - 3} more
                                 </span>
                               )}
                             </div>
-                            <span className="text-[11px] text-muted-foreground">
-                              {members
-                                .map((m) => m.name.split(" ")[0])
-                                .slice(0, 2)
-                                .join(", ")}
-                              {members.length > 2
-                                ? ` & ${members.length - 2} more`
-                                : ""}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })
-                ) : (
-                  <div className="col-span-full">
-                    <EmptyState message="No roles match your search" />
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })
+                  )}
+                </div>
+              </TabsContent>
+            </div>
+          </Tabs>
         </Card>
       </section>
 
-      {/* ── User Modal ───────────────────────────────────────────────────── */}
-      <ManagementModal
-        open={isUserModalOpen}
-        onClose={closeUserModal}
-        icon={IconUserPlus}
-        title={userForm.id ? "Edit Member" : "Add Member"}
-        description={
-          userForm.id
-            ? "Update this member's information and role"
-            : "Invite a new member and assign them to a role"
-        }
-      >
-        <form className="space-y-4" onSubmit={handleUserSubmit}>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label htmlFor="user-name" className="text-xs font-medium">
-                Full Name
-              </Label>
-              <Input
-                id="user-name"
-                value={userForm.name}
-                onChange={(e) =>
-                  setUserForm((c) => ({ ...c, name: e.target.value }))
-                }
-                placeholder="Enter full name"
-                className="h-9"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="user-email" className="text-xs font-medium">
-                Email Address
-              </Label>
-              <Input
-                id="user-email"
-                type="email"
-                value={userForm.email}
-                onChange={(e) =>
-                  setUserForm((c) => ({ ...c, email: e.target.value }))
-                }
-                placeholder="name@company.com"
-                className="h-9"
-              />
-            </div>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label htmlFor="user-role" className="text-xs font-medium">
-                Role
-              </Label>
-              <select
-                id="user-role"
-                value={userForm.roleId}
-                onChange={(e) =>
-                  setUserForm((c) => ({ ...c, roleId: e.target.value }))
-                }
-                className={SELECT_CLS}
-              >
-                <option value="">Unassigned</option>
-                {roles.map((r) => (
-                  <option key={r.id} value={r.id}>
-                    {r.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="user-status" className="text-xs font-medium">
-                Status
-              </Label>
-              <select
-                id="user-status"
-                value={userForm.status}
-                onChange={(e) =>
-                  setUserForm((c) => ({ ...c, status: e.target.value }))
-                }
-                className={SELECT_CLS}
-              >
-                <option value="Active">Active</option>
-                <option value="Busy">Busy</option>
-                <option value="Offline">Offline</option>
-              </select>
-            </div>
-          </div>
-
-          {userError && (
-            <p className="flex items-center gap-1.5 rounded-lg border border-destructive/20 bg-destructive/8 px-3 py-2 text-xs font-medium text-destructive">
-              <IconX className="size-3.5 shrink-0" />
-              {userError}
-            </p>
-          )}
-
-          <div className="flex gap-2 pt-1">
-            <Button type="submit" className="flex-1">
-              {userForm.id ? "Update Member" : "Add Member"}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              className="flex-1"
-              onClick={closeUserModal}
+      {/* User Dialog */}
+      <Dialog open={isUserModalOpen} onOpenChange={setIsUserModalOpen}>
+        <DialogContent className="sm:max-w-106.25">
+          <DialogHeader>
+            <DialogTitle>
+              {userForm.getValues().id ? "Edit User" : "Create User"}
+            </DialogTitle>
+            <DialogDescription>
+              Manage user details and role assignment.
+            </DialogDescription>
+          </DialogHeader>
+          <Form {...userForm}>
+            <form
+              onSubmit={userForm.handleSubmit(handleUserSubmit)}
+              className="space-y-4"
             >
-              Cancel
-            </Button>
-          </div>
-        </form>
-      </ManagementModal>
+              <FormField
+                control={userForm.control}
+                name="name"
+                rules={{ required: "Name is required" }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Full Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="John Doe" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={userForm.control}
+                name="email"
+                rules={{
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "invalid email address",
+                  },
+                }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email Address</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="john@example.com"
+                        type="email"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={userForm.control}
+                name="roleId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Role</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a role" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="none">Unassigned</SelectItem>
+                        {roles.map((r) => (
+                          <SelectItem key={r.id} value={r.id}>
+                            {r.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={userForm.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Status</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a status" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="Active">Active</SelectItem>
+                        <SelectItem value="Busy">Busy</SelectItem>
+                        <SelectItem value="Offline">Offline</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="flex justify-end gap-3 border-t border-border/40 pt-4">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setIsUserModalOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit">
+                  {userForm.getValues().id ? "Save Changes" : "Create User"}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
 
-      {/* ── Role Modal ───────────────────────────────────────────────────── */}
-      <ManagementModal
-        open={isRoleModalOpen}
-        onClose={closeRoleModal}
-        icon={IconShieldCheck}
-        title={roleForm.id ? "Edit Role" : "Create Role"}
-        description="Define role permissions and team ownership levels"
-      >
-        <form className="space-y-4" onSubmit={handleRoleSubmit}>
-          <div className="space-y-1.5">
-            <Label htmlFor="role-name" className="text-xs font-medium">
-              Role Name
-            </Label>
-            <Input
-              id="role-name"
-              value={roleForm.name}
-              onChange={(e) =>
-                setRoleForm((c) => ({ ...c, name: e.target.value }))
-              }
-              placeholder="e.g. QA Lead"
-              className="h-9"
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor="role-description" className="text-xs font-medium">
-              Description
-            </Label>
-            <textarea
-              id="role-description"
-              value={roleForm.description}
-              onChange={(e) =>
-                setRoleForm((c) => ({ ...c, description: e.target.value }))
-              }
-              placeholder="Describe the responsibilities for this role"
-              className={TEXTAREA_CLS}
-            />
-          </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor="role-permissions" className="text-xs font-medium">
-              Permissions
-            </Label>
-            <Input
-              id="role-permissions"
-              value={roleForm.permissions}
-              onChange={(e) =>
-                setRoleForm((c) => ({ ...c, permissions: e.target.value }))
-              }
-              placeholder="manage_users, view_reports, assign_tasks"
-              className="h-9"
-            />
-            <p className="text-[11px] text-muted-foreground">
-              Separate multiple permissions with commas.
-            </p>
-          </div>
-
-          {roleError && (
-            <p className="flex items-center gap-1.5 rounded-lg border border-destructive/20 bg-destructive/8 px-3 py-2 text-xs font-medium text-destructive">
-              <IconX className="size-3.5 shrink-0" />
-              {roleError}
-            </p>
-          )}
-
-          <div className="flex gap-2 pt-1">
-            <Button type="submit" className="flex-1">
-              {roleForm.id ? "Update Role" : "Create Role"}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              className="flex-1"
-              onClick={closeRoleModal}
+      {/* Role Dialog */}
+      <Dialog open={isRoleModalOpen} onOpenChange={setIsRoleModalOpen}>
+        <DialogContent className="sm:max-w-106.25">
+          <DialogHeader>
+            <DialogTitle>
+              {roleForm.getValues().id ? "Edit Role" : "Create Role"}
+            </DialogTitle>
+            <DialogDescription>
+              Define role access and descriptive properties.
+            </DialogDescription>
+          </DialogHeader>
+          <Form {...roleForm}>
+            <form
+              onSubmit={roleForm.handleSubmit(handleRoleSubmit)}
+              className="space-y-4"
             >
-              Cancel
-            </Button>
-          </div>
-        </form>
-      </ManagementModal>
+              <FormField
+                control={roleForm.control}
+                name="name"
+                rules={{ required: "Role name is required" }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Role Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="e.g. Editor" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={roleForm.control}
+                name="description"
+                rules={{ required: "Description is required" }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Input placeholder="What does this role do?" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={roleForm.control}
+                name="permissions"
+                rules={{ required: "At least one permission is required" }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Permissions</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="read, write, delete (comma separated)"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription className="mt-1.5 text-[10px] text-muted-foreground">
+                      Comma separated permission identifiers.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="flex justify-end gap-3 border-t border-border/40 pt-4">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setIsRoleModalOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit">
+                  {roleForm.getValues().id ? "Save Changes" : "Create Role"}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }

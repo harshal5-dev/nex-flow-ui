@@ -50,7 +50,7 @@ const accountInfo = (organizationName, roleName, createdAt) => [
   },
 ];
 
-function Profile() {
+const Profile = () => {
   const user = useSelector(selectCurrentUser);
   const profileInitials = getUserInitials(user);
   const profileName = getUserFullName(user);
@@ -183,7 +183,7 @@ function Profile() {
 
         {user.roles.some((role) => role.code === "PLATFORM_OWNER") && (
           <TabsContent value="organization" className="mt-0">
-            <Card className="animate-in rounded-2xl border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur duration-500 fade-in slide-in-from-bottom-2">
+            <Card className="animate-in border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur duration-500 fade-in slide-in-from-bottom-2">
               <CardHeader>
                 <div className="flex items-center gap-2.5">
                   <span className="inline-flex size-8 items-center justify-center rounded-lg border border-primary/20 bg-primary/8">
@@ -209,6 +209,6 @@ function Profile() {
       </Tabs>
     </div>
   );
-}
+};
 
 export default Profile;

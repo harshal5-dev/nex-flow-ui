@@ -1,6 +1,7 @@
 import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
+import Profile from "./pages/Profile";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicOnlyRoute from "./components/PublicOnlyRoute";
 import authReducer, {
@@ -19,6 +20,7 @@ export {
   Signin,
   Signup,
   ForgotPassword,
+  Profile,
   ProtectedRoute,
   PublicOnlyRoute,
   authReducer,
