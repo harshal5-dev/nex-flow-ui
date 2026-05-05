@@ -22,10 +22,7 @@ import { Button } from "@/components/ui/button";
 import StatusCallout from "@/components/common/StatusCallout";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "../reducer/authSlice";
-
-function RequiredMark() {
-  return <span className="ml-1 text-destructive">*</span>;
-}
+import RequiredMark from "@/components/common/RequiredMark";
 
 const SigninForm = () => {
   const navigate = useNavigate();
@@ -120,7 +117,7 @@ const SigninForm = () => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Email
+                  Email ID
                   <RequiredMark />
                 </FormLabel>
                 <div className="relative">

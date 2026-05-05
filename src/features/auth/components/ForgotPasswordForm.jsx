@@ -23,12 +23,9 @@ import {
   useForgotPasswordMutation,
   useVerifyResetPasswordMutation,
 } from "../api/authApi";
+import RequiredMark from "@/components/common/RequiredMark";
 
 const OTP_RESEND_SECONDS = 30;
-
-function RequiredMark() {
-  return <span className="ml-1 text-destructive">*</span>;
-}
 
 function delay(ms) {
   return new Promise((resolve) => {
@@ -49,7 +46,7 @@ function maskEmail(emailId) {
   return `${first}${maskedPart}@${domain}`;
 }
 
-function ForgotPasswordForm() {
+const ForgotPasswordForm = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState("email");
   const [resendIn, setResendIn] = useState(0);
@@ -395,6 +392,6 @@ function ForgotPasswordForm() {
       </form>
     </Form>
   );
-}
+};
 
 export default ForgotPasswordForm;

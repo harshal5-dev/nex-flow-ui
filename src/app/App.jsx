@@ -11,7 +11,7 @@ import {
 import DashboardLayout from "@/app/layouts/DashboardLayout";
 import Dashboard from "@/features/dashboard/Dashboard";
 import Team from "@/features/user/Team";
-import Profile from "@/features/user/Profile";
+import Profile from "@/features/auth/pages/Profile";
 import AccessDenied from "@/app/pages/AccessDenied";
 import NotFound from "@/app/pages/NotFound";
 import LoadingScreen from "@/components/common/LoadingScreen";

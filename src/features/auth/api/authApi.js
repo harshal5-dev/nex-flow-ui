@@ -42,6 +42,24 @@ export const authApi = createApi({
       },
     }),
 
+    updateProfile: builder.mutation({
+      query: (profileData) => ({
+        url: "/auth/update",
+        method: "PUT",
+        body: profileData,
+      }),
+      invalidatesTags: ["Auth"],
+    }),
+
+    updateOrganization: builder.mutation({
+      query: (orgData) => ({
+        url: "/tenants",
+        method: "PUT",
+        body: orgData,
+      }),
+      invalidatesTags: ["Auth"],
+    }),
+
     forgotPassword: builder.mutation({
       query: ({ emailId }) => ({
         url: "/auth/forgot-password",
@@ -74,4 +92,6 @@ export const {
   useVerifyResetPasswordMutation,
   useSignoutMutation,
   useGetUserProfileQuery,
+  useUpdateProfileMutation,
+  useUpdateOrganizationMutation,
 } = authApi;

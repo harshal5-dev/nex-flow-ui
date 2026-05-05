@@ -22,10 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useSignupMutation } from "../api/authApi";
 import StatusCallout from "@/components/common/StatusCallout";
-
-function RequiredMark() {
-  return <span className="ml-1 text-destructive">*</span>;
-}
+import RequiredMark from "@/components/common/RequiredMark";
 
 const SignupForm = () => {
   const navigate = useNavigate();

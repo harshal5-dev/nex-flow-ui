@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   IconAlertOctagon,
   IconAlertTriangle,
@@ -47,7 +48,21 @@ export function StatusCallout({
   action,
   onDismiss,
   className,
+  duration,
 }) {
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    if (duration) {
+      const timer = setTimeout(() => {
+        setVisible(false);
+      }, duration);
+      return () => clearTimeout(timer);
+    }
+  }, [duration]);
+
+  if (!visible) return null;
+
   const style = variantStyles[variant] || variantStyles.info;
   const Icon = style.Icon;
 
