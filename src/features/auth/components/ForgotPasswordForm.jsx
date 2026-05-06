@@ -225,7 +225,7 @@ const ForgotPasswordForm = () => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Email
+                  Email ID
                   <RequiredMark />
                 </FormLabel>
                 <div className="relative">

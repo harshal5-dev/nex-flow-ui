@@ -61,7 +61,7 @@ const OrganizationForm = ({ user }) => {
           message={orgStatus.message}
           className="mb-4"
           onDismiss={() => setOrgStatus(null)}
-          duration={5000}
+          duration={3000}
         />
       )}
 
@@ -83,7 +83,7 @@ const OrganizationForm = ({ user }) => {
             }}
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs font-medium">
+                <FormLabel>
                   Organization Name
                   <RequiredMark />
                 </FormLabel>
@@ -107,9 +107,7 @@ const OrganizationForm = ({ user }) => {
             name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs font-medium">
-                  Description
-                </FormLabel>
+                <FormLabel>Description</FormLabel>
                 <div className="relative">
                   <IconEdit className="pointer-events-none absolute top-3 left-3 size-4 text-muted-foreground" />
                   <FormControl>

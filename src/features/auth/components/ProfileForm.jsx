@@ -61,7 +61,7 @@ const ProfileForm = ({ user }) => {
           message={profileStatus.message}
           className="mb-4"
           onDismiss={() => setProfileStatus(null)}
-          duration={5000}
+          duration={3000}
         />
       )}
 
@@ -84,7 +84,7 @@ const ProfileForm = ({ user }) => {
               }}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-xs font-medium">
+                  <FormLabel>
                     First Name
                     <RequiredMark />
                   </FormLabel>
@@ -108,9 +108,7 @@ const ProfileForm = ({ user }) => {
               name="lastName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-xs font-medium">
-                    Last Name
-                  </FormLabel>
+                  <FormLabel>Last Name</FormLabel>
                   <div className="relative">
                     <IconUser className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
                     <FormControl>
@@ -140,7 +138,7 @@ const ProfileForm = ({ user }) => {
             }}
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-xs font-medium">
+                <FormLabel>
                   Email ID
                   <RequiredMark />
                 </FormLabel>

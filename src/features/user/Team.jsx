@@ -1,35 +1,27 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   IconActivity,
   IconBolt,
   IconChecklist,
+  IconChevronLeft,
+  IconChevronRight,
   IconClockHour4,
+  IconDotsVertical,
   IconEdit,
   IconMail,
   IconPlus,
   IconSearch,
   IconShieldCheck,
-  IconSparkles,
   IconTrash,
+  IconUser,
   IconUsers,
-  IconDotsVertical,
 } from "@tabler/icons-react";
 
+import RequiredMark from "@/components/common/RequiredMark";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
-
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
@@ -37,13 +29,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -53,13 +38,30 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-  FormDescription,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
@@ -123,15 +125,30 @@ const INITIAL_USERS = [
     status: "Offline",
     lastActive: "41 min ago",
   },
+  {
+    id: "user-5",
+    name: "Karan Singh",
+    email: "karan@nexflow.com",
+    roleId: "role-developer",
+    status: "Active",
+    lastActive: "10 min ago",
+  },
+  {
+    id: "user-6",
+    name: "Pooja Verma",
+    email: "pooja@nexflow.com",
+    roleId: "role-designer",
+    status: "Offline",
+    lastActive: "2 hours ago",
+  },
 ];
 
 // ─── Style Constants ───────────────────────────────────────────────────────────
 
 const STATUS_STYLES = {
-  Active:
-    "border-success/30 bg-success/10 text-success",
-  Busy: "border-warning/30  bg-warning/10  text-warning",
-  Offline: "border-border/60     bg-muted/50       text-muted-foreground",
+  Active: "border-success/30 bg-success/10 text-success",
+  Busy: "border-warning/30 bg-warning/10 text-warning",
+  Offline: "border-border/60 bg-muted/50 text-muted-foreground",
 };
 
 const STATUS_DOT = {
@@ -152,30 +169,12 @@ const AVATAR_GRADIENTS = [
 ];
 
 const ROLE_COLORS = [
-  {
-    icon: "text-primary",
-    bg: "border-primary/20 bg-primary/10",
-  },
-  {
-    icon: "text-info",
-    bg: "border-info/20 bg-info/10",
-  },
-  {
-    icon: "text-success",
-    bg: "border-success/20 bg-success/10",
-  },
-  {
-    icon: "text-destructive",
-    bg: "border-destructive/20 bg-destructive/10",
-  },
-  {
-    icon: "text-warning",
-    bg: "border-warning/20 bg-warning/10",
-  },
-  {
-    icon: "text-pending",
-    bg: "border-pending/20 bg-pending/10",
-  },
+  { icon: "text-primary", bg: "border-primary/20 bg-primary/10" },
+  { icon: "text-info", bg: "border-info/20 bg-info/10" },
+  { icon: "text-success", bg: "border-success/20 bg-success/10" },
+  { icon: "text-destructive", bg: "border-destructive/20 bg-destructive/10" },
+  { icon: "text-warning", bg: "border-warning/20 bg-warning/10" },
+  { icon: "text-pending", bg: "border-pending/20 bg-pending/10" },
 ];
 
 const PERMISSION_STYLES = {
@@ -286,6 +285,40 @@ function EmptyState({ message }) {
   );
 }
 
+function PaginationFooter({ currentPage, totalPages, onPageChange }) {
+  if (totalPages <= 1) return null;
+  return (
+    <div className="flex items-center justify-between border-t border-border/40 bg-card/20 px-4 py-3 sm:px-6">
+      <p className="text-xs text-muted-foreground">
+        Page <span className="font-medium text-foreground">{currentPage}</span>{" "}
+        of <span className="font-medium text-foreground">{totalPages}</span>
+      </p>
+      <div className="flex gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="h-8 gap-1 px-3 text-xs shadow-none"
+        >
+          <IconChevronLeft className="size-3.5" />
+          Previous
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="h-8 gap-1 px-3 text-xs shadow-none"
+        >
+          Next
+          <IconChevronRight className="size-3.5" />
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main Component ───────────────────────────────────────────────────────────
 
 function Team() {
@@ -293,6 +326,9 @@ function Team() {
   const [users, setUsers] = useState(INITIAL_USERS);
   const [roles, setRoles] = useState(INITIAL_ROLES);
   const [searchQuery, setSearchQuery] = useState("");
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 4; // Show 4 per page for better UI testing
 
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
@@ -357,6 +393,17 @@ function Team() {
       [r.name, r.description].some((val) => val?.toLowerCase().includes(q))
     );
   }, [roles, searchQuery]);
+
+  // Reset pagination when search or tab changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, activeTab]);
+
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+  const paginatedUsers = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredUsers.slice(start, start + itemsPerPage);
+  }, [filteredUsers, currentPage, itemsPerPage]);
 
   const statCards = useMemo(
     () => [
@@ -436,22 +483,22 @@ function Team() {
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <main className="grid gap-6">
+    <main className="grid animate-in gap-6 duration-500 fade-in">
       {/* ── Page Header ──────────────────────────────────────────────────── */}
-      <Card className="relative overflow-hidden rounded-2xl border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur">
-        <div className="pointer-events-none absolute -top-20 -right-10 size-60 rounded-full bg-primary/6 blur-3xl" />
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-primary/40 to-transparent" />
+      <Card className="relative overflow-hidden border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur">
+        <div className="pointer-events-none absolute -top-20 -right-10 size-60 rounded-full bg-primary/10 blur-3xl" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-primary/30 to-transparent" />
         <div className="relative flex flex-wrap items-center justify-between gap-4 p-5 md:p-6">
           <div className="flex items-center gap-3.5">
             <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl border border-primary/20 bg-primary/10">
-              <IconSparkles className="size-5 text-primary" />
+              <IconChecklist className="size-5 text-primary" />
             </span>
             <div>
-              <h1 className="text-base font-semibold tracking-tight">
+              <h1 className="text-lg font-bold tracking-tight">
                 Team Management
               </h1>
               <p className="text-xs text-muted-foreground">
-                Manage users, roles, permissions, and access flow
+                Manage your workspace members, roles, and platform access.
               </p>
             </div>
           </div>
@@ -459,38 +506,30 @@ function Team() {
       </Card>
 
       {/* ── Stat Cards ───────────────────────────────────────────────────── */}
-      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {statCards.map((item, index) => (
           <Card
             key={item.label}
-            className="group relative animate-in overflow-hidden rounded-2xl border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur transition-all duration-300 fade-in slide-in-from-bottom-2 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-black/5"
-            style={{ animationDelay: `${index * 60}ms` }}
+            className="group relative overflow-hidden rounded-2xl border border-border/40 bg-card/40 shadow-sm backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
           >
-            <div
-              className="pointer-events-none absolute -top-8 -right-6 size-32 rounded-full opacity-30 blur-2xl"
-              style={{ background: `var(--tw-gradient-from, transparent)` }}
-            />
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-linear-to-r from-transparent via-border/50 to-transparent" />
-
-            <div className="flex items-start justify-between gap-3 p-5">
+            <div className="flex items-start justify-between gap-4 p-5">
               <div>
-                <p className="text-[10px] font-semibold tracking-[0.14em] text-muted-foreground uppercase">
+                <p className="text-[11px] font-bold tracking-[0.15em] text-muted-foreground uppercase">
                   {item.label}
                 </p>
-                <p className="mt-1.5 text-3xl font-bold tracking-tight tabular-nums">
+                <p className="mt-2 text-3xl font-extrabold tracking-tight">
                   {String(item.value)}
                 </p>
               </div>
-
               <span
                 className={cn(
-                  "inline-flex size-11 shrink-0 items-center justify-center rounded-xl border transition-transform duration-300 group-hover:scale-105",
+                  "flex size-12 shrink-0 items-center justify-center rounded-2xl border transition-transform duration-300 group-hover:scale-110",
                   STAT_COLORS[index]?.bg ?? "border-primary/20 bg-primary/10"
                 )}
               >
                 <item.Icon
                   className={cn(
-                    "size-5",
+                    "size-5.5",
                     STAT_COLORS[index]?.color ?? "text-primary"
                   )}
                 />
@@ -502,40 +541,47 @@ function Team() {
 
       {/* ── Directory Section ─────────────────────────────────────────────── */}
       <section>
-        <Card className="rounded-2xl border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur">
+        <Card className="overflow-hidden rounded-2xl border border-border/40 bg-card/40 shadow-sm backdrop-blur-sm">
           <Tabs
             defaultValue="users"
             value={activeTab}
             onValueChange={setActiveTab}
+            className="w-full"
           >
             {/* Toolbar */}
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/40 p-4 md:p-5">
-              <TabsList className="bg-background/50">
-                <TabsTrigger value="users" className="gap-1.5">
+            <div className="flex flex-col gap-4 border-b border-border/40 bg-background/20 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+              <TabsList className="h-10 bg-muted/50 p-1">
+                <TabsTrigger
+                  value="users"
+                  className="gap-2 rounded-md px-4 data-[state=active]:bg-background data-[state=active]:shadow-sm"
+                >
                   <IconUsers className="size-4" />
                   Users
                   <Badge
                     variant="secondary"
-                    className="ml-1 h-5 px-1.5 text-[10px]"
+                    className="ml-1 h-5 px-1.5 text-[10px] font-semibold"
                   >
                     {users.length}
                   </Badge>
                 </TabsTrigger>
-                <TabsTrigger value="roles" className="gap-1.5">
+                <TabsTrigger
+                  value="roles"
+                  className="gap-2 rounded-md px-4 data-[state=active]:bg-background data-[state=active]:shadow-sm"
+                >
                   <IconShieldCheck className="size-4" />
                   Roles
                   <Badge
                     variant="secondary"
-                    className="ml-1 h-5 px-1.5 text-[10px]"
+                    className="ml-1 h-5 px-1.5 text-[10px] font-semibold"
                   >
                     {roles.length}
                   </Badge>
                 </TabsTrigger>
               </TabsList>
 
-              <div className="flex items-center gap-2">
-                <div className="relative">
-                  <IconSearch className="pointer-events-none absolute top-1/2 left-3 size-3.5 -translate-y-1/2 text-muted-foreground/70" />
+              <div className="flex items-center gap-3">
+                <div className="group relative w-full sm:w-64">
+                  <IconSearch className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
                   <Input
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -544,18 +590,17 @@ function Team() {
                         ? "Search users..."
                         : "Search roles..."
                     }
-                    className="h-9 w-64 rounded-lg bg-background/70 pl-8 text-sm"
+                    className="h-10 bg-background/50 pl-9 transition-colors hover:bg-background focus-visible:bg-background"
                   />
                 </div>
                 <Button
                   type="button"
-                  size="sm"
-                  className="gap-1.5"
                   onClick={
                     activeTab === "users"
                       ? openCreateUserModal
                       : openCreateRoleModal
                   }
+                  className="shrink-0 gap-2 shadow-sm transition-all hover:shadow-md active:scale-95"
                 >
                   <IconPlus className="size-4" />
                   {activeTab === "users" ? "Add User" : "Add Role"}
@@ -563,246 +608,257 @@ function Team() {
               </div>
             </div>
 
-            {/* Content */}
-            <div className="p-4 md:p-5">
-              <TabsContent value="users" className="mt-0 outline-none">
-                <div className="overflow-x-auto rounded-xl border border-border/50 bg-background/30">
-                  <Table>
-                    <TableHeader>
-                      <TableRow className="hover:bg-transparent">
-                        <TableHead>
-                          <TableHeadLabel Icon={IconUsers} label="Member" />
-                        </TableHead>
-                        <TableHead>
-                          <TableHeadLabel Icon={IconShieldCheck} label="Role" />
-                        </TableHead>
-                        <TableHead>
-                          <TableHeadLabel Icon={IconChecklist} label="Status" />
-                        </TableHead>
-                        <TableHead>
-                          <TableHeadLabel
-                            Icon={IconClockHour4}
-                            label="Last Active"
-                          />
-                        </TableHead>
-                        <TableHead className="w-16 text-right">
-                          <span className="sr-only">Actions</span>
-                        </TableHead>
+            {/* Content Areas */}
+            <TabsContent value="users" className="m-0 border-none outline-none">
+              <div className="w-full overflow-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-muted/20 hover:bg-muted/20">
+                      <TableHead className="py-4">
+                        <TableHeadLabel Icon={IconUsers} label="Member" />
+                      </TableHead>
+                      <TableHead className="py-4">
+                        <TableHeadLabel Icon={IconShieldCheck} label="Role" />
+                      </TableHead>
+                      <TableHead className="py-4">
+                        <TableHeadLabel Icon={IconChecklist} label="Status" />
+                      </TableHead>
+                      <TableHead className="py-4">
+                        <TableHeadLabel
+                          Icon={IconClockHour4}
+                          label="Last Active"
+                        />
+                      </TableHead>
+                      <TableHead className="py-4 text-right">
+                        <span className="sr-only">Actions</span>
+                      </TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {paginatedUsers.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={5} className="h-48 text-center">
+                          <EmptyState message="No users match your criteria." />
+                        </TableCell>
                       </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredUsers.length === 0 ? (
-                        <TableRow>
-                          <TableCell colSpan={5}>
-                            <EmptyState message="No users found." />
-                          </TableCell>
-                        </TableRow>
-                      ) : (
-                        filteredUsers.map((user) => {
-                          const role = roleById[user.roleId];
-                          const roleColor = roleColorByIndex[user.roleId];
-                          return (
-                            <TableRow
-                              key={user.id}
-                              className="group/row transition-colors duration-150"
-                            >
-                              <TableCell>
-                                <div className="flex items-center gap-3">
-                                  <UserAvatar name={user.name} size="md" />
-                                  <div>
-                                    <p className="leading-none font-medium">
-                                      {user.name}
-                                    </p>
-                                    <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
-                                      <IconMail className="size-3" />
-                                      {user.email}
-                                    </p>
-                                  </div>
-                                </div>
-                              </TableCell>
-                              <TableCell>
-                                {role ? (
-                                  <Badge
-                                    variant="outline"
-                                    className={cn(
-                                      "gap-1 border-transparent px-2 py-0.5 text-[10px] font-semibold",
-                                      roleColor?.bg,
-                                      roleColor?.icon
-                                    )}
-                                  >
-                                    <IconShieldCheck className="size-3" />
-                                    {role.name}
-                                  </Badge>
-                                ) : (
-                                  <span className="text-xs text-muted-foreground italic">
-                                    Unassigned
-                                  </span>
-                                )}
-                              </TableCell>
-                              <TableCell>
-                                <Badge
-                                  variant="outline"
-                                  className={cn(
-                                    "gap-1.5 border-transparent px-2 py-0.5 text-xs font-medium",
-                                    STATUS_STYLES[user.status] ??
-                                      STATUS_STYLES.Offline
-                                  )}
-                                >
-                                  <StatusDot status={user.status} />
-                                  {user.status}
-                                </Badge>
-                              </TableCell>
-                              <TableCell className="text-xs text-muted-foreground">
-                                {user.lastActive}
-                              </TableCell>
-                              <TableCell className="text-right">
-                                <DropdownMenu>
-                                  <DropdownMenuTrigger asChild>
-                                    <Button
-                                      variant="ghost"
-                                      size="icon-sm"
-                                      className="opacity-0 group-hover/row:opacity-100 data-[state=open]:opacity-100"
-                                    >
-                                      <IconDotsVertical className="size-4" />
-                                      <span className="sr-only">Open menu</span>
-                                    </Button>
-                                  </DropdownMenuTrigger>
-                                  <DropdownMenuContent
-                                    align="end"
-                                    className="w-40"
-                                  >
-                                    <DropdownMenuItem
-                                      onClick={() => beginUserEdit(user)}
-                                    >
-                                      <IconEdit className="mr-2 size-4" />
-                                      Edit
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                      className="text-destructive focus:bg-destructive/10 focus:text-destructive"
-                                      onClick={() => removeUser(user.id)}
-                                    >
-                                      <IconTrash className="mr-2 size-4" />
-                                      Delete
-                                    </DropdownMenuItem>
-                                  </DropdownMenuContent>
-                                </DropdownMenu>
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })
-                      )}
-                    </TableBody>
-                  </Table>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="roles" className="mt-0 outline-none">
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                  {filteredRoles.length === 0 ? (
-                    <div className="col-span-full">
-                      <EmptyState message="No roles found." />
-                    </div>
-                  ) : (
-                    filteredRoles.map((role, i) => {
-                      const color = ROLE_COLORS[i % ROLE_COLORS.length];
-                      const members = membersByRoleId[role.id] ?? [];
-                      return (
-                        <Card
-                          key={role.id}
-                          className="relative overflow-hidden border-border/50 bg-background/50 backdrop-blur-sm transition-all hover:-translate-y-1 hover:shadow-md"
-                        >
-                          <CardHeader className="pb-3">
-                            <div className="flex items-start justify-between">
-                              <div className="flex items-center gap-3">
-                                <span
-                                  className={cn(
-                                    "inline-flex size-10 items-center justify-center rounded-xl border",
-                                    color.bg
-                                  )}
-                                >
-                                  <IconShieldCheck
-                                    className={cn("size-5", color.icon)}
-                                  />
-                                </span>
+                    ) : (
+                      paginatedUsers.map((user) => {
+                        const role = roleById[user.roleId];
+                        const roleColor = roleColorByIndex[user.roleId];
+                        return (
+                          <TableRow
+                            key={user.id}
+                            className="group/row transition-colors hover:bg-muted/30"
+                          >
+                            <TableCell className="py-4">
+                              <div className="flex items-center gap-4">
+                                <UserAvatar name={user.name} size="md" />
                                 <div>
-                                  <CardTitle className="text-base">
-                                    {role.name}
-                                  </CardTitle>
-                                  <p className="mt-0.5 text-xs text-muted-foreground">
-                                    {members.length} member
-                                    {members.length !== 1 && "s"}
+                                  <p className="font-semibold">{user.name}</p>
+                                  <p className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground">
+                                    <IconMail className="size-3" />
+                                    {user.email}
                                   </p>
                                 </div>
                               </div>
+                            </TableCell>
+                            <TableCell className="py-4">
+                              {role ? (
+                                <Badge
+                                  variant="secondary"
+                                  className={cn(
+                                    "gap-1.5 rounded-full border-transparent px-2.5 py-1 text-xs font-semibold shadow-none",
+                                    roleColor?.bg,
+                                    roleColor?.icon
+                                  )}
+                                >
+                                  <IconShieldCheck className="size-3.5" />
+                                  {role.name}
+                                </Badge>
+                              ) : (
+                                <Badge
+                                  variant="outline"
+                                  className="gap-1.5 rounded-full text-xs text-muted-foreground shadow-none"
+                                >
+                                  <IconBolt className="size-3.5" />
+                                  Unassigned
+                                </Badge>
+                              )}
+                            </TableCell>
+                            <TableCell className="py-4">
+                              <Badge
+                                variant="outline"
+                                className={cn(
+                                  "gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium shadow-none",
+                                  STATUS_STYLES[user.status] ??
+                                    STATUS_STYLES.Offline
+                                )}
+                              >
+                                <StatusDot status={user.status} />
+                                {user.status}
+                              </Badge>
+                            </TableCell>
+                            <TableCell className="py-4 text-sm text-muted-foreground">
+                              {user.lastActive}
+                            </TableCell>
+                            <TableCell className="py-4 text-right">
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                   <Button
                                     variant="ghost"
-                                    size="icon-sm"
-                                    className="-mt-2 -mr-2"
+                                    size="icon"
+                                    className="h-8 w-8 opacity-0 transition-opacity group-hover/row:opacity-100 data-[state=open]:opacity-100"
                                   >
                                     <IconDotsVertical className="size-4" />
+                                    <span className="sr-only">Open menu</span>
                                   </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
+                                <DropdownMenuContent
+                                  align="end"
+                                  className="w-40"
+                                >
                                   <DropdownMenuItem
-                                    onClick={() => beginRoleEdit(role)}
+                                    onClick={() => beginUserEdit(user)}
                                   >
                                     <IconEdit className="mr-2 size-4" />
                                     Edit Role
                                   </DropdownMenuItem>
                                   <DropdownMenuItem
                                     className="text-destructive focus:bg-destructive/10 focus:text-destructive"
-                                    onClick={() => removeRole(role.id)}
+                                    onClick={() => removeUser(user.id)}
                                   >
                                     <IconTrash className="mr-2 size-4" />
-                                    Delete Role
+                                    Remove User
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
                               </DropdownMenu>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+              <PaginationFooter
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            </TabsContent>
+
+            <TabsContent
+              value="roles"
+              className="m-0 border-none p-5 outline-none sm:p-6"
+            >
+              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {filteredRoles.length === 0 ? (
+                  <div className="col-span-full flex h-48 items-center justify-center">
+                    <EmptyState message="No roles match your criteria." />
+                  </div>
+                ) : (
+                  filteredRoles.map((role, i) => {
+                    const color = ROLE_COLORS[i % ROLE_COLORS.length];
+                    const members = membersByRoleId[role.id] ?? [];
+                    return (
+                      <Card
+                        key={role.id}
+                        className="relative flex flex-col justify-between overflow-hidden border border-border/40 bg-background/50 shadow-sm backdrop-blur-sm transition-all hover:-translate-y-1 hover:shadow-md"
+                      >
+                        <CardHeader className="pb-4">
+                          <div className="flex items-start justify-between">
+                            <div className="flex items-center gap-3">
+                              <span
+                                className={cn(
+                                  "flex size-11 items-center justify-center rounded-xl border shadow-inner",
+                                  color.bg
+                                )}
+                              >
+                                <IconShieldCheck
+                                  className={cn("size-5.5", color.icon)}
+                                />
+                              </span>
+                              <div>
+                                <CardTitle className="text-base font-bold">
+                                  {role.name}
+                                </CardTitle>
+                                <p className="mt-0.5 text-xs font-medium text-muted-foreground">
+                                  {members.length} Assigned User
+                                  {members.length !== 1 && "s"}
+                                </p>
+                              </div>
                             </div>
-                          </CardHeader>
-                          <CardContent>
-                            <p className="mb-4 line-clamp-2 min-h-10 text-sm text-muted-foreground">
-                              {role.description}
-                            </p>
-                            <div className="flex flex-wrap gap-1.5">
-                              {role.permissions.slice(0, 3).map((p) => (
-                                <PermissionChip key={p} permission={p} />
-                              ))}
-                              {role.permissions.length > 3 && (
-                                <span className="inline-flex items-center rounded-full border border-border/50 bg-muted/50 px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
-                                  +{role.permissions.length - 3} more
-                                </span>
-                              )}
-                            </div>
-                          </CardContent>
-                        </Card>
-                      );
-                    })
-                  )}
-                </div>
-              </TabsContent>
-            </div>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="-mt-2 -mr-2 h-8 w-8"
+                                >
+                                  <IconDotsVertical className="size-4" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuItem
+                                  onClick={() => beginRoleEdit(role)}
+                                >
+                                  <IconEdit className="mr-2 size-4" />
+                                  Edit Role
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  className="text-destructive focus:bg-destructive/10 focus:text-destructive"
+                                  onClick={() => removeRole(role.id)}
+                                >
+                                  <IconTrash className="mr-2 size-4" />
+                                  Delete Role
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="mb-5 line-clamp-2 min-h-10 text-sm text-muted-foreground">
+                            {role.description}
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {role.permissions.slice(0, 3).map((p) => (
+                              <PermissionChip key={p} permission={p} />
+                            ))}
+                            {role.permissions.length > 3 && (
+                              <span className="inline-flex items-center rounded-full border border-border/50 bg-muted/30 px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
+                                +{role.permissions.length - 3} more
+                              </span>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    );
+                  })
+                )}
+              </div>
+            </TabsContent>
           </Tabs>
         </Card>
       </section>
 
-      {/* User Dialog */}
+      {/* ── Add / Edit User Dialog ─────────────────────────────────────────── */}
       <Dialog open={isUserModalOpen} onOpenChange={setIsUserModalOpen}>
-        <DialogContent className="sm:max-w-106.25">
-          <DialogHeader>
-            <DialogTitle>
-              {userForm.getValues().id ? "Edit User" : "Create User"}
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader className="pb-4">
+            <DialogTitle className="text-xl">
+              {userForm.getValues().id
+                ? "Update User Role & Status"
+                : "Invite New User"}
             </DialogTitle>
             <DialogDescription>
-              Manage user details and role assignment.
+              Assign the correct access level and status for this team member.
             </DialogDescription>
           </DialogHeader>
+
           <Form {...userForm}>
             <form
               onSubmit={userForm.handleSubmit(handleUserSubmit)}
-              className="space-y-4"
+              className="grid gap-5"
             >
               <FormField
                 control={userForm.control}
@@ -810,14 +866,25 @@ function Team() {
                 rules={{ required: "Name is required" }}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Full Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="John Doe" {...field} />
-                    </FormControl>
-                    <FormMessage />
+                    <FormLabel className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+                      Full Name
+                      <RequiredMark />
+                    </FormLabel>
+                    <div className="group relative">
+                      <IconUser className="pointer-events-none absolute top-1/2 left-3.5 size-4.5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
+                      <FormControl>
+                        <Input
+                          placeholder="e.g. Jane Doe"
+                          className="h-11 bg-background/50 pl-10 focus-visible:ring-primary/20"
+                          {...field}
+                        />
+                      </FormControl>
+                    </div>
+                    <FormMessage className="text-[11px]" />
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={userForm.control}
                 name="email"
@@ -825,77 +892,93 @@ function Team() {
                   required: "Email is required",
                   pattern: {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: "invalid email address",
+                    message: "Invalid email address",
                   },
                 }}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email Address</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="john@example.com"
-                        type="email"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={userForm.control}
-                name="roleId"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Role</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
+                    <FormLabel className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+                      Email Address
+                      <RequiredMark />
+                    </FormLabel>
+                    <div className="group relative">
+                      <IconMail className="pointer-events-none absolute top-1/2 left-3.5 size-4.5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a role" />
-                        </SelectTrigger>
+                        <Input
+                          placeholder="jane@example.com"
+                          type="email"
+                          className="h-11 bg-background/50 pl-10 focus-visible:ring-primary/20"
+                          {...field}
+                        />
                       </FormControl>
-                      <SelectContent>
-                        <SelectItem value="none">Unassigned</SelectItem>
-                        {roles.map((r) => (
-                          <SelectItem key={r.id} value={r.id}>
-                            {r.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
+                    </div>
+                    <FormMessage className="text-[11px]" />
                   </FormItem>
                 )}
               />
-              <FormField
-                control={userForm.control}
-                name="status"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Status</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a status" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="Active">Active</SelectItem>
-                        <SelectItem value="Busy">Busy</SelectItem>
-                        <SelectItem value="Offline">Offline</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="flex justify-end gap-3 border-t border-border/40 pt-4">
+
+              <div className="grid gap-5 sm:grid-cols-2">
+                <FormField
+                  control={userForm.control}
+                  name="roleId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+                        Assigned Role
+                      </FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="h-11 bg-background/50 focus:ring-primary/20">
+                            <SelectValue placeholder="Select a role" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="none">Unassigned</SelectItem>
+                          {roles.map((r) => (
+                            <SelectItem key={r.id} value={r.id}>
+                              {r.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage className="text-[11px]" />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={userForm.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+                        Status
+                      </FormLabel>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="h-11 bg-background/50 focus:ring-primary/20">
+                            <SelectValue placeholder="Set status" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Active">Active</SelectItem>
+                          <SelectItem value="Busy">Busy</SelectItem>
+                          <SelectItem value="Offline">Offline</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage className="text-[11px]" />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="mt-4 flex items-center justify-end gap-3 border-t border-border/40 pt-5">
                 <Button
                   type="button"
                   variant="ghost"
@@ -903,8 +986,9 @@ function Team() {
                 >
                   Cancel
                 </Button>
-                <Button type="submit">
+                <Button type="submit" className="gap-2 shadow-sm">
                   {userForm.getValues().id ? "Save Changes" : "Create User"}
+                  {!userForm.getValues().id && <IconPlus className="size-4" />}
                 </Button>
               </div>
             </form>
@@ -912,21 +996,24 @@ function Team() {
         </DialogContent>
       </Dialog>
 
-      {/* Role Dialog */}
+      {/* ── Add / Edit Role Dialog ─────────────────────────────────────────── */}
       <Dialog open={isRoleModalOpen} onOpenChange={setIsRoleModalOpen}>
-        <DialogContent className="sm:max-w-106.25">
-          <DialogHeader>
-            <DialogTitle>
-              {roleForm.getValues().id ? "Edit Role" : "Create Role"}
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader className="pb-4">
+            <DialogTitle className="text-xl">
+              {roleForm.getValues().id
+                ? "Update Role Definition"
+                : "Create New Role"}
             </DialogTitle>
             <DialogDescription>
-              Define role access and descriptive properties.
+              Define the permissions and responsibilities for this role group.
             </DialogDescription>
           </DialogHeader>
+
           <Form {...roleForm}>
             <form
               onSubmit={roleForm.handleSubmit(handleRoleSubmit)}
-              className="space-y-4"
+              className="grid gap-5"
             >
               <FormField
                 control={roleForm.control}
@@ -934,49 +1021,79 @@ function Team() {
                 rules={{ required: "Role name is required" }}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Role Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g. Editor" {...field} />
-                    </FormControl>
-                    <FormMessage />
+                    <FormLabel className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+                      Role Name
+                      <RequiredMark />
+                    </FormLabel>
+                    <div className="group relative">
+                      <IconShieldCheck className="pointer-events-none absolute top-1/2 left-3.5 size-4.5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
+                      <FormControl>
+                        <Input
+                          placeholder="e.g. Super Admin"
+                          className="h-11 bg-background/50 pl-10 focus-visible:ring-primary/20"
+                          {...field}
+                        />
+                      </FormControl>
+                    </div>
+                    <FormMessage className="text-[11px]" />
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={roleForm.control}
                 name="description"
                 rules={{ required: "Description is required" }}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Input placeholder="What does this role do?" {...field} />
-                    </FormControl>
-                    <FormMessage />
+                    <FormLabel className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+                      Description
+                      <RequiredMark />
+                    </FormLabel>
+                    <div className="group relative">
+                      <IconEdit className="pointer-events-none absolute top-1/2 left-3.5 size-4.5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
+                      <FormControl>
+                        <Input
+                          placeholder="What does this role entail?"
+                          className="h-11 bg-background/50 pl-10 focus-visible:ring-primary/20"
+                          {...field}
+                        />
+                      </FormControl>
+                    </div>
+                    <FormMessage className="text-[11px]" />
                   </FormItem>
                 )}
               />
+
               <FormField
                 control={roleForm.control}
                 name="permissions"
                 rules={{ required: "At least one permission is required" }}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Permissions</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="read, write, delete (comma separated)"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormDescription className="mt-1.5 text-[10px] text-muted-foreground">
-                      Comma separated permission identifiers.
+                    <FormLabel className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+                      Permissions
+                      <RequiredMark />
+                    </FormLabel>
+                    <div className="group relative">
+                      <IconChecklist className="pointer-events-none absolute top-1/2 left-3.5 size-4.5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
+                      <FormControl>
+                        <Input
+                          placeholder="e.g. read, write, delete"
+                          className="h-11 bg-background/50 pl-10 focus-visible:ring-primary/20"
+                          {...field}
+                        />
+                      </FormControl>
+                    </div>
+                    <FormDescription className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
+                      Enter permission identifiers separated by commas.
                     </FormDescription>
-                    <FormMessage />
+                    <FormMessage className="text-[11px]" />
                   </FormItem>
                 )}
               />
-              <div className="flex justify-end gap-3 border-t border-border/40 pt-4">
+
+              <div className="mt-4 flex items-center justify-end gap-3 border-t border-border/40 pt-5">
                 <Button
                   type="button"
                   variant="ghost"
@@ -984,8 +1101,9 @@ function Team() {
                 >
                   Cancel
                 </Button>
-                <Button type="submit">
-                  {roleForm.getValues().id ? "Save Changes" : "Create Role"}
+                <Button type="submit" className="gap-2 shadow-sm">
+                  {roleForm.getValues().id ? "Save Role" : "Create Role"}
+                  {!roleForm.getValues().id && <IconPlus className="size-4" />}
                 </Button>
               </div>
             </form>

@@ -160,8 +160,8 @@ const Profile = () => {
           <Card className="animate-in border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur duration-500 fade-in slide-in-from-bottom-2">
             <CardHeader>
               <div className="flex items-center gap-2.5">
-                <span className="inline-flex size-8 items-center justify-center rounded-lg border border-primary/20 bg-primary/8">
-                  <IconUserCircle className="size-4 text-primary" />
+                <span className="inline-flex size-9 items-center justify-center rounded-lg border border-primary/20 bg-primary/90">
+                  <IconUserCircle className="size-5 text-white" />
                 </span>
                 <div>
                   <CardTitle className="text-sm font-semibold">
@@ -185,8 +185,8 @@ const Profile = () => {
             <Card className="animate-in border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur duration-500 fade-in slide-in-from-bottom-2">
               <CardHeader>
                 <div className="flex items-center gap-2.5">
-                  <span className="inline-flex size-8 items-center justify-center rounded-lg border border-primary/20 bg-primary/8">
-                    <IconBuildingSkyscraper className="size-4 text-primary" />
+                  <span className="inline-flex size-9 items-center justify-center rounded-lg border border-primary/20 bg-primary/90">
+                    <IconBuildingSkyscraper className="size-5 text-white" />
                   </span>
                   <div>
                     <CardTitle className="text-sm font-semibold">
