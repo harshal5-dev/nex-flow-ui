@@ -27,12 +27,6 @@ import RequiredMark from "@/components/common/RequiredMark";
 
 const OTP_RESEND_SECONDS = 30;
 
-function delay(ms) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-}
-
 function maskEmail(emailId) {
   const [name = "", domain = ""] = String(emailId).split("@");
 
@@ -143,11 +137,11 @@ const ForgotPasswordForm = () => {
         navigate("/signin", { replace: true });
       }, 900);
     } catch (error) {
+      const { data = {} } = error;
       setStatus({
         variant: "error",
         title: "Error",
-        message:
-          error?.message || "Failed to reset password. Please try again.",
+        message: data.message || "Failed to reset password. Please try again.",
       });
     }
   };
@@ -165,14 +159,7 @@ const ForgotPasswordForm = () => {
     if (resendIn > 0 || isSubmitting) {
       return;
     }
-
-    await delay(500);
-    setResendIn(OTP_RESEND_SECONDS);
-    setStatus({
-      variant: "info",
-      title: "OTP resent",
-      message: `A new verification code was sent to ${maskedEmail}.`,
-    });
+    await handleSendOtp(form.getValues());
   };
 
   const handleChangeEmail = () => {

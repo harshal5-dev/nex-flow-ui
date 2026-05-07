@@ -44,10 +44,11 @@ const OrganizationForm = ({ user }) => {
         message,
       });
     } catch (error) {
+      const { data = {} } = error;
       setOrgStatus({
         variant: "error",
         title: "Error",
-        message: error.message || "Failed to update organization.",
+        message: data.message || "Failed to update organization.",
       });
     }
   };

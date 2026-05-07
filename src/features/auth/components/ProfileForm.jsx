@@ -44,10 +44,11 @@ const ProfileForm = ({ user }) => {
         message,
       });
     } catch (error) {
+      const { data = {} } = error;
       setProfileStatus({
         variant: "error",
         title: "Error",
-        message: error.message || "Failed to update profile.",
+        message: data.message || "Failed to update profile.",
       });
     }
   };

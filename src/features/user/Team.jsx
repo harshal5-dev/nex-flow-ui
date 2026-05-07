@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   IconActivity,
@@ -19,9 +19,10 @@ import {
 } from "@tabler/icons-react";
 
 import RequiredMark from "@/components/common/RequiredMark";
+import EmptyState from "@/components/common/EmptyState";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -38,7 +39,6 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -62,6 +62,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
+import Role from "./pages/Role";
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
@@ -168,26 +169,6 @@ const AVATAR_GRADIENTS = [
   "from-lime-500 to-green-600",
 ];
 
-const ROLE_COLORS = [
-  { icon: "text-primary", bg: "border-primary/20 bg-primary/10" },
-  { icon: "text-info", bg: "border-info/20 bg-info/10" },
-  { icon: "text-success", bg: "border-success/20 bg-success/10" },
-  { icon: "text-destructive", bg: "border-destructive/20 bg-destructive/10" },
-  { icon: "text-warning", bg: "border-warning/20 bg-warning/10" },
-  { icon: "text-pending", bg: "border-pending/20 bg-pending/10" },
-];
-
-const PERMISSION_STYLES = {
-  manage_users: "bg-primary/10 text-primary",
-  manage_roles: "bg-info/10 text-info",
-  view_reports: "bg-success/10 text-success",
-  assign_tasks: "bg-warning/10 text-warning",
-  manage_projects: "bg-pending/10 text-pending",
-  update_tasks: "bg-destructive/10 text-destructive",
-  view_projects: "bg-primary/10 text-primary",
-  comment_tasks: "bg-info/10 text-info",
-};
-
 const STAT_COLORS = [
   { color: "text-info", bg: "border-info/20 bg-info/8" },
   { color: "text-primary", bg: "border-primary/20 bg-primary/8" },
@@ -213,8 +194,8 @@ function getAvatarGradient(name) {
   return AVATAR_GRADIENTS[code % AVATAR_GRADIENTS.length];
 }
 
-function getPermissionStyle(permission) {
-  return PERMISSION_STYLES[permission] ?? "bg-muted text-muted-foreground";
+function clampPage(page, totalPages) {
+  return Math.min(Math.max(page, 1), Math.max(totalPages, 1));
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -252,19 +233,6 @@ function StatusDot({ status }) {
   );
 }
 
-function PermissionChip({ permission }) {
-  return (
-    <span
-      className={cn(
-        "inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium",
-        getPermissionStyle(permission)
-      )}
-    >
-      {permission}
-    </span>
-  );
-}
-
 function TableHeadLabel({ Icon, label }) {
   return (
     <span className="inline-flex items-center gap-1.5 font-semibold text-foreground/80">
@@ -274,46 +242,55 @@ function TableHeadLabel({ Icon, label }) {
   );
 }
 
-function EmptyState({ message }) {
-  return (
-    <div className="flex flex-col items-center justify-center gap-2 py-10 text-center">
-      <span className="text-muted-foreground/40">
-        <IconSearch className="size-8" />
-      </span>
-      <p className="text-sm font-medium text-muted-foreground">{message}</p>
-    </div>
-  );
-}
-
-function PaginationFooter({ currentPage, totalPages, onPageChange }) {
+function PaginationFooter({
+  currentPage,
+  totalPages,
+  totalItems,
+  itemsPerPage,
+  onPageChange,
+  itemLabel = "items",
+}) {
   if (totalPages <= 1) return null;
+
+  const start = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+  const end = Math.min(currentPage * itemsPerPage, totalItems);
+
   return (
-    <div className="flex items-center justify-between border-t border-border/40 bg-card/20 px-4 py-3 sm:px-6">
+    <div className="flex flex-col gap-2 border-t border-border/40 bg-card/20 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6">
       <p className="text-xs text-muted-foreground">
-        Page <span className="font-medium text-foreground">{currentPage}</span>{" "}
-        of <span className="font-medium text-foreground">{totalPages}</span>
+        Showing <span className="font-medium text-foreground">{start}</span>-
+        <span className="font-medium text-foreground">{end}</span> of{" "}
+        <span className="font-medium text-foreground">{totalItems}</span>{" "}
+        {itemLabel}
       </p>
-      <div className="flex gap-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onPageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="h-8 gap-1 px-3 text-xs shadow-none"
-        >
-          <IconChevronLeft className="size-3.5" />
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onPageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="h-8 gap-1 px-3 text-xs shadow-none"
-        >
-          Next
-          <IconChevronRight className="size-3.5" />
-        </Button>
+      <div className="flex items-center justify-between gap-2 sm:justify-end">
+        <p className="text-xs text-muted-foreground">
+          Page{" "}
+          <span className="font-medium text-foreground">{currentPage}</span> of{" "}
+          <span className="font-medium text-foreground">{totalPages}</span>
+        </p>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onPageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="h-8 gap-1 px-3 text-xs shadow-none"
+          >
+            <IconChevronLeft className="size-3.5" />
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onPageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="h-8 gap-1 px-3 text-xs shadow-none"
+          >
+            Next
+            <IconChevronRight className="size-3.5" />
+          </Button>
+        </div>
       </div>
     </div>
   );
@@ -324,14 +301,12 @@ function PaginationFooter({ currentPage, totalPages, onPageChange }) {
 function Team() {
   const [activeTab, setActiveTab] = useState("users");
   const [users, setUsers] = useState(INITIAL_USERS);
-  const [roles, setRoles] = useState(INITIAL_ROLES);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4; // Show 4 per page for better UI testing
+  const [userCurrentPage, setUserCurrentPage] = useState(1);
+  const usersPerPage = 4;
 
   const [isUserModalOpen, setIsUserModalOpen] = useState(false);
-  const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
 
   const userForm = useForm({
     defaultValues: {
@@ -343,43 +318,6 @@ function Team() {
     },
   });
 
-  const roleForm = useForm({
-    defaultValues: {
-      id: "",
-      name: "",
-      description: "",
-      permissions: "",
-    },
-  });
-
-  // ── Derived data ─────────────────────────────────────────────────────────
-
-  const roleById = useMemo(
-    () => roles.reduce((acc, r) => ({ ...acc, [r.id]: r }), {}),
-    [roles]
-  );
-
-  const roleColorByIndex = useMemo(
-    () =>
-      roles.reduce(
-        (acc, r, i) => ({
-          ...acc,
-          [r.id]: ROLE_COLORS[i % ROLE_COLORS.length],
-        }),
-        {}
-      ),
-    [roles]
-  );
-
-  const membersByRoleId = useMemo(
-    () =>
-      users.reduce(
-        (acc, u) => ({ ...acc, [u.roleId]: [...(acc[u.roleId] ?? []), u] }),
-        {}
-      ),
-    [users]
-  );
-
   const filteredUsers = useMemo(() => {
     const q = searchQuery.toLowerCase();
     return users.filter((u) =>
@@ -387,28 +325,21 @@ function Team() {
     );
   }, [users, searchQuery]);
 
-  const filteredRoles = useMemo(() => {
-    const q = searchQuery.toLowerCase();
-    return roles.filter((r) =>
-      [r.name, r.description].some((val) => val?.toLowerCase().includes(q))
-    );
-  }, [roles, searchQuery]);
+  const totalUserPages = Math.max(
+    1,
+    Math.ceil(filteredUsers.length / usersPerPage)
+  );
+  const activeUserPage = clampPage(userCurrentPage, totalUserPages);
 
-  // Reset pagination when search or tab changes
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery, activeTab]);
-
-  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
   const paginatedUsers = useMemo(() => {
-    const start = (currentPage - 1) * itemsPerPage;
-    return filteredUsers.slice(start, start + itemsPerPage);
-  }, [filteredUsers, currentPage, itemsPerPage]);
+    const start = (activeUserPage - 1) * usersPerPage;
+    return filteredUsers.slice(start, start + usersPerPage);
+  }, [filteredUsers, activeUserPage, usersPerPage]);
 
   const statCards = useMemo(
     () => [
       { label: "Total Users", value: users.length, Icon: IconUsers },
-      { label: "Total Roles", value: roles.length, Icon: IconShieldCheck },
+      { label: "Total Roles", value: 4, Icon: IconShieldCheck },
       {
         label: "Active Now",
         value: users.filter((u) => u.status === "Active").length,
@@ -420,7 +351,7 @@ function Team() {
         Icon: IconBolt,
       },
     ],
-    [users, roles]
+    [users]
   );
 
   const openCreateUserModal = () => {
@@ -428,16 +359,13 @@ function Team() {
       id: "",
       name: "",
       email: "",
-      roleId: roles[0]?.id ?? "",
+      roleId: "",
       status: "Active",
     });
     setIsUserModalOpen(true);
   };
 
-  const openCreateRoleModal = () => {
-    roleForm.reset({ id: "", name: "", description: "", permissions: "" });
-    setIsRoleModalOpen(true);
-  };
+  console.log(openCreateUserModal);
 
   const handleUserSubmit = (values) => {
     const payload = { ...values, lastActive: "Just now" };
@@ -449,43 +377,19 @@ function Team() {
     setIsUserModalOpen(false);
   };
 
-  const handleRoleSubmit = (values) => {
-    const payload = {
-      ...values,
-      permissions: values.permissions.split(",").map((p) => p.trim()),
-    };
-    if (values.id)
-      setRoles((cur) =>
-        cur.map((r) => (r.id === values.id ? { ...r, ...payload } : r))
-      );
-    else setRoles((cur) => [{ id: createId("role"), ...payload }, ...cur]);
-    setIsRoleModalOpen(false);
-  };
-
   const beginUserEdit = (user) => {
     userForm.reset(user);
     setIsUserModalOpen(true);
   };
 
-  const beginRoleEdit = (role) => {
-    roleForm.reset({ ...role, permissions: role.permissions.join(", ") });
-    setIsRoleModalOpen(true);
-  };
-
   const removeUser = (id) => setUsers((cur) => cur.filter((u) => u.id !== id));
-  const removeRole = (id) => {
-    setRoles((cur) => cur.filter((r) => r.id !== id));
-    setUsers((cur) =>
-      cur.map((u) => (u.roleId === id ? { ...u, roleId: "" } : u))
-    );
-  };
 
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <main className="grid animate-in gap-6 duration-500 fade-in">
+    <main className="flex w-full min-w-0 animate-in flex-col gap-6 duration-500 fade-in">
       {/* ── Page Header ──────────────────────────────────────────────────── */}
-      <Card className="relative overflow-hidden border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur">
+      <Card className="relative overflow-hidden rounded-2xl border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur">
         <div className="pointer-events-none absolute -top-20 -right-10 size-60 rounded-full bg-primary/10 blur-3xl" />
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-primary/30 to-transparent" />
         <div className="relative flex flex-wrap items-center justify-between gap-4 p-5 md:p-6">
@@ -506,30 +410,30 @@ function Team() {
       </Card>
 
       {/* ── Stat Cards ───────────────────────────────────────────────────── */}
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {statCards.map((item, index) => (
           <Card
             key={item.label}
-            className="group relative overflow-hidden rounded-2xl border border-border/40 bg-card/40 shadow-sm backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
+            className="group relative overflow-hidden rounded-2xl border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
           >
-            <div className="flex items-start justify-between gap-4 p-5">
+            <div className="flex items-start justify-between gap-3 p-5">
               <div>
-                <p className="text-[11px] font-bold tracking-[0.15em] text-muted-foreground uppercase">
+                <p className="text-[10px] font-semibold tracking-[0.14em] text-muted-foreground uppercase">
                   {item.label}
                 </p>
-                <p className="mt-2 text-3xl font-extrabold tracking-tight">
+                <p className="mt-1.5 text-3xl font-bold tracking-tight tabular-nums">
                   {String(item.value)}
                 </p>
               </div>
               <span
                 className={cn(
-                  "flex size-12 shrink-0 items-center justify-center rounded-2xl border transition-transform duration-300 group-hover:scale-110",
+                  "inline-flex size-10 shrink-0 items-center justify-center rounded-xl border transition-transform duration-300 group-hover:scale-105",
                   STAT_COLORS[index]?.bg ?? "border-primary/20 bg-primary/10"
                 )}
               >
                 <item.Icon
                   className={cn(
-                    "size-5.5",
+                    "size-5",
                     STAT_COLORS[index]?.color ?? "text-primary"
                   )}
                 />
@@ -541,79 +445,66 @@ function Team() {
 
       {/* ── Directory Section ─────────────────────────────────────────────── */}
       <section>
-        <Card className="overflow-hidden rounded-2xl border border-border/40 bg-card/40 shadow-sm backdrop-blur-sm">
-          <Tabs
-            defaultValue="users"
-            value={activeTab}
-            onValueChange={setActiveTab}
-            className="w-full"
-          >
-            {/* Toolbar */}
-            <div className="flex flex-col gap-4 border-b border-border/40 bg-background/20 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
-              <TabsList className="h-10 bg-muted/50 p-1">
-                <TabsTrigger
-                  value="users"
-                  className="gap-2 rounded-md px-4 data-[state=active]:bg-background data-[state=active]:shadow-sm"
-                >
-                  <IconUsers className="size-4" />
-                  Users
-                  <Badge
-                    variant="secondary"
-                    className="ml-1 h-5 px-1.5 text-[10px] font-semibold"
-                  >
-                    {users.length}
-                  </Badge>
-                </TabsTrigger>
-                <TabsTrigger
-                  value="roles"
-                  className="gap-2 rounded-md px-4 data-[state=active]:bg-background data-[state=active]:shadow-sm"
-                >
-                  <IconShieldCheck className="size-4" />
-                  Roles
-                  <Badge
-                    variant="secondary"
-                    className="ml-1 h-5 px-1.5 text-[10px] font-semibold"
-                  >
-                    {roles.length}
-                  </Badge>
-                </TabsTrigger>
-              </TabsList>
+        <Tabs
+          defaultValue="users"
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="w-full min-w-0"
+        >
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-4">
+            <TabsList className="border border-border/40 bg-background/60 shadow-sm">
+              <TabsTrigger value="users" className="gap-2">
+                <IconUsers className="size-4" />
+                Users
+              </TabsTrigger>
+              <TabsTrigger value="roles" className="gap-2">
+                <IconShieldCheck className="size-4" />
+                Roles
+              </TabsTrigger>
+            </TabsList>
 
-              <div className="flex items-center gap-3">
-                <div className="group relative w-full sm:w-64">
-                  <IconSearch className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
-                  <Input
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder={
-                      activeTab === "users"
-                        ? "Search users..."
-                        : "Search roles..."
-                    }
-                    className="h-10 bg-background/50 pl-9 transition-colors hover:bg-background focus-visible:bg-background"
-                  />
-                </div>
-                <Button
-                  type="button"
-                  onClick={
+            <div className="flex w-full items-center gap-2 sm:w-auto sm:gap-3">
+              <div className="relative flex-1 sm:flex-initial">
+                <IconSearch className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground/70" />
+                <Input
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setUserCurrentPage(1);
+                  }}
+                  placeholder={
                     activeTab === "users"
-                      ? openCreateUserModal
-                      : openCreateRoleModal
+                      ? "Search users..."
+                      : "Search roles..."
                   }
-                  className="shrink-0 gap-2 shadow-sm transition-all hover:shadow-md active:scale-95"
-                >
-                  <IconPlus className="size-4" />
-                  {activeTab === "users" ? "Add User" : "Add Role"}
-                </Button>
+                  className="h-9 w-full rounded-xl border-border/50 bg-background/60 pl-9 text-sm shadow-sm sm:w-64"
+                />
               </div>
+              {/* <Button
+                type="button"
+                onClick={
+                  activeTab === "users"
+                    ? openCreateUserModal
+                    : openCreateRoleModal
+                }
+                className="shrink-0 gap-1.5 rounded-xl"
+              >
+                <IconPlus className="size-4" />
+                <span className="hidden sm:inline">
+                  {activeTab === "users" ? "Add User" : "Add Role"}
+                </span>
+                <span className="sm:hidden">Add</span>
+              </Button>*/}
             </div>
+          </div>
 
-            {/* Content Areas */}
-            <TabsContent value="users" className="m-0 border-none outline-none">
+          {/* Content Areas */}
+          <TabsContent value="users" className="mt-0 outline-none">
+            <Card className="overflow-hidden rounded-2xl border-border/50 bg-card/60 shadow-sm backdrop-blur">
               <div className="w-full overflow-auto">
                 <Table>
                   <TableHeader>
-                    <TableRow className="bg-muted/20 hover:bg-muted/20">
+                    <TableRow className="border-border/40 bg-muted/30 hover:bg-muted/30">
                       <TableHead className="py-4">
                         <TableHeadLabel Icon={IconUsers} label="Member" />
                       </TableHead>
@@ -643,12 +534,12 @@ function Team() {
                       </TableRow>
                     ) : (
                       paginatedUsers.map((user) => {
-                        const role = roleById[user.roleId];
-                        const roleColor = roleColorByIndex[user.roleId];
+                        const role = null;
+                        const roleColor = null;
                         return (
                           <TableRow
                             key={user.id}
-                            className="group/row transition-colors hover:bg-muted/30"
+                            className="group/row border-border/40 transition-colors hover:bg-muted/20"
                           >
                             <TableCell className="py-4">
                               <div className="flex items-center gap-4">
@@ -741,104 +632,22 @@ function Team() {
                 </Table>
               </div>
               <PaginationFooter
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={setCurrentPage}
+                currentPage={activeUserPage}
+                totalPages={totalUserPages}
+                totalItems={filteredUsers.length}
+                itemsPerPage={usersPerPage}
+                itemLabel="users"
+                onPageChange={(nextPage) =>
+                  setUserCurrentPage(clampPage(nextPage, totalUserPages))
+                }
               />
-            </TabsContent>
+            </Card>
+          </TabsContent>
 
-            <TabsContent
-              value="roles"
-              className="m-0 border-none p-5 outline-none sm:p-6"
-            >
-              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredRoles.length === 0 ? (
-                  <div className="col-span-full flex h-48 items-center justify-center">
-                    <EmptyState message="No roles match your criteria." />
-                  </div>
-                ) : (
-                  filteredRoles.map((role, i) => {
-                    const color = ROLE_COLORS[i % ROLE_COLORS.length];
-                    const members = membersByRoleId[role.id] ?? [];
-                    return (
-                      <Card
-                        key={role.id}
-                        className="relative flex flex-col justify-between overflow-hidden border border-border/40 bg-background/50 shadow-sm backdrop-blur-sm transition-all hover:-translate-y-1 hover:shadow-md"
-                      >
-                        <CardHeader className="pb-4">
-                          <div className="flex items-start justify-between">
-                            <div className="flex items-center gap-3">
-                              <span
-                                className={cn(
-                                  "flex size-11 items-center justify-center rounded-xl border shadow-inner",
-                                  color.bg
-                                )}
-                              >
-                                <IconShieldCheck
-                                  className={cn("size-5.5", color.icon)}
-                                />
-                              </span>
-                              <div>
-                                <CardTitle className="text-base font-bold">
-                                  {role.name}
-                                </CardTitle>
-                                <p className="mt-0.5 text-xs font-medium text-muted-foreground">
-                                  {members.length} Assigned User
-                                  {members.length !== 1 && "s"}
-                                </p>
-                              </div>
-                            </div>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="-mt-2 -mr-2 h-8 w-8"
-                                >
-                                  <IconDotsVertical className="size-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem
-                                  onClick={() => beginRoleEdit(role)}
-                                >
-                                  <IconEdit className="mr-2 size-4" />
-                                  Edit Role
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  className="text-destructive focus:bg-destructive/10 focus:text-destructive"
-                                  onClick={() => removeRole(role.id)}
-                                >
-                                  <IconTrash className="mr-2 size-4" />
-                                  Delete Role
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </div>
-                        </CardHeader>
-                        <CardContent>
-                          <p className="mb-5 line-clamp-2 min-h-10 text-sm text-muted-foreground">
-                            {role.description}
-                          </p>
-                          <div className="flex flex-wrap gap-2">
-                            {role.permissions.slice(0, 3).map((p) => (
-                              <PermissionChip key={p} permission={p} />
-                            ))}
-                            {role.permissions.length > 3 && (
-                              <span className="inline-flex items-center rounded-full border border-border/50 bg-muted/30 px-2 py-0.5 text-[10px] font-medium text-muted-foreground">
-                                +{role.permissions.length - 3} more
-                              </span>
-                            )}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    );
-                  })
-                )}
-              </div>
-            </TabsContent>
-          </Tabs>
-        </Card>
+          <TabsContent value="roles" className="mt-0 outline-none">
+            <Role searchQuery={searchQuery} />
+          </TabsContent>
+        </Tabs>
       </section>
 
       {/* ── Add / Edit User Dialog ─────────────────────────────────────────── */}
@@ -937,11 +746,11 @@ function Team() {
                         </FormControl>
                         <SelectContent>
                           <SelectItem value="none">Unassigned</SelectItem>
-                          {roles.map((r) => (
+                          {/* {roles.map((r) => (
                             <SelectItem key={r.id} value={r.id}>
                               {r.name}
                             </SelectItem>
-                          ))}
+                          ))}*/}
                         </SelectContent>
                       </Select>
                       <FormMessage className="text-[11px]" />
@@ -989,121 +798,6 @@ function Team() {
                 <Button type="submit" className="gap-2 shadow-sm">
                   {userForm.getValues().id ? "Save Changes" : "Create User"}
                   {!userForm.getValues().id && <IconPlus className="size-4" />}
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
-
-      {/* ── Add / Edit Role Dialog ─────────────────────────────────────────── */}
-      <Dialog open={isRoleModalOpen} onOpenChange={setIsRoleModalOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader className="pb-4">
-            <DialogTitle className="text-xl">
-              {roleForm.getValues().id
-                ? "Update Role Definition"
-                : "Create New Role"}
-            </DialogTitle>
-            <DialogDescription>
-              Define the permissions and responsibilities for this role group.
-            </DialogDescription>
-          </DialogHeader>
-
-          <Form {...roleForm}>
-            <form
-              onSubmit={roleForm.handleSubmit(handleRoleSubmit)}
-              className="grid gap-5"
-            >
-              <FormField
-                control={roleForm.control}
-                name="name"
-                rules={{ required: "Role name is required" }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-                      Role Name
-                      <RequiredMark />
-                    </FormLabel>
-                    <div className="group relative">
-                      <IconShieldCheck className="pointer-events-none absolute top-1/2 left-3.5 size-4.5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
-                      <FormControl>
-                        <Input
-                          placeholder="e.g. Super Admin"
-                          className="h-11 bg-background/50 pl-10 focus-visible:ring-primary/20"
-                          {...field}
-                        />
-                      </FormControl>
-                    </div>
-                    <FormMessage className="text-[11px]" />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={roleForm.control}
-                name="description"
-                rules={{ required: "Description is required" }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-                      Description
-                      <RequiredMark />
-                    </FormLabel>
-                    <div className="group relative">
-                      <IconEdit className="pointer-events-none absolute top-1/2 left-3.5 size-4.5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
-                      <FormControl>
-                        <Input
-                          placeholder="What does this role entail?"
-                          className="h-11 bg-background/50 pl-10 focus-visible:ring-primary/20"
-                          {...field}
-                        />
-                      </FormControl>
-                    </div>
-                    <FormMessage className="text-[11px]" />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={roleForm.control}
-                name="permissions"
-                rules={{ required: "At least one permission is required" }}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-                      Permissions
-                      <RequiredMark />
-                    </FormLabel>
-                    <div className="group relative">
-                      <IconChecklist className="pointer-events-none absolute top-1/2 left-3.5 size-4.5 -translate-y-1/2 text-muted-foreground transition-colors group-focus-within:text-primary" />
-                      <FormControl>
-                        <Input
-                          placeholder="e.g. read, write, delete"
-                          className="h-11 bg-background/50 pl-10 focus-visible:ring-primary/20"
-                          {...field}
-                        />
-                      </FormControl>
-                    </div>
-                    <FormDescription className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
-                      Enter permission identifiers separated by commas.
-                    </FormDescription>
-                    <FormMessage className="text-[11px]" />
-                  </FormItem>
-                )}
-              />
-
-              <div className="mt-4 flex items-center justify-end gap-3 border-t border-border/40 pt-5">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => setIsRoleModalOpen(false)}
-                >
-                  Cancel
-                </Button>
-                <Button type="submit" className="gap-2 shadow-sm">
-                  {roleForm.getValues().id ? "Save Role" : "Create Role"}
-                  {!roleForm.getValues().id && <IconPlus className="size-4" />}
                 </Button>
               </div>
             </form>

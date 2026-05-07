@@ -91,3 +91,7 @@ export const getUserInitials = (user) => {
     .toUpperCase()
     .slice(0, 2);
 };
+
+export const clampPage = (page, totalPages) => {
+  return Math.min(Math.max(page, 1), Math.max(totalPages, 1));
+};

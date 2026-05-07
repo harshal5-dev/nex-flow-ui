@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
+import { IconCheck } from "@tabler/icons-react";
 
 import { cn } from "@/lib/utils";
 
@@ -48,7 +49,7 @@ const DropdownMenuItem = React.forwardRef(
     <DropdownMenuPrimitive.Item
       ref={ref}
       className={cn(
-        "relative flex cursor-default items-center gap-2 rounded-lg px-2 py-2 text-sm transition-colors outline-none select-none focus:bg-accent focus:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50",
+        "relative flex cursor-default items-center gap-2 rounded-lg px-2 py-2 text-sm transition-colors outline-none select-none focus:bg-accent focus:text-foreground data-disabled:pointer-events-none data-disabled:opacity-50",
         inset && "pl-8",
         className
       )}
@@ -57,6 +58,29 @@ const DropdownMenuItem = React.forwardRef(
   )
 );
 DropdownMenuItem.displayName = DropdownMenuPrimitive.Item.displayName;
+
+const DropdownMenuCheckboxItem = React.forwardRef(
+  ({ className, children, checked, ...props }, ref) => (
+    <DropdownMenuPrimitive.CheckboxItem
+      ref={ref}
+      checked={checked}
+      className={cn(
+        "relative flex cursor-default items-center gap-2 rounded-lg py-2 pr-2 pl-8 text-sm transition-colors outline-none select-none focus:bg-accent focus:text-foreground data-disabled:pointer-events-none data-disabled:opacity-50",
+        className
+      )}
+      {...props}
+    >
+      <span className="pointer-events-none absolute left-2 flex size-4 items-center justify-center">
+        <DropdownMenuPrimitive.ItemIndicator>
+          <IconCheck className="size-3.5" />
+        </DropdownMenuPrimitive.ItemIndicator>
+      </span>
+      {children}
+    </DropdownMenuPrimitive.CheckboxItem>
+  )
+);
+DropdownMenuCheckboxItem.displayName =
+  DropdownMenuPrimitive.CheckboxItem.displayName;
 
 const DropdownMenuSeparator = React.forwardRef(
   ({ className, ...props }, ref) => (
@@ -70,6 +94,7 @@ const DropdownMenuSeparator = React.forwardRef(
 DropdownMenuSeparator.displayName = DropdownMenuPrimitive.Separator.displayName;
 
 export {
+  DropdownMenuCheckboxItem,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,

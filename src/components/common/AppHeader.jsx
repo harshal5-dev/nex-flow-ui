@@ -61,7 +61,7 @@ const AppHeader = ({ pageMeta }) => {
           className="hidden items-center gap-1.5 border border-border/30 bg-secondary/40 px-3 py-1 text-secondary-foreground shadow-sm transition-colors hover:bg-secondary/60 sm:flex"
         >
           <IconBuildingSkyscraper className="size-3.5 text-primary" />
-          <span className="max-w-[150px] truncate font-medium">
+          <span className="max-w-37.5 truncate font-medium">
             {organization}
           </span>
         </Badge>
