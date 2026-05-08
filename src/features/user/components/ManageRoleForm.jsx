@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from "react";
 import RequiredMark from "@/components/common/RequiredMark";
 import {
   Form,
@@ -10,35 +11,60 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { IconEdit, IconPlus, IconShieldCheck } from "@tabler/icons-react";
+import {
+  IconEdit,
+  IconLoader,
+  IconPlus,
+  IconShieldCheck,
+} from "@tabler/icons-react";
 import { useForm, useWatch } from "react-hook-form";
 import PermissionMultiSelect from "./PermissionMultiSelect";
 import PermissionChip from "./PermissionChip";
-import { useMemo } from "react";
 import { getPermissionLabel } from "../lib/user.utils";
 import { Button } from "@/components/ui/button";
+import { useCreateRoleMutation, useUpdateRoleMutation } from "../api/roleApi";
+import { toast } from "sonner";
 
-const ManageRoleForm = ({ setIsRoleModalOpen, permissionResponse, roles }) => {
+const ManageRoleForm = ({
+  setIsRoleModalOpen,
+  permissionResponse,
+  roles,
+  selectedRole,
+}) => {
   const {
     data: permissionsData,
     isLoading: permissionsLoading,
     isFetching: permissionsFetching,
     isError: permissionsError,
   } = permissionResponse;
+  const isEditing = Boolean(selectedRole?._id);
+
+  const [createRole, { isLoading: creatingRole }] = useCreateRoleMutation();
+  const [updateRole, { isLoading: updatingRole }] = useUpdateRoleMutation();
+  const [submitError, setSubmitError] = useState("");
+  const isSubmitting = creatingRole || updatingRole;
 
   const roleForm = useForm({
     mode: "onBlur",
     defaultValues: {
-      id: "",
-      name: "",
-      description: "",
-      permissions: [],
+      id: selectedRole?._id ?? "",
+      name: selectedRole?.name ?? "",
+      description: selectedRole?.description ?? "",
+      permissions: selectedRole?.permissions ?? [],
     },
   });
 
+  useEffect(() => {
+    roleForm.reset({
+      id: selectedRole?._id ?? "",
+      name: selectedRole?.name ?? "",
+      description: selectedRole?.description ?? "",
+      permissions: selectedRole?.permissions ?? [],
+    });
+  }, [roleForm, selectedRole]);
+
   const selectedRolePermissions =
     useWatch({ control: roleForm.control, name: "permissions" }) ?? [];
-  const editingRoleId = useWatch({ control: roleForm.control, name: "id" });
 
   const permissionOptions = useMemo(() => {
     const catalogPermissions = Array.isArray(permissionsData)
@@ -58,22 +84,39 @@ const ManageRoleForm = ({ setIsRoleModalOpen, permissionResponse, roles }) => {
     }));
   }, [permissionsData, roles]);
 
-  const handleRoleSubmit = (values) => {
+  const handleRoleSubmit = async (values) => {
+    setSubmitError("");
     const isEditing = Boolean(values.id);
     const normalizedPermissions = Array.from(new Set(values.permissions));
     const payload = {
       ...values,
-      _id: values.id || "",
+      id: values.id || "",
       permissions: normalizedPermissions,
     };
 
-    if (isEditing) {
-      console.log(values, "value", payload);
-    } else {
-      console.log(values, "value", payload);
+    try {
+      if (isEditing) {
+        const response = await updateRole(payload).unwrap();
+        toast.success(
+          response?.message || `${values.name || "Role"} updated successfully.`
+        );
+      } else {
+        const response = await createRole({
+          name: payload.name,
+          description: payload.description,
+          permissions: payload.permissions,
+        }).unwrap();
+        toast.success(
+          response?.message || `${values.name || "Role"} created successfully.`
+        );
+      }
+      setIsRoleModalOpen(false);
+    } catch (error) {
+      setSubmitError(
+        error?.data?.message ||
+          "Unable to save role right now. Please try again."
+      );
     }
-
-    setIsRoleModalOpen(false);
   };
 
   return (
@@ -189,6 +232,10 @@ const ManageRoleForm = ({ setIsRoleModalOpen, permissionResponse, roles }) => {
           )}
         />
 
+        {submitError && (
+          <p className="text-xs font-medium text-destructive">{submitError}</p>
+        )}
+
         <div className="mt-4 flex items-center justify-between gap-3 border-t border-border/40 pt-5">
           <p className="text-[11px] text-muted-foreground">
             Permissions selected:{" "}
@@ -200,13 +247,27 @@ const ManageRoleForm = ({ setIsRoleModalOpen, permissionResponse, roles }) => {
             <Button
               type="button"
               variant="ghost"
+              disabled={isSubmitting}
               onClick={() => setIsRoleModalOpen(false)}
             >
               Cancel
             </Button>
-            <Button type="submit" className="gap-2 shadow-sm">
-              {editingRoleId ? "Save Role" : "Create Role"}
-              {!editingRoleId && <IconPlus className="size-4" />}
+            <Button
+              type="submit"
+              className="gap-2 shadow-sm"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <IconLoader className="size-4 animate-spin" />
+                  {isEditing ? "Saving..." : "Creating..."}
+                </>
+              ) : (
+                <>
+                  {isEditing ? "Save Role" : "Create Role"}
+                  {!isEditing && <IconPlus className="size-4" />}
+                </>
+              )}
             </Button>
           </div>
         </div>

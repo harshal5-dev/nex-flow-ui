@@ -16,7 +16,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { SidebarFooter, SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "../ui/sidebar";
+import {
+  SidebarFooter,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+} from "../ui/sidebar";
 import {
   IconChevronDown,
   IconLoader,
@@ -89,15 +94,20 @@ const AppSidebarFooter = ({
         <SidebarMenuItem>
           <DropdownMenu onOpenChange={setIsUserMenuOpen}>
             <DropdownMenuTrigger asChild>
-              <SidebarMenuButton 
-                size="lg" 
+              <SidebarMenuButton
+                size="lg"
                 className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
               >
                 <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary text-[11px] font-bold text-sidebar-primary-foreground shadow-sm">
                   {profileInitials}
                 </div>
 
-                <div className={cn("flex flex-col min-w-0 flex-1", isCollapsed && "lg:hidden")}>
+                <div
+                  className={cn(
+                    "flex min-w-0 flex-1 flex-col",
+                    isCollapsed && "lg:hidden"
+                  )}
+                >
                   <span className="truncate text-xs font-semibold text-sidebar-foreground">
                     {profileName}
                   </span>
@@ -106,12 +116,12 @@ const AppSidebarFooter = ({
                   </span>
                 </div>
 
-                <IconChevronDown 
+                <IconChevronDown
                   className={cn(
-                    "ml-auto size-4 shrink-0 transition-transform duration-200", 
+                    "ml-auto size-4 shrink-0 transition-transform duration-200",
                     isUserMenuOpen && "rotate-180",
                     isCollapsed && "lg:hidden"
-                  )} 
+                  )}
                 />
               </SidebarMenuButton>
             </DropdownMenuTrigger>
@@ -127,8 +137,10 @@ const AppSidebarFooter = ({
                   <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary text-[11px] font-bold text-primary-foreground shadow-sm">
                     {profileInitials}
                   </span>
-                  <div className="min-w-0 flex flex-col">
-                    <span className="truncate font-semibold">{profileName}</span>
+                  <div className="flex min-w-0 flex-col">
+                    <span className="truncate font-semibold">
+                      {profileName}
+                    </span>
                     <span className="truncate text-[10px] text-muted-foreground">
                       {user.emailId}
                     </span>
@@ -138,9 +150,9 @@ const AppSidebarFooter = ({
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onSelect={handleOnProfileClick}
-                className="cursor-pointer gap-2 rounded-lg text-xs"
+                className="cursor-pointer gap-2 rounded-lg text-xs focus:text-white"
               >
-                <IconUserCircle className="size-4 text-muted-foreground" />
+                <IconUserCircle className="size-4" />
                 View profile
               </DropdownMenuItem>
               <DropdownMenuSeparator />
