@@ -16,6 +16,7 @@ export const roleApi = createApi({
       query: () => "/roles/permissions",
       providesTags: ["Role"],
       transformResponse: (response) => response.data,
+      keepUnusedDataFor: 3600,
     }),
 
     createRole: builder.mutation({
