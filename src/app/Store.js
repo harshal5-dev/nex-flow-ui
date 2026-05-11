@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 
-import { roleApi } from "@/features/user";
+import { roleApi, userApi } from "@/features/user";
 import { authApi, authReducer } from "@/features/auth";
 
 export const store = configureStore({
@@ -8,9 +8,14 @@ export const store = configureStore({
     [authApi.reducerPath]: authApi.reducer,
     auth: authReducer,
     [roleApi.reducerPath]: roleApi.reducer,
+    [userApi.reducerPath]: userApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(authApi.middleware, roleApi.middleware),
+    getDefaultMiddleware().concat(
+      authApi.middleware,
+      roleApi.middleware,
+      userApi.middleware
+    ),
 });
 
 export default store;

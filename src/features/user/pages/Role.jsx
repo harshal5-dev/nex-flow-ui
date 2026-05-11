@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { IconPlus, IconShieldCheck } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
-import { useGetPermissionsQuery, useGetRolesQuery } from "../api/roleApi";
 import {
   Dialog,
   DialogContent,
@@ -12,14 +11,12 @@ import {
 } from "@/components/ui/dialog";
 import ManageRoleForm from "../components/ManageRoleForm";
 import RoleList from "../components/RoleList";
+import { PERMISSIONS } from "@/constant/global";
+import { hasAnyPermission } from "@/lib/utils";
 
-const Role = ({ searchQuery }) => {
+const Role = ({ searchQuery, permissions }) => {
   const [isRoleModalOpen, setIsRoleModalOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState(null);
-
-  const roleResponse = useGetRolesQuery();
-  const { data: roles = [] } = roleResponse || {};
-  const permissionResponse = useGetPermissionsQuery();
 
   const openCreateRoleModal = () => {
     setSelectedRole(null);
@@ -44,22 +41,24 @@ const Role = ({ searchQuery }) => {
                 Manage roles and permissions
               </p>
             </div>
-            <Button
-              type="button"
-              onClick={openCreateRoleModal}
-              className="shrink-0 gap-1.5"
-            >
-              <IconPlus className="size-4" />
-              <span className="hidden sm:inline">Add Role</span>
-              <span className="sm:hidden">Add</span>
-            </Button>
+            {hasAnyPermission(permissions, [PERMISSIONS.MANAGE_ROLES]) && (
+              <Button
+                type="button"
+                onClick={openCreateRoleModal}
+                className="shrink-0 gap-1.5"
+              >
+                <IconPlus className="size-4" />
+                <span className="hidden sm:inline">Add Role</span>
+                <span className="sm:hidden">Add</span>
+              </Button>
+            )}
           </div>
         </div>
 
         <RoleList
-          roleResponse={roleResponse}
           searchQuery={searchQuery}
           beginRoleEdit={beginRoleEdit}
+          permissions={permissions}
         />
       </Card>
 
@@ -83,8 +82,6 @@ const Role = ({ searchQuery }) => {
 
           <ManageRoleForm
             setIsRoleModalOpen={setIsRoleModalOpen}
-            permissionResponse={permissionResponse}
-            roles={roles}
             selectedRole={selectedRole}
           />
         </DialogContent>

@@ -1,21 +1,34 @@
 import { Link } from "react-router-dom";
-import { SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
+import {
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "../ui/sidebar";
 import LogoBrand from "../common/LogoBrand";
 import { cn } from "@/lib/utils";
 
 const AppSidebarHeader = ({ isCollapsed, onNavigate }) => {
   return (
-    <SidebarHeader>
-      <SidebarMenu>
+    <SidebarHeader className={cn(isCollapsed && "items-center")}>
+      <SidebarMenu className={cn(isCollapsed && "w-full")}>
         <SidebarMenuItem>
-          <SidebarMenuButton size="lg" asChild tooltip="Dashboard">
+          <SidebarMenuButton
+            size="lg"
+            asChild
+            tooltip="Dashboard"
+            className={cn(isCollapsed && "px-0")}
+          >
             <Link
               to="/app/dashboard"
               onClick={onNavigate}
-              className={cn("flex items-center", isCollapsed && "justify-center")}
+              className={cn(
+                "flex w-full items-center",
+                isCollapsed && "justify-center"
+              )}
             >
               <LogoBrand
-                size="md"
+                size={isCollapsed ? "sm" : "md"}
                 subtitle="Project Management"
                 showText={!isCollapsed}
                 logoClassName="bg-sidebar-primary text-sidebar-primary-foreground shadow-sm"

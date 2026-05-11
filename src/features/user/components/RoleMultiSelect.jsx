@@ -36,16 +36,18 @@ const RoleMultiSelect = ({
             return {
               value: option,
               label: option,
+              subtitle: "",
               description: "",
             };
           }
 
-          const optionValue = option?.value ?? option?.id;
+          const optionValue = option?.value ?? option?._id ?? option?.id;
           if (!optionValue) return null;
 
           return {
             value: optionValue,
             label: option?.label ?? option?.name ?? optionValue,
+            subtitle: option?.subtitle ?? option?.code ?? "",
             description: option?.description ?? "",
           };
         })
@@ -67,7 +69,7 @@ const RoleMultiSelect = ({
     if (!query) return normalizedOptions;
 
     return normalizedOptions.filter((role) =>
-      [role.value, role.label, role.description].some((text) =>
+      [role.value, role.label, role.subtitle, role.description].some((text) =>
         text.toLowerCase().includes(query)
       )
     );
@@ -207,6 +209,7 @@ const RoleMultiSelect = ({
           ) : (
             filteredOptions.map((role) => {
               const isSelected = selectedRoleValues.includes(role.value);
+              const roleSubtitle = role.subtitle || role.description || role.value;
 
               return (
                 <DropdownMenuCheckboxItem
@@ -222,7 +225,7 @@ const RoleMultiSelect = ({
                       {role.label}
                     </p>
                     <p className="text-[11px] text-muted-foreground group-data-highlighted:text-muted-foreground">
-                      {role.description || role.value}
+                      {roleSubtitle}
                     </p>
                   </div>
                 </DropdownMenuCheckboxItem>

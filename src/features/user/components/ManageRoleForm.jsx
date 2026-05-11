@@ -22,15 +22,15 @@ import PermissionMultiSelect from "./PermissionMultiSelect";
 import PermissionChip from "./PermissionChip";
 import { getPermissionLabel } from "../lib/user.utils";
 import { Button } from "@/components/ui/button";
-import { useCreateRoleMutation, useUpdateRoleMutation } from "../api/roleApi";
+import {
+  useCreateRoleMutation,
+  useGetPermissionsQuery,
+  useUpdateRoleMutation,
+} from "../api/roleApi";
 import { toast } from "sonner";
 
-const ManageRoleForm = ({
-  setIsRoleModalOpen,
-  permissionResponse,
-  roles,
-  selectedRole,
-}) => {
+const ManageRoleForm = ({ setIsRoleModalOpen, selectedRole }) => {
+  const permissionResponse = useGetPermissionsQuery();
   const {
     data: permissionsData,
     isLoading: permissionsLoading,
@@ -70,19 +70,12 @@ const ManageRoleForm = ({
     const catalogPermissions = Array.isArray(permissionsData)
       ? permissionsData
       : [];
-    const usedPermissions = roles.flatMap((role) =>
-      Array.isArray(role.permissions) ? role.permissions : []
-    );
 
-    const mergedPermissions = Array.from(
-      new Set([...catalogPermissions, ...usedPermissions])
-    );
-
-    return mergedPermissions.filter(Boolean).map((permission) => ({
+    return catalogPermissions.filter(Boolean).map((permission) => ({
       value: permission,
       label: getPermissionLabel(permission),
     }));
-  }, [permissionsData, roles]);
+  }, [permissionsData]);
 
   const handleRoleSubmit = async (values) => {
     setSubmitError("");

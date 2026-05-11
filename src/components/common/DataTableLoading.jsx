@@ -34,7 +34,7 @@ const DataTableLoading = ({
         className
       )}
     >
-      <Table className={cn("min-w-[680px]", tableClassName)}>
+      <Table className={cn("min-w-170", tableClassName)}>
         <TableHeader>
           <TableRow className="border-border/40 bg-muted/30 hover:bg-muted/30">
             {columnIndexes.map((columnIndex) => {
@@ -75,7 +75,7 @@ const DataTableLoading = ({
                     className={cn(
                       "py-4",
                       isActionColumn && "text-right",
-                      isFirstColumn && withLeadingAvatar && "min-w-[220px]"
+                      isFirstColumn && withLeadingAvatar && "min-w-55"
                     )}
                   >
                     {isFirstColumn && withLeadingAvatar ? (

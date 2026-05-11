@@ -46,5 +46,7 @@ export const selectCurrentUser = (state) => state.auth.user;
 export const selectIsAuthenticated = (state) => state.auth.isAuthenticated;
 export const selectIsAuthLoading = (state) => state.auth.isLoading;
 export const selectAuthError = (state) => state.auth.error;
+export const selectAuthPermissions = (state) =>
+  state.auth.user?.permissions || [];
 
 export default authSlice.reducer;

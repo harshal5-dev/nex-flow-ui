@@ -76,6 +76,14 @@ export const authApi = createApi({
       }),
     }),
 
+    acceptInvite: builder.mutation({
+      query: ({ token, password }) => ({
+        url: "/auth/accept-invitation",
+        method: "POST",
+        body: { token, password },
+      }),
+    }),
+
     signout: builder.mutation({
       query: () => ({
         url: "/auth/signout",
@@ -90,6 +98,7 @@ export const {
   useSigninMutation,
   useForgotPasswordMutation,
   useVerifyResetPasswordMutation,
+  useAcceptInviteMutation,
   useSignoutMutation,
   useGetUserProfileQuery,
   useUpdateProfileMutation,

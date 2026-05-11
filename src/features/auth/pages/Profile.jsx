@@ -22,9 +22,11 @@ import {
   getUserInitials,
   getUserOrganization,
   getUserPrimaryRole,
+  hasAnyPermission,
 } from "@/lib/utils";
 import ProfileForm from "../components/ProfileForm";
 import OrganizationForm from "../components/OrganizationForm";
+import { PERMISSIONS } from "@/constant/global";
 
 const accountInfo = (organizationName, roleName, createdAt) => [
   {
@@ -145,7 +147,7 @@ const Profile = () => {
             <IconUserCircle className="size-4" />
             Basic
           </TabsTrigger>
-          {user.roles.some((role) => role.name === "Owner") && (
+          {hasAnyPermission(user?.permissions, [PERMISSIONS.UPDATE_TENANT]) && (
             <TabsTrigger
               value="organization"
               className="flex items-center gap-2"
@@ -180,7 +182,7 @@ const Profile = () => {
           </Card>
         </TabsContent>
 
-        {user.roles.some((role) => role.code === "PLATFORM_OWNER") && (
+        {hasAnyPermission(user?.permissions, [PERMISSIONS.UPDATE_TENANT]) && (
           <TabsContent value="organization" className="mt-0">
             <Card className="animate-in border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur duration-500 fade-in slide-in-from-bottom-2">
               <CardHeader>

@@ -8,6 +8,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import {
+  IconEye,
+  IconEyeOff,
   IconLoader,
   IconLock,
   IconMail,
@@ -29,6 +31,7 @@ const SigninForm = () => {
   const dispatch = useDispatch();
   const [signin, { isLoading }] = useSigninMutation();
   const [serverStatus, setServerStatus] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm({
     mode: "onBlur",
@@ -157,13 +160,27 @@ const SigninForm = () => {
                   <IconLock className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
                   <FormControl>
                     <Input
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       placeholder="Enter your password"
                       autoComplete="current-password"
-                      className="pl-9"
+                      className="pr-10 pl-9"
                       {...field}
                     />
                   </FormControl>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-xs"
+                    className="absolute top-1/2 right-2 -translate-y-1/2"
+                    onClick={() => setShowPassword((visible) => !visible)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? (
+                      <IconEyeOff className="size-3.5" />
+                    ) : (
+                      <IconEye className="size-3.5" />
+                    )}
+                  </Button>
                 </div>
                 <FormMessage />
               </FormItem>

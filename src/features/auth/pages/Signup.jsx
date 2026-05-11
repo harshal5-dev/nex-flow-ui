@@ -37,11 +37,13 @@ const Signup = () => {
       description="Sign up to get access to team management, project tracking, and task workflows — all in one place."
       highlights={signupHighlights}
     >
-      <Card className="w-full max-w-md animate-in rounded-2xl border-border/50 bg-card/90 p-0 shadow-xl backdrop-blur-sm duration-500 fade-in slide-in-from-bottom-3">
-        {/* Top gradient accent line */}
-        <div className="h-1 rounded-t-2xl bg-linear-to-r from-primary/40 via-primary to-primary/40" />
+      <Card className="relative w-full max-w-md animate-in overflow-hidden rounded-2xl border-border/50 bg-card/92 p-0 shadow-xl backdrop-blur-sm duration-500 fade-in slide-in-from-bottom-3">
+        <span className="pointer-events-none absolute -top-20 -right-8 size-48 rounded-full bg-primary/14 blur-3xl" />
+        <span className="pointer-events-none absolute -bottom-20 -left-10 size-48 rounded-full bg-info/12 blur-3xl" />
 
-        <CardHeader className="px-6 pt-6 pb-4">
+        <div className="relative h-1 rounded-t-2xl bg-linear-to-r from-info/45 via-primary to-success/45" />
+
+        <CardHeader className="relative px-6 pt-6 pb-4">
           <CardTitle className="text-2xl font-bold tracking-tight">
             Create workspace
           </CardTitle>
@@ -50,7 +52,7 @@ const Signup = () => {
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="px-6 pb-4">
+        <CardContent className="relative px-6 pb-4">
           <SignupForm />
         </CardContent>
 

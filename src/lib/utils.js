@@ -95,3 +95,9 @@ export const getUserInitials = (user) => {
 export const clampPage = (page, totalPages) => {
   return Math.min(Math.max(page, 1), Math.max(totalPages, 1));
 };
+
+export const hasAnyPermission = (userPermissions, requiredPermissions) => {
+  return requiredPermissions.some((permission) =>
+    userPermissions.includes(permission)
+  );
+};

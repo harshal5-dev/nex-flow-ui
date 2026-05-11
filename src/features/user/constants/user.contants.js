@@ -1,10 +1,28 @@
 export const ROLE_COLORS = [
-  { icon: "text-primary", bg: "border-primary/20 bg-primary/10" },
-  { icon: "text-info", bg: "border-info/20 bg-info/10" },
-  { icon: "text-success", bg: "border-success/20 bg-success/10" },
-  { icon: "text-destructive", bg: "border-destructive/20 bg-destructive/10" },
-  { icon: "text-warning", bg: "border-warning/20 bg-warning/10" },
-  { icon: "text-pending", bg: "border-pending/20 bg-pending/10" },
+  {
+    icon: "text-primary",
+    bg: "border-primary/20 bg-primary/10 dark:bg-primary/75 dark:border-primary/25 dark:text-foreground",
+  },
+  {
+    icon: "text-info",
+    bg: "border-info/20 bg-info/10 dark:bg-info/75 dark:border-info/25 dark:text-foreground",
+  },
+  {
+    icon: "text-success",
+    bg: "border-success/20 bg-success/10 dark:bg-success/75 dark:border-success/25 dark:text-foreground",
+  },
+  {
+    icon: "text-destructive",
+    bg: "border-destructive/20 bg-destructive/10 dark:bg-destructive/75 dark:border-destructive/25 dark:text-foreground",
+  },
+  {
+    icon: "text-warning",
+    bg: "border-warning/20 bg-warning/10 dark:bg-warning/75 dark:border-warning/25 dark:text-foreground",
+  },
+  {
+    icon: "text-pending",
+    bg: "border-pending/20 bg-pending/10 dark:bg-pending/75 dark:border-pending/25 dark:text-foreground",
+  },
 ];
 
 export const PERMISSION_STYLES = {
@@ -75,3 +93,10 @@ export const PERMISSION_LABELS = {
   UPDATE_PROJECTS: "Update Projects",
   VIEW_LIST_PROJECTS: "View List Projects",
 };
+
+export const STAT_COLORS = [
+  { color: "text-info", bg: "border-info/20 bg-info/8" },
+  { color: "text-primary", bg: "border-primary/20 bg-primary/8" },
+  { color: "text-success", bg: "border-success/20 bg-success/8" },
+  { color: "text-warning", bg: "border-warning/20 bg-warning/8" },
+];

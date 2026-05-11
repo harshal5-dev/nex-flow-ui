@@ -142,11 +142,16 @@ function Sidebar({ className, children }) {
       data-state={desktopOpen ? "expanded" : "collapsed"}
       className={cn(
         "relative hidden h-svh shrink-0 border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-[width] duration-700 ease-out lg:block",
-        desktopOpen ? "w-64" : "w-20",
+        desktopOpen ? "w-64" : "w-16",
         className
       )}
     >
-      <div className="flex h-full flex-col gap-2.5 overflow-hidden p-2.5">
+      <div
+        className={cn(
+          "flex h-full flex-col gap-2.5 overflow-hidden",
+          desktopOpen ? "p-2.5" : "p-1.5"
+        )}
+      >
         {children}
       </div>
     </aside>
@@ -295,7 +300,12 @@ function SidebarMenuItem({ className, ...props }) {
   );
 }
 
-function SidebarMenuButton({ className, asChild = false, isActive = false, ...props }) {
+function SidebarMenuButton({
+  className,
+  asChild = false,
+  isActive = false,
+  ...props
+}) {
   const { isCollapsed } = useSidebarContext();
   const Comp = asChild ? Slot : "button";
 
@@ -304,10 +314,12 @@ function SidebarMenuButton({ className, asChild = false, isActive = false, ...pr
       data-slot="sidebar-menu-button"
       data-active={isActive ? "true" : "false"}
       className={cn(
-        "relative flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2.5 text-left text-sm font-medium transition-all duration-500 outline-none focus-visible:ring-3 focus-visible:ring-sidebar-ring/40 hover:-translate-y-px",
+        "relative flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2.5 text-left text-sm font-medium transition-all duration-500 outline-none hover:-translate-y-px focus-visible:ring-3 focus-visible:ring-sidebar-ring/40",
         isActive
           ? "bg-primary/10 text-primary shadow-[0_4px_12px_-4px_rgba(var(--primary-rgb),0.3)] dark:bg-primary/20 dark:text-primary-foreground dark:shadow-none " +
-            (!isCollapsed ? "before:absolute before:left-0 before:top-1/2 before:h-2/3 before:w-1 before:-translate-y-1/2 before:rounded-r-md before:bg-primary before:shadow-[0_0_8px_var(--primary)] dark:before:shadow-none before:transition-all before:duration-500" : "")
+              (!isCollapsed
+                ? "before:absolute before:top-1/2 before:left-0 before:h-2/3 before:w-1 before:-translate-y-1/2 before:rounded-r-md before:bg-primary before:shadow-[0_0_8px_var(--primary)] before:transition-all before:duration-500 dark:before:shadow-none"
+                : "")
           : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
         isCollapsed && "lg:justify-center lg:px-2",
         className

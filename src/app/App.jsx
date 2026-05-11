@@ -4,6 +4,7 @@ import {
   Signin,
   Signup,
   ForgotPassword,
+  AcceptInvite,
   ProtectedRoute,
   PublicOnlyRoute,
   useGetUserProfileQuery,
@@ -11,12 +12,12 @@ import {
 } from "@/features/auth";
 import DashboardLayout from "@/app/layouts/DashboardLayout";
 import Dashboard from "@/features/dashboard/Dashboard";
-import Team from "@/features/user/Team";
 import Tasks from "@/features/tasks/Tasks";
 import Projects from "@/features/projects/Projects";
 import AccessDenied from "@/app/pages/AccessDenied";
 import NotFound from "@/app/pages/NotFound";
 import LoadingScreen from "@/components/common/LoadingScreen";
+import { Team } from "@/features/user";
 
 export function App() {
   const { isLoading } = useGetUserProfileQuery();
@@ -34,6 +35,7 @@ export function App() {
         <Route path="/signup" element={<Signup />} />
       </Route>
       <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/accept-invite" element={<AcceptInvite />} />
       <Route path="/access-denied" element={<AccessDenied />} />
 
       {/* Auth-protected Routes */}

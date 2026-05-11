@@ -2,13 +2,15 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   IconCircleCheck,
+  IconEye,
+  IconEyeOff,
   IconLoader,
   IconLock,
   IconMail,
   IconUser,
   IconDesk,
 } from "@tabler/icons-react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -23,11 +25,15 @@ import { Input } from "@/components/ui/input";
 import { useSignupMutation } from "../api/authApi";
 import StatusCallout from "@/components/common/StatusCallout";
 import RequiredMark from "@/components/common/RequiredMark";
+import PasswordStrengthIndicator from "./PasswordStrengthIndicator";
+import { isStrongPassword } from "../lib/passwordStrength";
 
 const SignupForm = () => {
   const navigate = useNavigate();
   const [signup, { isLoading }] = useSignupMutation();
   const [serverStatus, setServerStatus] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const form = useForm({
     mode: "onBlur",
@@ -40,6 +46,11 @@ const SignupForm = () => {
       acceptTerms: false,
     },
   });
+  const passwordValue = useWatch({
+    control: form.control,
+    name: "password",
+    defaultValue: "",
+  });
 
   const dismissServerStatus = () => {
     setServerStatus(null);
@@ -48,6 +59,14 @@ const SignupForm = () => {
   const handleSubmit = async (values) => {
     form.clearErrors();
     setServerStatus(null);
+
+    if (!isStrongPassword(values.password)) {
+      form.setError("password", {
+        type: "validate",
+        message: "Please satisfy all password requirements.",
+      });
+      return;
+    }
 
     const payload = {
       firstName: values.firstName,
@@ -246,13 +265,27 @@ const SignupForm = () => {
                     <IconLock className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
                     <FormControl>
                       <Input
-                        type="password"
+                        type={showPassword ? "text" : "password"}
                         placeholder="Create password"
                         autoComplete="new-password"
-                        className="pl-9"
+                        className="pr-10 pl-9"
                         {...field}
                       />
                     </FormControl>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-xs"
+                      className="absolute top-1/2 right-2 -translate-y-1/2"
+                      onClick={() => setShowPassword((visible) => !visible)}
+                      aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                      {showPassword ? (
+                        <IconEyeOff className="size-3.5" />
+                      ) : (
+                        <IconEye className="size-3.5" />
+                      )}
+                    </Button>
                   </div>
                   <FormMessage />
                 </FormItem>
@@ -278,19 +311,39 @@ const SignupForm = () => {
                     <IconLock className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
                     <FormControl>
                       <Input
-                        type="password"
+                        type={showConfirmPassword ? "text" : "password"}
                         placeholder="Confirm password"
                         autoComplete="new-password"
-                        className="pl-9"
+                        className="pr-10 pl-9"
                         {...field}
                       />
                     </FormControl>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-xs"
+                      className="absolute top-1/2 right-2 -translate-y-1/2"
+                      onClick={() =>
+                        setShowConfirmPassword((visible) => !visible)
+                      }
+                      aria-label={
+                        showConfirmPassword ? "Hide password" : "Show password"
+                      }
+                    >
+                      {showConfirmPassword ? (
+                        <IconEyeOff className="size-3.5" />
+                      ) : (
+                        <IconEye className="size-3.5" />
+                      )}
+                    </Button>
                   </div>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
+
+          <PasswordStrengthIndicator passwordValue={passwordValue} />
 
           <FormField
             control={form.control}

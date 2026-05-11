@@ -15,6 +15,7 @@ const ConfirmationDialog = ({
   onOpenChange,
   title = "Are you sure?",
   description = "This action cannot be undone.",
+  errorMessage = "",
   confirmLabel = "Confirm",
   cancelLabel = "Cancel",
   onConfirm,
@@ -32,6 +33,11 @@ const ConfirmationDialog = ({
           <DialogDescription className="text-sm leading-relaxed">
             {description}
           </DialogDescription>
+          {errorMessage ? (
+            <p className="mt-1 text-xs font-medium text-destructive">
+              {errorMessage}
+            </p>
+          ) : null}
         </DialogHeader>
         <DialogFooter className="mt-2">
           <Button

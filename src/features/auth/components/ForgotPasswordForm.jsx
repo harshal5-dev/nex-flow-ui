@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import {
   IconCircleCheck,
+  IconEye,
+  IconEyeOff,
   IconLoader,
   IconLock,
   IconMail,
@@ -24,6 +26,8 @@ import {
   useVerifyResetPasswordMutation,
 } from "../api/authApi";
 import RequiredMark from "@/components/common/RequiredMark";
+import PasswordStrengthIndicator from "./PasswordStrengthIndicator";
+import { isStrongPassword } from "../lib/passwordStrength";
 
 const OTP_RESEND_SECONDS = 30;
 
@@ -46,6 +50,8 @@ const ForgotPasswordForm = () => {
   const [resendIn, setResendIn] = useState(0);
   const [maskedEmail, setMaskedEmail] = useState("");
   const [status, setStatus] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [forgotPassword, { isLoading }] = useForgotPasswordMutation();
   const [verifyResetPassword, { isLoading: isVerifying }] =
     useVerifyResetPasswordMutation();
@@ -59,6 +65,11 @@ const ForgotPasswordForm = () => {
       password: "",
       confirmPassword: "",
     },
+  });
+  const passwordValue = useWatch({
+    control: form.control,
+    name: "password",
+    defaultValue: "",
   });
 
   useEffect(() => {
@@ -122,6 +133,14 @@ const ForgotPasswordForm = () => {
       form.setError("confirmPassword", {
         type: "validate",
         message: "Passwords do not match.",
+      });
+      return;
+    }
+
+    if (!isStrongPassword(password)) {
+      form.setError("password", {
+        type: "validate",
+        message: "Please satisfy all password requirements.",
       });
       return;
     }
@@ -285,13 +304,27 @@ const ForgotPasswordForm = () => {
                       <IconLock className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
                       <FormControl>
                         <Input
-                          type="password"
+                          type={showPassword ? "text" : "password"}
                           placeholder="Create new password"
                           autoComplete="new-password"
-                          className="pl-9"
+                          className="pr-10 pl-9"
                           {...field}
                         />
                       </FormControl>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon-xs"
+                        className="absolute top-1/2 right-2 -translate-y-1/2"
+                        onClick={() => setShowPassword((visible) => !visible)}
+                        aria-label={showPassword ? "Hide password" : "Show password"}
+                      >
+                        {showPassword ? (
+                          <IconEyeOff className="size-3.5" />
+                        ) : (
+                          <IconEye className="size-3.5" />
+                        )}
+                      </Button>
                     </div>
                     <FormMessage />
                   </FormItem>
@@ -317,18 +350,38 @@ const ForgotPasswordForm = () => {
                       <IconLock className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
                       <FormControl>
                         <Input
-                          type="password"
+                          type={showConfirmPassword ? "text" : "password"}
                           placeholder="Confirm new password"
                           autoComplete="new-password"
-                          className="pl-9"
+                          className="pr-10 pl-9"
                           {...field}
                         />
                       </FormControl>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon-xs"
+                        className="absolute top-1/2 right-2 -translate-y-1/2"
+                        onClick={() =>
+                          setShowConfirmPassword((visible) => !visible)
+                        }
+                        aria-label={
+                          showConfirmPassword ? "Hide password" : "Show password"
+                        }
+                      >
+                        {showConfirmPassword ? (
+                          <IconEyeOff className="size-3.5" />
+                        ) : (
+                          <IconEye className="size-3.5" />
+                        )}
+                      </Button>
                     </div>
                     <FormMessage />
                   </FormItem>
                 )}
               />
+
+              <PasswordStrengthIndicator passwordValue={passwordValue} />
             </>
           )}
         </fieldset>
