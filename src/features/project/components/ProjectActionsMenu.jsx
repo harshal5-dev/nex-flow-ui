@@ -1,4 +1,9 @@
-import { IconDotsVertical, IconEdit, IconTrash } from "@tabler/icons-react";
+import {
+  IconDotsVertical,
+  IconEdit,
+  IconEye,
+  IconTrash,
+} from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,12 +16,13 @@ import {
 
 const ProjectActionsMenu = ({
   project,
+  onView,
   onEdit,
   onDelete,
   canEdit,
   canDelete,
 }) => {
-  const hasActions = canEdit || canDelete;
+  const hasActions = true;
 
   return (
     <DropdownMenu>
@@ -36,11 +42,13 @@ const ProjectActionsMenu = ({
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
 
+        <DropdownMenuItem onClick={() => onView(project)}>
+          <IconEye className="size-4" />
+          View Details
+        </DropdownMenuItem>
+
         {canEdit ? (
-          <DropdownMenuItem
-            onClick={() => onEdit(project)}
-            className="cursor-pointer focus:text-white"
-          >
+          <DropdownMenuItem onClick={() => onEdit(project)}>
             <IconEdit className="size-4" />
             Edit Project
           </DropdownMenuItem>
