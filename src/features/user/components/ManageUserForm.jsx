@@ -21,6 +21,11 @@ import { cn } from "@/lib/utils";
 import { useCreateUserMutation, useUpdateUserMutation } from "../api/userApi";
 import { toast } from "sonner";
 
+/**
+ * Extract the _id from a role, which may come from the API as:
+ *  - a string (already an _id)
+ *  - an object { _id, name, ... }
+ */
 const toRoleId = (role) => {
   if (typeof role === "string") return role;
   return role?._id ?? role?.id ?? role?.value ?? "";
@@ -60,59 +65,22 @@ const ManageUserForm = ({ setIsUserModalOpen, selectedUser }) => {
     userForm.reset(resolveDefaultValues(selectedUser));
   }, [selectedUser, userForm]);
 
+  // Pass raw API role objects directly — RoleMultiSelect normalizes internally
   const roleOptions = useMemo(
-    () =>
-      (Array.isArray(rolesData) ? rolesData : [])
-        .map((role) => {
-          const value = toRoleId(role);
-          if (!value) return null;
-
-          return {
-            value,
-            label:
-              typeof role === "string"
-                ? role
-                : (role?.label ?? role?.name ?? value),
-            subtitle: typeof role === "string" ? "" : (role?.code ?? ""),
-            description:
-              typeof role === "string" ? "" : (role?.description ?? ""),
-          };
-        })
-        .filter(Boolean),
+    () => (Array.isArray(rolesData) ? rolesData : []),
     [rolesData]
   );
 
-  const roleByValue = useMemo(
-    () =>
-      roleOptions.reduce((acc, role) => ({ ...acc, [role.value]: role }), {}),
-    [roleOptions]
-  );
-  const roleIdByCode = useMemo(
+  // Build a lookup by _id for preview badges
+  const roleById = useMemo(
     () =>
       roleOptions.reduce((acc, role) => {
-        if (role.subtitle) {
-          acc[role.subtitle] = role.value;
-        }
+        const id = role?._id ?? role?.id;
+        if (id) acc[id] = role;
         return acc;
       }, {}),
     [roleOptions]
   );
-
-  useEffect(() => {
-    const currentRoles = userForm.getValues("roles") ?? [];
-    if (currentRoles.length === 0) return;
-
-    const normalizedRoles = currentRoles.map(
-      (roleValue) => roleIdByCode[roleValue] ?? roleValue
-    );
-    const hasChanged = normalizedRoles.some(
-      (roleValue, index) => roleValue !== currentRoles[index]
-    );
-
-    if (hasChanged) {
-      userForm.setValue("roles", normalizedRoles);
-    }
-  }, [roleIdByCode, userForm]);
 
   const selectedRoleValues = useWatch({
     control: userForm.control,
@@ -121,27 +89,18 @@ const ManageUserForm = ({ setIsUserModalOpen, selectedUser }) => {
   });
 
   const selectedRolePreview = useMemo(
-    () =>
-      selectedRoleValues
-        .map((roleValue) => roleByValue[roleIdByCode[roleValue] ?? roleValue])
-        .filter(Boolean),
-    [selectedRoleValues, roleByValue, roleIdByCode]
+    () => selectedRoleValues.map((roleId) => roleById[roleId]).filter(Boolean),
+    [selectedRoleValues, roleById]
   );
 
   const handleUserSubmit = async (values) => {
     setSubmitError("");
-    const normalizedRoleIds = Array.from(
-      new Set(
-        (values.roles ?? [])
-          .map((roleValue) => roleIdByCode[roleValue] ?? roleValue)
-          .filter(Boolean)
-      )
-    );
 
+    // values.roles is already an array of _id strings
     const payload = {
       ...values,
       id: values.id || "",
-      roles: normalizedRoleIds,
+      roles: Array.from(new Set(values.roles ?? [])).filter(Boolean),
     };
 
     try {
@@ -285,7 +244,7 @@ const ManageUserForm = ({ setIsUserModalOpen, selectedUser }) => {
                 Roles
                 <RequiredMark />
               </FormLabel>
-              <div className="border border-border/50 bg-muted/15 p-3">
+              <div className="rounded-md border border-border/50 bg-muted/15 p-3">
                 <FormControl>
                   <RoleMultiSelect
                     value={field.value}
@@ -305,7 +264,7 @@ const ManageUserForm = ({ setIsUserModalOpen, selectedUser }) => {
                       const color = ROLE_COLORS[index % ROLE_COLORS.length];
                       return (
                         <Badge
-                          key={role.value}
+                          key={role._id ?? role.id}
                           variant="secondary"
                           className={cn(
                             "rounded-full border-transparent px-2.5 py-1 text-[11px] font-semibold",
@@ -313,7 +272,7 @@ const ManageUserForm = ({ setIsUserModalOpen, selectedUser }) => {
                             color.icon
                           )}
                         >
-                          {role.label}
+                          {role.name ?? role.label}
                         </Badge>
                       );
                     })}

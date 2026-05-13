@@ -192,7 +192,7 @@ const ManageRoleForm = ({ setIsRoleModalOpen, selectedRole }) => {
                 Permissions
                 <RequiredMark />
               </FormLabel>
-              <div className="border border-border/50 bg-muted/15 p-3">
+              <div className="rounded-md border border-border/50 bg-muted/15 p-3">
                 <FormControl>
                   <PermissionMultiSelect
                     value={field.value}

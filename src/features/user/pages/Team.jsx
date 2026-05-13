@@ -10,12 +10,12 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { hasAnyPermission } from "@/lib/utils";
-import Role from "./pages/Role";
-import { selectAuthPermissions } from "../auth";
+import Role from "./Role";
+import { selectAuthPermissions } from "../../auth";
 import { useSelector } from "react-redux";
 import { PERMISSIONS } from "@/constant/global";
-import User from "./pages/User";
-import StateCard from "./components/StateCard";
+import User from "./User";
+import StateCard from "../components/StateCard";
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 

@@ -1,0 +1,8 @@
+export const PROJECT_STATUSES = [
+  "IN_PROGRESS",
+  "COMPLETED",
+  "ARCHIVED",
+  "CANCELLED",
+  "ON_HOLD",
+  "REVIEW",
+];
