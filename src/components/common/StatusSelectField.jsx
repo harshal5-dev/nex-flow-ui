@@ -86,6 +86,17 @@ const STATUS_CONFIG = {
     badge: "border-pending/25 bg-pending/10 text-pending",
     description: "Under review and evaluation",
   },
+  TODO: {
+    label: "Todo",
+    icon: IconCircleDashed,
+    dot: "bg-muted-foreground",
+    text: "text-muted-foreground",
+    bg: "bg-muted/30 border-muted-foreground/15",
+    activeBg: "bg-muted/50 border-muted-foreground/25",
+    badge: "border-muted-foreground/25 bg-muted/35 text-muted-foreground",
+    description: "Scoping and planning phase",
+  },
+
   // ── Generic fallbacks ──
   Planning: {
     label: "Planning",

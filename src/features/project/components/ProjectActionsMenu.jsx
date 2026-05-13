@@ -37,7 +37,10 @@ const ProjectActionsMenu = ({
         <DropdownMenuSeparator />
 
         {canEdit ? (
-          <DropdownMenuItem onClick={() => onEdit(project)}>
+          <DropdownMenuItem
+            onClick={() => onEdit(project)}
+            className="cursor-pointer focus:text-white"
+          >
             <IconEdit className="size-4" />
             Edit Project
           </DropdownMenuItem>
@@ -46,7 +49,7 @@ const ProjectActionsMenu = ({
         {canDelete ? (
           <DropdownMenuItem
             onClick={() => onDelete(project)}
-            className="text-destructive focus:bg-destructive/10 focus:text-destructive"
+            className="cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive"
           >
             <IconTrash className="size-4" />
             Delete Project

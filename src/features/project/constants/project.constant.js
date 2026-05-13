@@ -5,4 +5,5 @@ export const PROJECT_STATUSES = [
   "CANCELLED",
   "ON_HOLD",
   "REVIEW",
+  "TODO",
 ];

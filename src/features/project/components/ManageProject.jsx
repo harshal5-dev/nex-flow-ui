@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { format, isValid, parseISO } from "date-fns";
 import {
   Form,
   FormControl,
@@ -30,13 +31,24 @@ import {
 } from "../api/projectApi";
 import { toast } from "sonner";
 
+const normalizeDueDate = (dateValue) => {
+  if (!dateValue) return "";
+
+  // Handle ISO strings like "2026-05-30T00:00:00.000Z" → "2026-05-30"
+  const parsed = parseISO(dateValue);
+  if (isValid(parsed)) return format(parsed, "yyyy-MM-dd");
+
+  // Pass through if already in yyyy-MM-dd or other format
+  return dateValue;
+};
+
 const resolveProjectDefaults = (project) => {
   return {
     _id: project?._id ?? "",
     name: project?.name ?? "",
     description: project?.description ?? "",
     status: project?.status ?? "",
-    dueDate: project?.dueDate ?? "",
+    dueDate: normalizeDueDate(project?.dueDate),
     assignees: Array.isArray(project?.assignees)
       ? project.assignees.map((a) => a?._id ?? a).filter(Boolean)
       : [],
@@ -197,9 +209,13 @@ const ManageProject = ({ closeProjectModal, selectedProject }) => {
           <FormField
             control={projectForm.control}
             name="dueDate"
+            rules={{ required: "Due date is required." }}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Due Date</FormLabel>
+                <FormLabel>
+                  Due Date
+                  <RequiredMark />
+                </FormLabel>
                 <FormControl>
                   <DatePickerField
                     value={field.value}

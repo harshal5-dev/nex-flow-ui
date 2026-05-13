@@ -12,7 +12,7 @@ import {
 
 import ConfirmationDialog from "@/components/common/ConfirmationDialog";
 import { selectAuthPermissions } from "@/features/auth";
-import { cn } from "@/lib/utils";
+import { cn, hasAnyPermission } from "@/lib/utils";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -27,6 +27,8 @@ import {
 import ManageProject from "../components/ManageProject";
 import { Input } from "@/components/ui/input";
 import ProjectList from "../components/ProjectList";
+import { PERMISSIONS } from "@/constant/global";
+import { useDeleteProjectMutation } from "../api/projectApi";
 
 const Projects = () => {
   const permissions = useSelector(selectAuthPermissions);
@@ -34,6 +36,14 @@ const Projects = () => {
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
   const [projectToDelete, setProjectToDelete] = useState(null);
+  const [deleteError, setDeleteError] = useState("");
+
+  const [deleteProject, { isLoading: isDeleting }] = useDeleteProjectMutation();
+
+  const canCreateProjects = hasAnyPermission(permissions, [
+    PERMISSIONS.MANAGE_PROJECTS,
+    PERMISSIONS.CREATE_PROJECTS,
+  ]);
 
   const statCards = useMemo(() => {
     return [
@@ -79,6 +89,7 @@ const Projects = () => {
   };
 
   const beginProjectDelete = (project) => {
+    setDeleteError("");
     setProjectToDelete(project);
   };
 
@@ -87,14 +98,27 @@ const Projects = () => {
     setSelectedProject(null);
   };
 
-  const confirmDeleteProject = () => {
-    if (!projectToDelete?.id) return;
+  const confirmDeleteProject = async () => {
+    const projectId = projectToDelete?._id ?? projectToDelete?.id;
+    if (!projectId) return;
 
-    toast.success("Project removed successfully.");
-    setProjectToDelete(null);
+    try {
+      const response = await deleteProject(projectId).unwrap();
+      toast.success(
+        response?.message ||
+          `${projectToDelete?.name || "Project"} removed successfully.`
+      );
+      setProjectToDelete(null);
+      setDeleteError("");
+    } catch (error) {
+      setDeleteError(
+        error?.data?.message ||
+          `Unable to remove ${projectToDelete?.name || "project"} right now.`
+      );
+    }
   };
 
-  const isEditing = Boolean(selectedProject?.id);
+  const isEditing = Boolean(selectedProject?._id);
 
   return (
     <main className="flex w-full min-w-0 animate-in flex-col gap-6 duration-500 fade-in">
@@ -164,15 +188,17 @@ const Projects = () => {
                 />
               </div>
 
-              <Button
-                type="button"
-                className="shrink-0 gap-1.5"
-                onClick={openCreateProjectModal}
-              >
-                <IconPlus className="size-4" />
-                <span className="hidden sm:inline">Add Project</span>
-                <span className="sm:hidden">Add</span>
-              </Button>
+              {canCreateProjects && (
+                <Button
+                  type="button"
+                  className="shrink-0 gap-1.5"
+                  onClick={openCreateProjectModal}
+                >
+                  <IconPlus className="size-4" />
+                  <span className="hidden sm:inline">Add Project</span>
+                  <span className="sm:hidden">Add</span>
+                </Button>
+              )}
             </div>
           </div>
 
@@ -222,14 +248,17 @@ const Projects = () => {
       <ConfirmationDialog
         open={Boolean(projectToDelete)}
         onOpenChange={(open) => {
-          if (!open) {
+          if (!open && !isDeleting) {
             setProjectToDelete(null);
+            setDeleteError("");
           }
         }}
         title="Delete this project?"
         description={`This will remove "${projectToDelete?.name || "this project"}" from your workspace.`}
+        errorMessage={deleteError}
         confirmLabel="Delete Project"
         onConfirm={confirmDeleteProject}
+        isLoading={isDeleting}
       />
     </main>
   );

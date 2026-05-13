@@ -34,8 +34,8 @@ export const projectApi = createApi({
     }),
 
     updateProject: builder.mutation({
-      query: ({ id, ...project }) => ({
-        url: `/projects/${id}`,
+      query: ({ _id, ...project }) => ({
+        url: `/projects/${_id}`,
         method: "PUT",
         body: project,
       }),
