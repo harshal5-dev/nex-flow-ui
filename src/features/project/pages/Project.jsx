@@ -1,19 +1,16 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import {
-  IconCalendar,
-  IconCircleCheck,
   IconEye,
   IconFolderPlus,
   IconFolders,
-  IconLoader,
   IconPlus,
   IconSearch,
 } from "@tabler/icons-react";
 
 import ConfirmationDialog from "@/components/common/ConfirmationDialog";
 import { selectAuthPermissions } from "@/features/auth";
-import { cn, hasAnyPermission } from "@/lib/utils";
+import { hasAnyPermission } from "@/lib/utils";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -31,6 +28,7 @@ import { Input } from "@/components/ui/input";
 import ProjectList from "../components/ProjectList";
 import { PERMISSIONS } from "@/constant/global";
 import { useDeleteProjectMutation } from "../api/projectApi";
+import ProjectStates from "../components/ProjectStates";
 
 const Projects = () => {
   const permissions = useSelector(selectAuthPermissions);
@@ -48,38 +46,9 @@ const Projects = () => {
     PERMISSIONS.CREATE_PROJECTS,
   ]);
 
-  const statCards = useMemo(() => {
-    return [
-      {
-        label: "Total Projects",
-        value: 2,
-        Icon: IconFolders,
-        color: "text-primary",
-        bg: "border-primary/20 bg-primary/10",
-      },
-      {
-        label: "Active",
-        value: 1,
-        Icon: IconLoader,
-        color: "text-info",
-        bg: "border-info/20 bg-info/10",
-      },
-      {
-        label: "Completed",
-        value: 3,
-        Icon: IconCircleCheck,
-        color: "text-success",
-        bg: "border-success/20 bg-success/10",
-      },
-      {
-        label: "Overdue",
-        value: 0,
-        Icon: IconCalendar,
-        color: "text-destructive",
-        bg: "border-destructive/20 bg-destructive/10",
-      },
-    ];
-  }, []);
+  const canViewStates = hasAnyPermission(permissions, [
+    PERMISSIONS.MANAGE_PROJECTS,
+  ]);
 
   const openCreateProjectModal = () => {
     setSelectedProject(null);
@@ -151,34 +120,7 @@ const Projects = () => {
         </div>
       </Card>
 
-      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        {statCards.map((item) => (
-          <Card
-            key={item.label}
-            className="group relative overflow-hidden rounded-2xl border-border/50 bg-card/60 p-0 shadow-sm backdrop-blur transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
-          >
-            <div className="flex items-start justify-between gap-3 p-5">
-              <div>
-                <p className="text-[10px] font-semibold tracking-[0.14em] text-muted-foreground uppercase">
-                  {item.label}
-                </p>
-                <p className="mt-1.5 text-3xl font-bold tracking-tight tabular-nums">
-                  {item.value}
-                </p>
-              </div>
-
-              <span
-                className={cn(
-                  "inline-flex size-10 shrink-0 items-center justify-center rounded-xl border transition-transform duration-300 group-hover:scale-105",
-                  item.bg
-                )}
-              >
-                <item.Icon className={cn("size-5", item.color)} />
-              </span>
-            </div>
-          </Card>
-        ))}
-      </section>
+      {canViewStates && <ProjectStates />}
 
       <section>
         <Card className="overflow-hidden border-border/50 bg-card/60 shadow-sm backdrop-blur">

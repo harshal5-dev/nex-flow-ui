@@ -21,6 +21,7 @@ const ProjectActionsMenu = ({
   onDelete,
   canEdit,
   canDelete,
+  canView,
 }) => {
   const hasActions = true;
 
@@ -42,13 +43,21 @@ const ProjectActionsMenu = ({
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem onClick={() => onView(project)}>
-          <IconEye className="size-4" />
-          View Details
-        </DropdownMenuItem>
+        {canView ? (
+          <DropdownMenuItem
+            onClick={() => onView(project)}
+            className="cursor-pointer focus:text-white"
+          >
+            <IconEye className="size-4" />
+            View Details
+          </DropdownMenuItem>
+        ) : null}
 
         {canEdit ? (
-          <DropdownMenuItem onClick={() => onEdit(project)}>
+          <DropdownMenuItem
+            onClick={() => onEdit(project)}
+            className="cursor-pointer focus:text-white"
+          >
             <IconEdit className="size-4" />
             Edit Project
           </DropdownMenuItem>

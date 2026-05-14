@@ -70,6 +70,11 @@ const ProjectList = ({
     PERMISSIONS.DELETE_PROJECTS,
   ]);
 
+  const canViewProjects = hasAnyPermission(permissions, [
+    PERMISSIONS.VIEW_PROJECTS,
+    PERMISSIONS.MANAGE_PROJECTS,
+  ]);
+
   const filteredProjects = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
     if (!query) return projects;
@@ -155,6 +160,7 @@ const ProjectList = ({
                         onDelete={beginProjectDelete}
                         canEdit={canUpdateProjects}
                         canDelete={canDeleteProjects}
+                        canView={canViewProjects}
                       />
                     </div>
 

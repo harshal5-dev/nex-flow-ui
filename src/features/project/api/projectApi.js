@@ -12,6 +12,12 @@ export const projectApi = createApi({
       transformResponse: (response) => response.data,
     }),
 
+    getProjectStats: builder.query({
+      query: () => "/projects/states",
+      providesTags: ["Project"],
+      transformResponse: (response) => response.data,
+    }),
+
     getTeamStates: builder.query({
       query: () => "/users/team-states",
       providesTags: ["Project"],
@@ -59,4 +65,5 @@ export const {
   useGetProjectsQuery,
   useGetTeamStatesQuery,
   useGetLookupUsersQuery,
+  useGetProjectStatsQuery,
 } = projectApi;
