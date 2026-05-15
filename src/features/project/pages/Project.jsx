@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
-  IconEye,
   IconFolderPlus,
   IconFolders,
   IconPlus,
@@ -23,7 +23,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import ManageProject from "../components/ManageProject";
-import ViewProject from "../components/ViewProject";
 import { Input } from "@/components/ui/input";
 import ProjectList from "../components/ProjectList";
 import { PERMISSIONS } from "@/constant/global";
@@ -31,13 +30,13 @@ import { useDeleteProjectMutation } from "../api/projectApi";
 import ProjectStates from "../components/ProjectStates";
 
 const Projects = () => {
+  const navigate = useNavigate();
   const permissions = useSelector(selectAuthPermissions);
   const [searchQuery, setSearchQuery] = useState("");
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
   const [projectToDelete, setProjectToDelete] = useState(null);
   const [deleteError, setDeleteError] = useState("");
-  const [viewingProject, setViewingProject] = useState(null);
 
   const [deleteProject, { isLoading: isDeleting }] = useDeleteProjectMutation();
 
@@ -55,12 +54,14 @@ const Projects = () => {
     setIsProjectModalOpen(true);
   };
 
-  const beginProjectView = (project) => {
-    setViewingProject(project);
+  const openProjectDetails = (project) => {
+    const id = project?._id ?? project?.id;
+    if (!id) return;
+
+    navigate(`/app/projects/${id}`);
   };
 
   const beginProjectEdit = (project) => {
-    setViewingProject(null);
     setSelectedProject(project);
     setIsProjectModalOpen(true);
   };
@@ -155,7 +156,7 @@ const Projects = () => {
           <ProjectList
             openCreateProjectModal={openCreateProjectModal}
             searchQuery={searchQuery}
-            beginProjectView={beginProjectView}
+            openProjectDetails={openProjectDetails}
             beginProjectEdit={beginProjectEdit}
             beginProjectDelete={beginProjectDelete}
             permissions={permissions}
@@ -192,36 +193,6 @@ const Projects = () => {
           <ManageProject
             closeProjectModal={closeProjectModal}
             selectedProject={selectedProject}
-          />
-        </DialogContent>
-      </Dialog>
-
-      {/* ── View Project Dialog ─────────────────────────────────────────── */}
-      <Dialog
-        open={Boolean(viewingProject)}
-        onOpenChange={(open) => {
-          if (!open) setViewingProject(null);
-        }}
-      >
-        <DialogContent className="sm:max-w-4xl">
-          <DialogHeader className="pb-2">
-            <div className="mb-2 flex items-center gap-3">
-              <span className="inline-flex size-9 items-center justify-center rounded-xl border border-info/20 bg-info/10">
-                <IconEye className="size-4.5 text-info" />
-              </span>
-              <div>
-                <DialogTitle className="text-lg">Project Details</DialogTitle>
-                <DialogDescription>
-                  Full overview of this project and its resources.
-                </DialogDescription>
-              </div>
-            </div>
-          </DialogHeader>
-
-          <ViewProject
-            project={viewingProject}
-            onClose={() => setViewingProject(null)}
-            onEdit={beginProjectEdit}
           />
         </DialogContent>
       </Dialog>

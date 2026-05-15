@@ -51,7 +51,7 @@ const isProjectOverdue = (project) => {
 const ProjectList = ({
   openCreateProjectModal,
   searchQuery,
-  beginProjectView,
+  openProjectDetails,
   beginProjectEdit,
   beginProjectDelete,
   permissions,
@@ -155,7 +155,7 @@ const ProjectList = ({
                       <StatusBadge status={project.status} size="sm" />
                       <ProjectActionsMenu
                         project={project}
-                        onView={beginProjectView}
+                        onView={openProjectDetails}
                         onEdit={beginProjectEdit}
                         onDelete={beginProjectDelete}
                         canEdit={canUpdateProjects}
@@ -164,9 +164,15 @@ const ProjectList = ({
                       />
                     </div>
 
-                    <h3 className="text-base font-semibold tracking-tight">
-                      {project.name}
-                    </h3>
+                    <button
+                      type="button"
+                      onClick={() => openProjectDetails(project)}
+                      className="text-left"
+                    >
+                      <h3 className="text-base font-semibold tracking-tight hover:text-primary">
+                        {project.name}
+                      </h3>
+                    </button>
                     <p className="mt-1 line-clamp-3 text-xs leading-relaxed text-muted-foreground">
                       {project.description}
                     </p>

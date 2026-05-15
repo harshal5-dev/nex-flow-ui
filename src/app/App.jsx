@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useParams } from "react-router-dom";
 import Home from "@/features/home/pages/Home";
 import {
   Signin,
@@ -17,7 +17,12 @@ import AccessDenied from "@/app/pages/AccessDenied";
 import NotFound from "@/app/pages/NotFound";
 import LoadingScreen from "@/components/common/LoadingScreen";
 import { Team } from "@/features/user";
-import { Project } from "@/features/project";
+import { Project, ProjectDetail } from "@/features/project";
+
+const ProjectDetailRedirect = () => {
+  const { projectId } = useParams();
+  return <Navigate to={`/app/projects/${projectId || ""}`} replace />;
+};
 
 export function App() {
   const { isLoading } = useGetUserProfileQuery();
@@ -40,10 +45,15 @@ export function App() {
 
       {/* Auth-protected Routes */}
       <Route element={<ProtectedRoute />}>
+        <Route
+          path="/projects/:projectId"
+          element={<ProjectDetailRedirect />}
+        />
         <Route path="/app" element={<DashboardLayout />}>
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="projects" element={<Project />} />
+          <Route path="projects/:projectId" element={<ProjectDetail />} />
           <Route path="tasks" element={<Tasks />} />
           <Route path="team" element={<Team />} />
           <Route path="profile" element={<Profile />} />

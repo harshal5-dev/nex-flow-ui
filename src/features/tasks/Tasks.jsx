@@ -513,7 +513,7 @@ function Tasks() {
                   </div>
 
                   {/* Task List */}
-                  <div className="flex min-h-[150px] flex-col gap-3">
+                  <div className="flex min-h-37.5 flex-col gap-3">
                     {columnTasks.map((task) => (
                       <Card
                         key={task.id}
@@ -624,7 +624,7 @@ function Tasks() {
                       >
                         <TableCell>
                           <div className="font-medium">{task.title}</div>
-                          <div className="mt-0.5 max-w-[300px] truncate text-xs text-muted-foreground">
+                          <div className="mt-0.5 max-w-75 truncate text-xs text-muted-foreground">
                             {task.description}
                           </div>
                         </TableCell>
@@ -699,7 +699,7 @@ function Tasks() {
 
       {/* ── Task Modal ────────────────────────────────────────────────────── */}
       <Dialog open={isTaskModalOpen} onOpenChange={setIsTaskModalOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-125">
           <DialogHeader>
             <DialogTitle>
               {taskForm.getValues().id ? "Edit Task" : "Create New Task"}
