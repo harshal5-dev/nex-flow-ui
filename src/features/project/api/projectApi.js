@@ -69,10 +69,14 @@ export const projectApi = createApi({
     }),
 
     deleteTask: builder.mutation({
-      query: (taskId) => ({
-        url: `/tasks/${taskId}`,
-        method: "DELETE",
-      }),
+      query: (arg) => {
+        const taskId = typeof arg === "string" ? arg : arg?.taskId;
+
+        return {
+          url: `/tasks/${taskId}`,
+          method: "DELETE",
+        };
+      },
       invalidatesTags: (result, error, arg) => {
         const taskId = typeof arg === "string" ? arg : arg?.taskId;
         const projectId = typeof arg === "object" ? arg?.projectId : undefined;

@@ -50,17 +50,15 @@ export const normalizeProject = (project) => {
 export const normalizeTask = (task, { membersById = {}, projectId } = {}) => {
   if (!task) return null;
 
-  const rawAssignees =
-    task.assignees || task.assignee || task.assigneeDetails || task.assignedTo;
+  const rawAssigned =
+    task.assignedTo ||
+    task.assignee ||
+    (Array.isArray(task.assignees) ? task.assignees[0] : task.assignees);
 
-  const assigneeList = Array.isArray(rawAssignees)
-    ? rawAssignees
-    : rawAssignees
-      ? [rawAssignees]
-      : [];
-
-  const assignees = assigneeList
+  const assignedTo = [rawAssigned]
     .map((assignee) => {
+      if (!assignee) return null;
+
       if (typeof assignee === "string") {
         return membersById[assignee] || { _id: assignee };
       }
@@ -70,7 +68,7 @@ export const normalizeTask = (task, { membersById = {}, projectId } = {}) => {
 
       return membersById[id] || normalizeUser(assignee);
     })
-    .filter(Boolean);
+    .filter(Boolean)[0] || null;
 
   const createdBy = normalizeUser(task.createdBy) || null;
 
@@ -81,7 +79,8 @@ export const normalizeTask = (task, { membersById = {}, projectId } = {}) => {
     project: task.project || projectId,
     status: normalizeTaskStatus(task.status),
     priority: normalizeTaskPriority(task.priority),
-    assignees,
+    assignedTo,
+    assignees: assignedTo ? [assignedTo] : [],
     dueDate: task.dueDate || "",
     createdBy,
     createdAt: task.createdAt || "",
@@ -104,7 +103,13 @@ export const formatDate = (dateValue, withTime = false) => {
 };
 
 export const isOverdueTask = (task) => {
-  if (!task?.dueDate || normalizeTaskStatus(task.status) === TASK_STATUS.COMPLETED) {
+  const status = normalizeTaskStatus(task?.status);
+
+  if (
+    !task?.dueDate ||
+    status === TASK_STATUS.COMPLETED ||
+    status === TASK_STATUS.DONE
+  ) {
     return false;
   }
 
@@ -128,21 +133,23 @@ export const calculateTaskStats = (tasks = []) => {
     {
       [TASK_STATUS.TODO]: 0,
       [TASK_STATUS.IN_PROGRESS]: 0,
-      [TASK_STATUS.REVIEW]: 0,
+      [TASK_STATUS.DONE]: 0,
       [TASK_STATUS.COMPLETED]: 0,
+      [TASK_STATUS.ON_HOLD]: 0,
       [TASK_STATUS.CANCELLED]: 0,
       overdue: 0,
     }
   );
 
-  const completed = counts[TASK_STATUS.COMPLETED];
+  const completed = counts[TASK_STATUS.COMPLETED] + counts[TASK_STATUS.DONE];
   const progress = total > 0 ? Math.round((completed / total) * 100) : 0;
 
   return {
     total,
     todo: counts[TASK_STATUS.TODO],
     inProgress: counts[TASK_STATUS.IN_PROGRESS],
-    review: counts[TASK_STATUS.REVIEW],
+    done: counts[TASK_STATUS.DONE],
+    onHold: counts[TASK_STATUS.ON_HOLD],
     completed,
     cancelled: counts[TASK_STATUS.CANCELLED],
     overdue: counts.overdue,
@@ -164,7 +171,7 @@ export const defaultTaskPayload = {
   description: "",
   status: TASK_STATUS.TODO,
   priority: TASK_PRIORITY.MEDIUM,
-  assignees: [],
+  assignedTo: "",
   dueDate: "",
 };
 

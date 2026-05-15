@@ -1,7 +1,8 @@
 export const TASK_STATUS = {
   TODO: "TODO",
   IN_PROGRESS: "IN_PROGRESS",
-  REVIEW: "REVIEW",
+  DONE: "DONE",
+  ON_HOLD: "ON_HOLD",
   COMPLETED: "COMPLETED",
   CANCELLED: "CANCELLED",
 };
@@ -16,15 +17,17 @@ export const TASK_PRIORITY = {
 export const TASK_STATUS_ORDER = [
   TASK_STATUS.TODO,
   TASK_STATUS.IN_PROGRESS,
-  TASK_STATUS.REVIEW,
-  TASK_STATUS.COMPLETED,
+  TASK_STATUS.DONE,
   TASK_STATUS.CANCELLED,
+  TASK_STATUS.ON_HOLD,
+  TASK_STATUS.COMPLETED,
 ];
 
 export const TASK_STATUS_LABELS = {
   [TASK_STATUS.TODO]: "Todo",
   [TASK_STATUS.IN_PROGRESS]: "In Progress",
-  [TASK_STATUS.REVIEW]: "Review",
+  [TASK_STATUS.DONE]: "Done",
+  [TASK_STATUS.ON_HOLD]: "On Hold",
   [TASK_STATUS.COMPLETED]: "Completed",
   [TASK_STATUS.CANCELLED]: "Cancelled",
 };
@@ -39,7 +42,8 @@ export const TASK_PRIORITY_LABELS = {
 export const TASK_STATUS_BADGE_STYLES = {
   [TASK_STATUS.TODO]: "border-muted-foreground/25 bg-muted/35 text-muted-foreground",
   [TASK_STATUS.IN_PROGRESS]: "border-info/25 bg-info/10 text-info",
-  [TASK_STATUS.REVIEW]: "border-pending/25 bg-pending/10 text-pending",
+  [TASK_STATUS.DONE]: "border-success/25 bg-success/10 text-success",
+  [TASK_STATUS.ON_HOLD]: "border-warning/25 bg-warning/10 text-warning",
   [TASK_STATUS.COMPLETED]: "border-success/25 bg-success/10 text-success",
   [TASK_STATUS.CANCELLED]: "border-destructive/25 bg-destructive/10 text-destructive",
 };
@@ -59,8 +63,9 @@ export const normalizeTaskStatus = (status) => {
     .toUpperCase()
     .replace(/\s+/g, "_");
 
-  if (normalized === "DONE") return TASK_STATUS.COMPLETED;
-  if (normalized === "IN_REVIEW") return TASK_STATUS.REVIEW;
+  if (normalized === "IN_REVIEW" || normalized === "REVIEW") {
+    return TASK_STATUS.DONE;
+  }
 
   return TASK_STATUS[normalized] || TASK_STATUS.TODO;
 };

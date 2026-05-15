@@ -79,7 +79,7 @@ function SidebarProvider({ defaultOpen = true, children }) {
       <div
         data-slot="sidebar-provider"
         data-collapsed={desktopOpen ? "false" : "true"}
-        className="flex min-h-svh w-full"
+        className="flex h-svh w-full overflow-hidden"
       >
         {children}
       </div>
@@ -141,7 +141,7 @@ function Sidebar({ className, children }) {
       data-slot="sidebar"
       data-state={desktopOpen ? "expanded" : "collapsed"}
       className={cn(
-        "relative hidden h-svh shrink-0 border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-[width] duration-700 ease-out lg:block",
+        "relative top-0 hidden h-svh shrink-0 border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-[width] duration-700 ease-out lg:sticky lg:block",
         desktopOpen ? "w-64" : "w-16",
         className
       )}
@@ -208,7 +208,7 @@ function SidebarInset({ className, ...props }) {
   return (
     <div
       data-slot="sidebar-inset"
-      className={cn("flex min-h-svh min-w-0 flex-1 flex-col", className)}
+      className={cn("flex h-svh min-w-0 flex-1 flex-col overflow-hidden", className)}
       {...props}
     />
   );

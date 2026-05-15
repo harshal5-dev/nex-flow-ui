@@ -91,9 +91,25 @@ const TaskDetailSheet = ({
               </div>
 
               <div className="grid grid-cols-[120px_1fr] gap-3">
-                <dt className="text-muted-foreground">Assignees</dt>
+                <dt className="text-muted-foreground">Assigned To</dt>
                 <dd>
-                  {Array.isArray(task.assignees) && task.assignees.length > 0 ? (
+                  {task.assignedTo ? (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <UserAvatar
+                          size="sm"
+                          firstName={task.assignedTo?.firstName}
+                          lastName={task.assignedTo?.lastName}
+                        />
+                        <div>
+                          <p className="text-sm">{getUserDisplayName(task.assignedTo)}</p>
+                          {task.assignedTo?.emailId ? (
+                            <p className="text-xs text-muted-foreground">{task.assignedTo.emailId}</p>
+                          ) : null}
+                        </div>
+                      </div>
+                    </div>
+                  ) : Array.isArray(task.assignees) && task.assignees.length > 0 ? (
                     <div className="space-y-2">
                       {task.assignees.map((assignee) => (
                         <div key={assignee?._id || assignee?.id} className="flex items-center gap-2">

@@ -27,11 +27,11 @@ const SidebarFrame = ({
   }, [isMobile, location.pathname, setMobileOpen]);
 
   return (
-    <div className="relative flex min-h-svh w-full flex-1 overflow-hidden bg-background text-foreground">
+    <div className="relative flex h-svh w-full flex-1 overflow-hidden bg-background text-foreground">
       <div className="bg-grid pointer-events-none absolute inset-0 opacity-60" />
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_90%_60%_at_40%_-10%,rgba(59,130,246,0.08),transparent)]" />
 
-      <div className="relative flex min-h-svh w-full">
+      <div className="relative flex h-full w-full">
         <AppSidebar
           onNavigate={() => {
             if (isMobile) {
@@ -46,10 +46,10 @@ const SidebarFrame = ({
           navigationItems={navigationItems}
         />
 
-        <SidebarInset className="w-full">
+        <SidebarInset className="w-full overflow-hidden">
           <AppHeader pageMeta={pageMeta} />
 
-          <main className="min-w-0 flex-1 px-3 pt-4 pb-5 md:px-5 md:pb-6">
+          <main className="min-w-0 flex-1 overflow-y-auto overscroll-contain px-3 pt-4 pb-5 md:px-5 md:pb-6">
             {signoutError ? (
               <StatusCallout
                 variant="error"

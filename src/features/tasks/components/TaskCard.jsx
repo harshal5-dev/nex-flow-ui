@@ -129,22 +129,33 @@ const TaskCard = ({
         </div>
 
         <div className="flex items-center justify-between border-t border-border/40 pt-2.5">
-          {Array.isArray(task.assignees) && task.assignees.length > 0 ? (
-            <div className="flex -space-x-2">
-              {task.assignees.slice(0, 3).map((assignee) => (
-                <UserAvatar
-                  key={assignee?._id || assignee?.id}
-                  size="sm"
-                  firstName={assignee?.firstName}
-                  lastName={assignee?.lastName}
-                  className="ring-2 ring-background"
-                />
-              ))}
-              {task.assignees.length > 3 ? (
-                <span className="inline-flex size-9 items-center justify-center rounded-xl border border-border bg-background text-[11px] font-semibold text-muted-foreground ring-2 ring-background">
-                  +{task.assignees.length - 3}
-                </span>
-              ) : null}
+          {task.assignedTo ? (
+            <div className="flex items-center gap-2">
+              <UserAvatar
+                key={task.assignedTo?._id || task.assignedTo?.id}
+                size="sm"
+                firstName={task.assignedTo?.firstName}
+                lastName={task.assignedTo?.lastName}
+                className="ring-2 ring-background"
+              />
+              <span className="text-xs text-muted-foreground">
+                {[
+                  task.assignedTo?.firstName,
+                  task.assignedTo?.lastName,
+                ]
+                  .filter(Boolean)
+                  .join(" ") || "Assigned"}
+              </span>
+            </div>
+          ) : Array.isArray(task.assignees) && task.assignees.length > 0 ? (
+            <div className="flex items-center gap-2">
+              <UserAvatar
+                key={task.assignees[0]?._id || task.assignees[0]?.id}
+                size="sm"
+                firstName={task.assignees[0]?.firstName}
+                lastName={task.assignees[0]?.lastName}
+                className="ring-2 ring-background"
+              />
             </div>
           ) : (
             <span className="text-xs text-muted-foreground">Unassigned</span>

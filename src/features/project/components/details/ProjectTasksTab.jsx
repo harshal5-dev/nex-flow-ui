@@ -11,9 +11,12 @@ const ProjectTasksTab = ({
   onEditTask,
   onDeleteTask,
   onStatusChange,
+  assigneeFilter,
+  onAssigneeFilterChange,
 }) => {
   return (
     <TaskTable
+      key={`project-task-table-${assigneeFilter}`}
       tasks={tasks}
       members={members}
       canCreateTask={canCreateTask}
@@ -24,6 +27,8 @@ const ProjectTasksTab = ({
       onEditTask={onEditTask}
       onDeleteTask={onDeleteTask}
       onStatusChange={onStatusChange}
+      assigneeFilter={assigneeFilter}
+      onAssigneeFilterChange={onAssigneeFilterChange}
     />
   );
 };

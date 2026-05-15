@@ -3,15 +3,14 @@ import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import {
-  IconArrowLeft,
   IconChecklist,
+  IconFolderPlus,
   IconFolders,
   IconUsers,
 } from "@tabler/icons-react";
 
 import ConfirmationDialog from "@/components/common/ConfirmationDialog";
 import EmptyState from "@/components/common/EmptyState";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
@@ -39,7 +38,6 @@ import {
   useCreateProjectTaskMutation,
   useDeleteTaskMutation,
   useGetProjectByIdQuery,
-  useGetProjectsQuery,
   useGetProjectTasksQuery,
   useUpdateTaskMutation,
 } from "@/features/project/api/projectApi";
@@ -47,6 +45,8 @@ import AddTaskSheet from "@/features/tasks/components/AddTaskSheet";
 import EditTaskSheet from "@/features/tasks/components/EditTaskSheet";
 import TaskDetailSheet from "@/features/tasks/components/TaskDetailSheet";
 import { hasAnyPermission } from "@/lib/utils";
+
+const ASSIGNEE_ALL = "all";
 
 const ProjectDetail = () => {
   const navigate = useNavigate();
@@ -61,11 +61,11 @@ const ProjectDetail = () => {
   const [taskToEdit, setTaskToEdit] = useState(null);
   const [taskToDelete, setTaskToDelete] = useState(null);
   const [taskToView, setTaskToView] = useState(null);
+  const [taskAssigneeFilter, setTaskAssigneeFilter] = useState(ASSIGNEE_ALL);
 
   const projectByIdQuery = useGetProjectByIdQuery(projectId, {
     skip: !projectId,
   });
-  const projectsQuery = useGetProjectsQuery();
   const projectTasksQuery = useGetProjectTasksQuery(projectId, {
     skip: !projectId,
   });
@@ -100,19 +100,9 @@ const ProjectDetail = () => {
     PERMISSIONS.UPDATE_PROJECTS,
   ]);
 
-  const isProjectLoading =
-    projectByIdQuery.isLoading ||
-    (projectsQuery.isLoading && !projectByIdQuery.data);
+  const isProjectLoading = projectByIdQuery.isLoading;
 
-  const rawProjectFromList = useMemo(
-    () =>
-      (projectsQuery.data ?? []).find(
-        (project) => (project?._id || project?.id) === projectId
-      ) || null,
-    [projectsQuery.data, projectId]
-  );
-
-  const rawProject = projectByIdQuery.data || rawProjectFromList;
+  const rawProject = projectByIdQuery.data;
   const project = useMemo(() => normalizeProject(rawProject), [rawProject]);
 
   const membersById = useMemo(() => {
@@ -161,7 +151,6 @@ const ProjectDetail = () => {
     await Promise.all([
       projectByIdQuery.refetch(),
       projectTasksQuery.refetch(),
-      projectsQuery.refetch(),
     ]);
   };
 
@@ -171,8 +160,8 @@ const ProjectDetail = () => {
       description: values.description?.trim() || "",
       status: values.status,
       priority: values.priority,
-      assignees: Array.from(new Set(values.assignees ?? [])).filter(Boolean),
-      ...(values.dueDate ? { dueDate: values.dueDate } : {}),
+      assignedTo: values.assignedTo,
+      dueDate: values.dueDate,
     };
 
     try {
@@ -198,8 +187,8 @@ const ProjectDetail = () => {
       description: values.description?.trim() || "",
       status: values.status,
       priority: values.priority,
-      assignees: Array.from(new Set(values.assignees ?? [])).filter(Boolean),
-      dueDate: values.dueDate || null,
+      assignedTo: values.assignedTo,
+      dueDate: values.dueDate,
     };
 
     try {
@@ -270,26 +259,13 @@ const ProjectDetail = () => {
     );
   }
 
-  console.log(project, "project");
-
   return (
     <main className="space-y-6">
-      <div className="flex items-center">
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => navigate("/app/projects")}
-        >
-          <IconArrowLeft className="size-4" />
-          Back to Projects
-        </Button>
-      </div>
-
       <ProjectDetailHeader
         project={project}
         canEditProject={canEditProject}
         canCreateTask={canCreateTask}
+        onBack={() => navigate("/app/projects")}
         onEditProject={() => setIsProjectModalOpen(true)}
         onAddTask={() => setIsAddTaskOpen(true)}
       />
@@ -335,6 +311,8 @@ const ProjectDetail = () => {
               onEditTask={setTaskToEdit}
               onDeleteTask={setTaskToDelete}
               onStatusChange={handleTaskStatusChange}
+              assigneeFilter={taskAssigneeFilter}
+              onAssigneeFilterChange={setTaskAssigneeFilter}
             />
           </TabsContent>
 
@@ -343,6 +321,10 @@ const ProjectDetail = () => {
               members={project.members}
               tasks={normalizedTasks}
               onViewMemberTasks={(member) => {
+                const memberId = member?._id || member?.id;
+                if (memberId) {
+                  setTaskAssigneeFilter(memberId);
+                }
                 setActiveTab("tasks");
                 toast.info(
                   `Switched to Tasks for ${getUserDisplayName(member)}.`
@@ -404,12 +386,18 @@ const ProjectDetail = () => {
         }}
       >
         <DialogContent className="sm:max-w-2xl">
-          <DialogHeader>
-            <DialogTitle>Edit Project</DialogTitle>
+          <DialogHeader className="pb-3">
+            <div className="mb-2 flex items-center gap-3">
+              <span className="inline-flex size-9 items-center justify-center rounded-xl border border-primary/20 bg-primary/10">
+                <IconFolderPlus className="size-4.5 text-primary" />
+              </span>
+              <DialogTitle className="text-xl">Update Project</DialogTitle>
+            </div>
             <DialogDescription>
-              Update project details and members.
+              Set project details and assign the right team members.
             </DialogDescription>
           </DialogHeader>
+
           <ManageProject
             closeProjectModal={() => {
               setIsProjectModalOpen(false);

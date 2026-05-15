@@ -1,4 +1,5 @@
 import {
+  IconArrowLeft,
   IconCalendar,
   IconEdit,
   IconFolders,
@@ -18,24 +19,30 @@ const ProjectDetailHeader = ({
   project,
   canEditProject,
   canCreateTask,
+  onBack,
   onEditProject,
   onAddTask,
 }) => {
   const members = project?.members ?? [];
-  const visibleMembers = members.slice(0, 5);
-  const extraCount = Math.max(0, members.length - 5);
+  const visibleMembers = members.slice(0, 3);
+  const extraCount = Math.max(0, members.length - 3);
 
   return (
-    <Card className="relative overflow-hidden border-border/40 bg-linear-to-br from-card via-card to-muted/30 p-0 shadow-md">
-      {/* Background accents */}
-      <div className="pointer-events-none absolute -top-32 -right-20 size-80 rounded-full bg-primary/8 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-24 -left-24 size-72 rounded-full bg-info/6 blur-3xl" />
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-primary/30 to-transparent" />
-
-      <div className="relative flex flex-col gap-6 p-6 sm:p-8">
+    <Card className="border-border/40 bg-card p-0 shadow-md">
+      <div className="flex flex-col gap-6 p-6 sm:p-8">
         {/* Top row: breadcrumb + actions */}
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="-ml-2 h-8 px-2 text-xs text-muted-foreground hover:text-foreground"
+              onClick={onBack}
+            >
+              <IconArrowLeft className="size-3.5" />
+              Back
+            </Button>
             <span className="inline-flex size-8 items-center justify-center rounded-lg border border-primary/15 bg-primary/8 text-primary">
               <IconFolders className="size-4 dark:text-white" />
             </span>
@@ -45,7 +52,7 @@ const ProjectDetailHeader = ({
               </span>
               <span className="text-muted-foreground/40">/</span>
               <span className="font-semibold text-foreground">
-                {project?.name ?? "Project"}
+                {project.name ?? "Project"}
               </span>
             </div>
           </div>
@@ -81,15 +88,15 @@ const ProjectDetailHeader = ({
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0 space-y-2">
             <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-              {project?.name}
+              {project.name}
             </h1>
-            {project?.description ? (
+            {project.description ? (
               <p className="max-w-2xl text-sm leading-relaxed text-muted-foreground">
                 {project.description}
               </p>
             ) : null}
           </div>
-          <StatusBadge status={project?.status} size="default" />
+          <StatusBadge status={project.status} size="default" />
         </div>
 
         {/* Bottom: metadata row */}
@@ -99,9 +106,7 @@ const ProjectDetailHeader = ({
             <IconCalendar className="size-4 text-muted-foreground" />
             <span className="text-sm">
               <span className="text-muted-foreground">Due </span>
-              <span className="font-medium">
-                {formatDate(project?.dueDate)}
-              </span>
+              <span className="font-medium">{formatDate(project.dueDate)}</span>
             </span>
           </div>
 
@@ -111,7 +116,8 @@ const ProjectDetailHeader = ({
           <div className="flex items-center gap-2">
             <IconUsers className="size-4 text-muted-foreground" />
             <span className="text-sm text-muted-foreground">
-              {members.length} member{members.length !== 1 ? "s" : ""}
+              {project.assigneeCount} member
+              {project.assigneeCount !== 1 ? "s" : ""}
             </span>
             <div className="ml-1 flex -space-x-1.5">
               {visibleMembers.map((member) => (
@@ -139,7 +145,7 @@ const ProjectDetailHeader = ({
               variant="outline"
               className="gap-1 border-border/40 bg-muted/30 px-2 py-0 text-[11px] font-medium"
             >
-              {project?.taskCount ?? 0} tasks
+              {project.taskCount ?? 0} tasks
             </Badge>
           </div>
         </div>

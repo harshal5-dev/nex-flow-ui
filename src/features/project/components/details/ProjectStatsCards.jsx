@@ -13,7 +13,6 @@ const STAT_ITEMS = [
     key: "total",
     label: "Total Tasks",
     icon: IconStack2,
-    gradient: "from-primary/15 to-primary/5",
     iconBg: "bg-primary/10 border-primary/15 text-primary",
     textColor: "text-primary",
   },
@@ -21,7 +20,6 @@ const STAT_ITEMS = [
     key: "inProgress",
     label: "In Progress",
     icon: IconLoaderQuarter,
-    gradient: "from-info/15 to-info/5",
     iconBg: "bg-info/10 border-info/15 text-info",
     textColor: "text-info",
   },
@@ -29,7 +27,6 @@ const STAT_ITEMS = [
     key: "completed",
     label: "Completed",
     icon: IconCircleCheck,
-    gradient: "from-success/15 to-success/5",
     iconBg: "bg-success/10 border-success/15 text-success",
     textColor: "text-success",
   },
@@ -37,7 +34,6 @@ const STAT_ITEMS = [
     key: "overdue",
     label: "Overdue",
     icon: IconAlertTriangle,
-    gradient: "from-destructive/15 to-destructive/5",
     iconBg: "bg-destructive/10 border-destructive/15 text-destructive",
     textColor: "text-destructive",
   },
@@ -49,7 +45,7 @@ function StatCard({ item, value }) {
   const cardClasses = cn(
     "group relative overflow-hidden border-border/40 shadow-sm",
     "transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md",
-    "bg-linear-to-br " + item.gradient
+    "bg-card/70"
   );
 
   const iconClasses = cn(

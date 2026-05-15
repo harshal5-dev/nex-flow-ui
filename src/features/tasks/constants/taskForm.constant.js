@@ -5,6 +5,6 @@ export const taskFormDefaults = {
   description: "",
   status: TASK_STATUS.TODO,
   priority: TASK_PRIORITY.MEDIUM,
-  assignees: [],
+  assignedTo: "",
   dueDate: "",
 };
